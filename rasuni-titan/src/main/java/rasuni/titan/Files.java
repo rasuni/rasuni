@@ -10,7 +10,7 @@ import rasuni.graph.Key;
  * File utilities
  *
  */
-class Files
+public final class Files
 {
 	/**
 	 * The name key

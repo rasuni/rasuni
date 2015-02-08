@@ -8,11 +8,11 @@ import com.tinkerpop.blueprints.Vertex;
  * Edges utilities
  *
  */
-final class Edges
+public final class Edges
 {
 	/**
 	 * Get the head of an edge
-	 * 
+	 *
 	 * @param edge
 	 *            the edge
 	 * @return the head vertex
@@ -24,7 +24,7 @@ final class Edges
 
 	/**
 	 * Get first outgoing edge for specified label
-	 * 
+	 *
 	 * @param vertex
 	 *            the source vertex
 	 * @param label
@@ -38,7 +38,7 @@ final class Edges
 
 	/**
 	 * Remove the edge and return its head vertex
-	 * 
+	 *
 	 * @param edge
 	 *            the edge to remove
 	 * @return the head vertex
@@ -54,7 +54,7 @@ final class Edges
 
 	/**
 	 * Remove a reference from a vertex
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex
 	 * @param label

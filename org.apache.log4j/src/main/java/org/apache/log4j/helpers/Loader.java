@@ -20,7 +20,6 @@ import java.io.InterruptedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import rasuni.titan.TitanCollector;
 
 /**
    Load resources (or images) from various sources.
@@ -103,7 +102,7 @@ public class Loader
 				classLoader = getTCL();
 				if (classLoader != null)
 				{
-					TitanCollector.debug(TitanCollector.g_debugEnabled, TitanCollector.g_quietMode, System.out, "Trying to find [" + resource + "] using context classloader " + classLoader + ".");
+					LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using context classloader " + classLoader + ".");
 					url = classLoader.getResource(resource);
 					if (url != null)
 					{
@@ -116,7 +115,7 @@ public class Loader
 			classLoader = Loader.class.getClassLoader();
 			if (classLoader != null)
 			{
-				TitanCollector.debug(TitanCollector.g_debugEnabled, TitanCollector.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
+				LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
 				url = classLoader.getResource(resource);
 				if (url != null)
 				{
@@ -147,7 +146,7 @@ public class Loader
 		// may be the case that clazz was loaded by the Extentsion class
 		// loader which the parent of the system class loader. Hence the
 		// code below.
-		TitanCollector.debug(TitanCollector.g_debugEnabled, TitanCollector.g_quietMode, System.out, "Trying to find [" + resource + "] using ClassLoader.getSystemResource().");
+		LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using ClassLoader.getSystemResource().");
 		return ClassLoader.getSystemResource(resource);
 	}
 

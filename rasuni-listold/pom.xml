@@ -10,13 +10,24 @@
   <dependencies>
   	<dependency>
   		<groupId>rasuni</groupId>
-  		<artifactId>rasuni-taskqueue</artifactId>
+  		<artifactId>org.apache.log4j</artifactId>
   		<version>0.0.1</version>
   	</dependency>
   	<dependency>
   		<groupId>rasuni</groupId>
-  		<artifactId>rasuni-filesystemscanner</artifactId>
+  		<artifactId>rasuni-titan</artifactId>
+  		<version>0.0.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>log4j</groupId>
+  		<artifactId>log4j</artifactId>
+  		<version>1.2.16</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>rasuni</groupId>
+  		<artifactId>rasuni-jre</artifactId>
   		<version>0.0.1</version>
   	</dependency>
   </dependencies>
+  
 </project>

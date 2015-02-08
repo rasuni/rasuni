@@ -16,7 +16,7 @@
  */
 package org.apache.log4j.helpers;
 
-import rasuni.titan.TitanCollector;
+import java.io.PrintStream;
 
 /**
    This class used to output log statements from within the log4j package.
@@ -37,15 +37,6 @@ import rasuni.titan.TitanCollector;
 public class LogLog
 {
 	/**
-	   Defining this value makes log4j print log4j-internal debug
-	   statements to <code>System.out</code>.
-
-	  <p> The value of this string is <b>log4j.debug</b>.
-
-	  <p>Note that the search for all option names is case sensitive.  */
-	public static final String DEBUG_KEY = "log4j.debug";
-
-	/**
 	   Defining this value makes log4j components print log4j-internal
 	   debug statements to <code>System.out</code>.
 
@@ -53,7 +44,6 @@ public class LogLog
 
 	  <p>Note that the search for all option names is case sensitive.
 
-	  @deprecated Use {@link #DEBUG_KEY} instead.
 	 */
 	@Deprecated
 	public static final String CONFIG_DEBUG_KEY = "log4j.configDebug";
@@ -67,7 +57,7 @@ public class LogLog
 	 */
 	static public void setInternalDebugging(@SuppressWarnings("javadoc") boolean enabled)
 	{
-		TitanCollector.g_debugEnabled = enabled;
+		LogLog.g_debugEnabled = enabled;
 	}
 
 	/**
@@ -77,9 +67,9 @@ public class LogLog
 	@SuppressWarnings("javadoc")
 	public static void debug(String msg, Throwable t)
 	{
-		if (TitanCollector.g_debugEnabled && !TitanCollector.g_quietMode)
+		if (LogLog.g_debugEnabled && !LogLog.g_quietMode)
 		{
-			System.out.println(TitanCollector.PREFIX + msg);
+			System.out.println("log4j: " + msg);
 			if (t != null)
 			{
 				t.printStackTrace(System.out);
@@ -95,7 +85,7 @@ public class LogLog
 	@SuppressWarnings("javadoc")
 	public static void error(String msg)
 	{
-		if (TitanCollector.g_quietMode)
+		if (LogLog.g_quietMode)
 		{
 			return;
 		}
@@ -110,7 +100,7 @@ public class LogLog
 	@SuppressWarnings("javadoc")
 	public static void error(String msg, Throwable t)
 	{
-		if (TitanCollector.g_quietMode)
+		if (LogLog.g_quietMode)
 		{
 			return;
 		}
@@ -129,7 +119,7 @@ public class LogLog
 	 */
 	public static void setQuietMode(boolean quietMode)
 	{
-		TitanCollector.g_quietMode = quietMode;
+		LogLog.g_quietMode = quietMode;
 	}
 
 	/**
@@ -139,7 +129,7 @@ public class LogLog
 	@SuppressWarnings("javadoc")
 	public static void warn(String msg)
 	{
-		if (TitanCollector.g_quietMode)
+		if (LogLog.g_quietMode)
 		{
 			return;
 		}
@@ -153,7 +143,7 @@ public class LogLog
 	@SuppressWarnings("javadoc")
 	public static void warn(String msg, Throwable t)
 	{
-		if (TitanCollector.g_quietMode)
+		if (LogLog.g_quietMode)
 		{
 			return;
 		}
@@ -163,4 +153,40 @@ public class LogLog
 			t.printStackTrace();
 		}
 	}
+
+	/**
+	This method is used to output log4j internal debug
+	statements. Output goes to <code>System.out</code>.
+	 * @param msg the message
+	 */
+	public static void debug(String msg)
+	{
+		debug(g_debugEnabled, g_quietMode, System.out, msg);
+	}
+
+	/**
+	   This method is used to output log4j internal debug
+	   statements. Output goes to <code>System.out</code>.
+	 * @param debugEnabled true if debug is enabled
+	 * @param quietMode true if quiet mode
+	 * @param out the out print stream
+	 * @param msg the message
+	 */
+	public static void debug(boolean debugEnabled, boolean quietMode, PrintStream out, String msg)
+	{
+		if (debugEnabled && !quietMode)
+		{
+			out.println("log4j: " + msg);
+		}
+	}
+
+	/**
+	 * true if debug is enabled
+	 */
+	public static boolean g_debugEnabled = false;
+
+	/**
+	   In quietMode not even errors generate any output.
+	 */
+	public static boolean g_quietMode = false;
 }

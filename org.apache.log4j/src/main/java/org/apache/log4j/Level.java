@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import rasuni.titan.TitanCollector;
 
 /**
    Defines the minimum set of levels recognized by the system, that is

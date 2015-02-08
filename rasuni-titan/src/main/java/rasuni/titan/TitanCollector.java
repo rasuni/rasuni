@@ -43,7 +43,6 @@ import org.apache.log4j.helpers.OptionConverter;
 import org.apache.log4j.spi.DefaultRepositorySelector;
 import org.apache.log4j.spi.LoggerRepository;
 import org.apache.log4j.spi.NOPLoggerRepository;
-import org.apache.log4j.spi.RepositorySelector;
 import org.apache.log4j.spi.RootLogger;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -116,12 +115,19 @@ public final class TitanCollector
 		return new Key<>(name, String.class);
 	}
 
-	private static RuntimeException unexpected()
+	/**
+	 * Create an unexpected exception
+	 * @return the new exception instance
+	 */
+	public static RuntimeException unexpected()
 	{
 		return new RuntimeException("Unexpected");
 	}
 
-	private static void fail()
+	/**
+	 * Unconditional fail
+	 */
+	public static void fail()
 	{
 		throw unexpected();
 	}
@@ -239,7 +245,7 @@ public final class TitanCollector
 	 *            the label
 	 * @return the found edge
 	 */
-	static Edge getSingleIncoming(Vertex vertex, String label)
+	public static Edge getSingleIncoming(Vertex vertex, String label)
 	{
 		return getSingle(Vertex::getEdges, vertex, Direction.IN, label);
 	}
@@ -251,7 +257,7 @@ public final class TitanCollector
 	 *            the edge
 	 * @return the tail vertex
 	 */
-	private static Vertex getTail(Edge edge)
+	public static Vertex getTail(Edge edge)
 	{
 		return edge.getVertex(Direction.OUT);
 	}
@@ -318,7 +324,7 @@ public final class TitanCollector
 		return ifNull(sequence, null, (IProvider<ISequence<String>>) () ->
 		{
 			return new ISequence<String>()
-			{
+					{
 				@Override
 				public String getHead()
 				{
@@ -330,7 +336,7 @@ public final class TitanCollector
 				{
 					return map(sequence.getTail(), toString);
 				}
-			};
+					};
 		});
 	}
 
@@ -367,7 +373,7 @@ public final class TitanCollector
 	public static <T> ISequence<T> sequence(T[] array, int pos)
 	{
 		return array.length == pos ? null : new ISequence<T>()
-				{
+		{
 			@Override
 			public T getHead()
 			{
@@ -379,7 +385,7 @@ public final class TitanCollector
 			{
 				return sequence(array, pos + 1);
 			}
-				};
+		};
 	}
 
 	/**
@@ -461,9 +467,10 @@ public final class TitanCollector
 	 *
 	 * @param tg
 	 *            the titan graph
+	 * @param tt the task type
 	 * @return the task vertex
 	 */
-	private static Vertex newTask(TitanGraph tg, TaskType tt)
+	public static Vertex newTask(TitanGraph tg, TaskType tt)
 	{
 		Vertex v = tg.addVertex(null);
 		setProperty(v, "task.type", tt);
@@ -529,9 +536,9 @@ public final class TitanCollector
 	{
 		return includeEntity(entity, Entity::getId, resource, tg, out, Object::toString, mbid ->
 		{ // empty
-				}, vertex ->
-				{ // empty
-				});
+		}, vertex ->
+		{ // empty
+		});
 	}
 
 	private static void printSpace(PrintStream out, String s)
@@ -653,71 +660,83 @@ public final class TitanCollector
 		}
 	}
 
+	/**
+	 * Checks if asked type is excpected type and return the provided value
+	 * @param <A> the asked type class
+	 * @param <E> the expected type class
+	 * @param askedType the asked type
+	 * @param expectedType the expected type
+	 * @param value the value
+	 * @return the value
+	 */
 	@SuppressWarnings("unchecked")
-	private static <A, E> A provideSetting(Class<A> askedType, Class<E> expectedType, E value)
+	public static <A, E> A provideSetting(Class<A> askedType, Class<E> expectedType, E value)
 	{
 		failIf(askedType != expectedType);
 		return (A) value;
 	}
 
-	private static <A> A provideBooleanSetting(Class<A> askedType, Boolean value)
+	/**
+	 * Provide a boolean setting
+	 * @param <A> the asked type class
+	 * @param askedType the asked type
+	 * @param value the value
+	 * @return the value
+	 */
+	public static <A> A provideBooleanSetting(Class<A> askedType, Boolean value)
 	{
 		return provideSetting(askedType, Boolean.class, value);
 	}
 
-	private static <A> A provideStringSetting(Class<A> askedType, String value)
+	/**
+	 * Provide a string setting
+	 * @param <A> the asked type class
+	 * @param askedType the asked type
+	 * @param value the value
+	 * @return the value
+	 */
+	public static <A> A provideStringSetting(Class<A> askedType, String value)
 	{
 		return provideSetting(askedType, String.class, value);
 	}
 
-	private static <A> A provideDurationSetting(Class<A> askedType, Duration value)
+	/**
+	 * Provide a duration setting
+	 * @param <A> the asked type class
+	 * @param askedType the asked type
+	 * @param value the value
+	 * @return the value
+	 */
+	public static <A> A provideDurationSetting(Class<A> askedType, Duration value)
 	{
 		return provideSetting(askedType, Duration.class, value);
 	}
 
-	private static <A> A provideIntegerSetting(Class<A> asketType, int value)
+	/**
+	 * Provide a integer setting
+	 * @param <A> the asked type class
+	 * @param askedType the asked type
+	 * @param value the value
+	 * @return the value
+	 */
+	public static <A> A provideIntegerSetting(Class<A> askedType, int value)
 	{
-		return provideSetting(asketType, Integer.class, Integer.valueOf(value));
+		return provideSetting(askedType, Integer.class, Integer.valueOf(value));
 	}
 
-	@SuppressWarnings("javadoc")
-	public static final String PREFIX = "log4j: ";
-
 	/**
-	   This method is used to output log4j internal debug
-	   statements. Output goes to <code>System.out</code>.
-	 * @param debugEnabled true if debug is enabled
+	 * Log a debug message
+	 * @param debugEnabled flag indicating whether debug is enabled
 	 * @param quietMode true if quiet mode
-	 * @param out the out print stream
-	 * @param msg the message
+	 * @param out the output stream to use
+	 * @param s1 the first string
+	 * @param s2 the second string
+	 * @param s3 the third string
 	 */
-	public static void debug(boolean debugEnabled, boolean quietMode, PrintStream out, String msg)
+	public static void debug(boolean debugEnabled, boolean quietMode, PrintStream out, String s1, Object s2, String s3)
 	{
-		if (debugEnabled && !quietMode)
-		{
-			out.println("log4j: " + msg);
-		}
+		LogLog.debug(debugEnabled, quietMode, out, s1 + s2 + s3);
 	}
-
-	private static void debug(boolean debugEnabled, boolean quietMode, PrintStream out, String s1, Object s2, String s3)
-	{
-		debug(debugEnabled, quietMode, out, s1 + s2 + s3);
-	}
-
-	/**
-	 * the repository selector
-	 */
-	public static RepositorySelector g_repositorySelector;
-
-	/**
-	 * true if debug is enabled
-	 */
-	public static boolean g_debugEnabled = false;
-
-	/**
-	   In quietMode not even errors generate any output.
-	 */
-	public static boolean g_quietMode = false;
 
 	@SuppressWarnings("deprecation")
 	private static void selectAndConfigure(URL url, Runnable isNull)
@@ -728,7 +747,7 @@ public final class TitanCollector
 		}
 		else
 		{
-			debug(g_debugEnabled, g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
+			debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
 			try
 			{
 				OptionConverter.selectAndConfigure(url, OptionConverter.getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY, null), LogManager.getLoggerRepository());
@@ -740,8 +759,15 @@ public final class TitanCollector
 		}
 	}
 
+	/**
+	 * Configure log options
+	 * @param java1 do we have java 1
+	 * @param ignoreTCL ignore the tcl
+	 * @param resource the resurce
+	 * @param isNull action to call when null
+	 */
 	@SuppressWarnings("deprecation")
-	private static void configureLogOptions(boolean java1, boolean ignoreTCL, String resource, Runnable isNull)
+	public static void configureLogOptions(boolean java1, boolean ignoreTCL, String resource, Runnable isNull)
 	{
 		// If we have a non-null url, then delegate the rest of the
 		// configuration to the OptionConverter.selectAndConfigure
@@ -761,12 +787,12 @@ public final class TitanCollector
 					// loader which the parent of the system class loader. Hence
 					// the
 					// code below.
-					debug(g_debugEnabled, g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
+					debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
 					selectAndConfigure(ClassLoader.getSystemResource(resource), isNull);
 				}
 				else
 				{
-					TitanCollector.debug(TitanCollector.g_debugEnabled, TitanCollector.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
+					LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
 					selectAndConfigure(classLoader.getResource(resource), () ->
 					{
 						// Last ditch attempt: get the resource from the class
@@ -779,9 +805,9 @@ public final class TitanCollector
 						// Hence
 						// the
 						// code below.
-							debug(g_debugEnabled, g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
-							selectAndConfigure(ClassLoader.getSystemResource(resource), isNull);
-						});
+						debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
+						selectAndConfigure(ClassLoader.getSystemResource(resource), isNull);
+					});
 				}
 			}
 			else
@@ -789,12 +815,12 @@ public final class TitanCollector
 				ClassLoader classLoader = Loader.getTCL();
 				if (classLoader != null)
 				{
-					TitanCollector.debug(TitanCollector.g_debugEnabled, TitanCollector.g_quietMode, System.out, "Trying to find [" + resource + "] using context classloader " + classLoader + ".");
+					LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using context classloader " + classLoader + ".");
 					URL url1 = classLoader.getResource(resource);
 					if (url1 != null)
 					{
 						URL url = url1;
-						debug(g_debugEnabled, g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
+						debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
 						try
 						{
 							OptionConverter.selectAndConfigure(url, OptionConverter.getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY, null), LogManager.getLoggerRepository());
@@ -811,12 +837,12 @@ public final class TitanCollector
 						classLoader = Loader.class.getClassLoader();
 						if (classLoader != null)
 						{
-							TitanCollector.debug(TitanCollector.g_debugEnabled, TitanCollector.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
+							LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
 							url1 = classLoader.getResource(resource);
 							if (url1 != null)
 							{
 								URL url = url1;
-								debug(g_debugEnabled, g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
+								debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
 								try
 								{
 									OptionConverter.selectAndConfigure(url, OptionConverter.getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY, null), LogManager.getLoggerRepository());
@@ -840,7 +866,7 @@ public final class TitanCollector
 								// Hence
 								// the
 								// code below.
-								debug(g_debugEnabled, g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
+								debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
 								URL url = ClassLoader.getSystemResource(resource);
 								selectAndConfigure(url, isNull);
 							}
@@ -859,7 +885,7 @@ public final class TitanCollector
 							// Hence
 							// the
 							// code below.
-							debug(g_debugEnabled, g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
+							debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
 							URL url = ClassLoader.getSystemResource(resource);
 							selectAndConfigure(url, isNull);
 						}
@@ -872,12 +898,12 @@ public final class TitanCollector
 					classLoader = Loader.class.getClassLoader();
 					if (classLoader != null)
 					{
-						TitanCollector.debug(TitanCollector.g_debugEnabled, TitanCollector.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
+						LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
 						URL url1 = classLoader.getResource(resource);
 						if (url1 != null)
 						{
 							URL url = url1;
-							debug(g_debugEnabled, g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
+							debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
 							try
 							{
 								OptionConverter.selectAndConfigure(url, OptionConverter.getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY, null), LogManager.getLoggerRepository());
@@ -901,7 +927,7 @@ public final class TitanCollector
 							// Hence
 							// the
 							// code below.
-							debug(g_debugEnabled, g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
+							debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
 							URL url = ClassLoader.getSystemResource(resource);
 							selectAndConfigure(url, isNull);
 						}
@@ -918,7 +944,7 @@ public final class TitanCollector
 						// Hence
 						// the
 						// code below.
-						debug(g_debugEnabled, g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
+						debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
 						URL url = ClassLoader.getSystemResource(resource);
 						selectAndConfigure(url, isNull);
 					}
@@ -932,7 +958,7 @@ public final class TitanCollector
 			// may be the case that clazz was loaded by the Extentsion class
 			// loader which the parent of the system class loader. Hence the
 			// code below.
-			debug(g_debugEnabled, g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
+			debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
 			URL url = ClassLoader.getSystemResource(resource);
 			selectAndConfigure(url, isNull);
 		}
@@ -947,7 +973,7 @@ public final class TitanCollector
 			// may be the case that clazz was loaded by the Extentsion class
 			// loader which the parent of the system class loader. Hence the
 			// code below.
-			debug(g_debugEnabled, g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
+			debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
 			URL url = ClassLoader.getSystemResource(resource);
 			selectAndConfigure(url, isNull);
 		}
@@ -961,7 +987,7 @@ public final class TitanCollector
 			// may be the case that clazz was loaded by the Extentsion class
 			// loader which the parent of the system class loader. Hence the
 			// code below.
-			debug(g_debugEnabled, g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
+			debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [", resource, "] using ClassLoader.getSystemResource().");
 			URL url = ClassLoader.getSystemResource(resource);
 			selectAndConfigure(url, isNull);
 		}
@@ -982,19 +1008,19 @@ public final class TitanCollector
 	@SuppressWarnings("deprecation")
 	public static void run(final String db, final Iterable<Iterable<String>> roots, final boolean checkAccuracy, Iterable<String> playListPath)
 	{
-		String debugKey = OptionConverter.getSystemProperty(LogLog.DEBUG_KEY, null);
+		String debugKey = OptionConverter.getSystemProperty("log4j.debug", null);
 		if (debugKey == null)
 		{
 			debugKey = OptionConverter.getSystemProperty(LogLog.CONFIG_DEBUG_KEY, null);
 		}
 		if (debugKey != null)
 		{
-			TitanCollector.g_debugEnabled = OptionConverter.toBoolean(debugKey, true);
+			LogLog.g_debugEnabled = OptionConverter.toBoolean(debugKey, true);
 		}
 		Level debug = new Level(Priority.DEBUG_INT, "DEBUG", 7);
 		Level.DEBUG = debug;
 		final DefaultRepositorySelector defaultRepositorySelector = new DefaultRepositorySelector(new Hierarchy(new RootLogger(debug)));
-		g_repositorySelector = defaultRepositorySelector;
+		LogManager.g_repositorySelector = defaultRepositorySelector;
 		/** Search for the properties file log4j.properties in the CLASSPATH.  */
 		final String override = OptionConverter.getSystemProperty(LogManager.DEFAULT_INIT_OVERRIDE_KEY, null);
 		// if there is no default init override, then get the resource
@@ -1017,7 +1043,7 @@ public final class TitanCollector
 				{
 					conf.accept(LogManager.DEFAULT_CONFIGURATION_FILE, () ->
 					{
-						debug(g_debugEnabled, g_quietMode, System.out, "Could not find resource: [", configurationOptionStr, "].");
+						debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Could not find resource: [", configurationOptionStr, "].");
 					});
 				});
 			}
@@ -1026,7 +1052,7 @@ public final class TitanCollector
 				try
 				{
 					final URL url = new URL(configurationOptionStr);
-					debug(g_debugEnabled, g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
+					debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
 					try
 					{
 						OptionConverter.selectAndConfigure(url, OptionConverter.getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY, null), LogManager.getLoggerRepository());
@@ -1042,18 +1068,18 @@ public final class TitanCollector
 					// attempt to get the resource from the class path
 					configureLogOptions(Loader.java1, Loader.ignoreTCL, configurationOptionStr, () ->
 					{
-						debug(g_debugEnabled, g_quietMode, System.out, "Could not find resource: [", configurationOptionStr, "].");
+						debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Could not find resource: [", configurationOptionStr, "].");
 					});
 				}
 			}
 		}
 		else
 		{
-			debug(g_debugEnabled, g_quietMode, System.out, "Default initialization of overridden by ", LogManager.DEFAULT_INIT_OVERRIDE_KEY, "property.");
+			debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Default initialization of overridden by ", LogManager.DEFAULT_INIT_OVERRIDE_KEY, "property.");
 		}
-		if (TitanCollector.g_repositorySelector == null)
+		if (LogManager.g_repositorySelector == null)
 		{
-			TitanCollector.g_repositorySelector = new DefaultRepositorySelector(new NOPLoggerRepository());
+			LogManager.g_repositorySelector = new DefaultRepositorySelector(new NOPLoggerRepository());
 			LogManager.guard = null;
 			Exception ex = new IllegalStateException("Class invariant violation");
 			String msg = "log4j called after unloading, see http://logging.apache.org/log4j/1.2/faq.html#unload.";
@@ -1066,7 +1092,7 @@ public final class TitanCollector
 				LogLog.error(msg, ex);
 			}
 		}
-		LoggerRepository loggerRepository = TitanCollector.g_repositorySelector.getLoggerRepository();
+		LoggerRepository loggerRepository = LogManager.g_repositorySelector.getLoggerRepository();
 		loggerRepository.getRootLogger().setLevel(Level.WARN);
 		final TitanGraph tg = TitanFactory.open(new ReadConfiguration()
 		{
@@ -1242,7 +1268,7 @@ public final class TitanCollector
 				case "index":
 				case "attributes.custom":
 					return () -> new Iterator<String>()
-					{
+							{
 						@Override
 						public boolean hasNext()
 						{
@@ -1254,7 +1280,7 @@ public final class TitanCollector
 						{
 							throw new RuntimeException("not implemented!");
 						}
-					};
+							};
 				default:
 					throw new RuntimeException("not implemented!");
 				}
@@ -1531,14 +1557,14 @@ public final class TitanCollector
 					{
 						if (processResource(Resource.RECORDING, metaData -> metaData._recording, musicBrainz,
 								Parameter.inc("area-rels+artist-rels+event-rels+instrument-rels+label-rels+place-rels+recording-rels+release-rels+release-group-rels+series-rels+url-rels+work-rels+isrcs"), (foreignId1, entity) ->
-								{
-									Parameter parameter = new Parameter("recording", foreignId1);
-									return browseArtists(musicBrainz, parameter, tg) && browseReleases(musicBrainz, parameter, v ->
-									{ // empty
-											}, tg, mbid ->
-											{ // empty
-											}) && processRelations(entity, a -> a._relationLists, tg) && processAcoustIds(acoustId, checkAccuracy, tg, entity);
-								}, tg, Recording::getTitle, Recording::getId))
+						{
+							Parameter parameter = new Parameter("recording", foreignId1);
+							return browseArtists(musicBrainz, parameter, tg) && browseReleases(musicBrainz, parameter, v ->
+							{ // empty
+							}, tg, mbid ->
+							{ // empty
+							}) && processRelations(entity, a -> a._relationLists, tg) && processAcoustIds(acoustId, checkAccuracy, tg, entity);
+						}, tg, Recording::getTitle, Recording::getId))
 						{
 							break l1;
 						}
@@ -1641,34 +1667,34 @@ public final class TitanCollector
 							{
 								return browseReleases(mb, parameter, checkVertex, t, mbid ->
 								{ // empty
-										});
+								});
 							}, musicBrainz, artist, tg) && browseReleases(musicBrainz, new Parameter("track_artist", foreignId), v ->
 							{ // empty
-									}, tg, releaseId ->
+							}, tg, releaseId ->
+							{
+								// System.out.println(releaseId);
+								final MetaData metaData = musicBrainz.query("release/" + releaseId, new Parameter("inc", "artist-credits+recordings"));
+								for (Medium m : metaData._release._mediumList._mediums)
+								{
+									for (final Track t : m._trackList._tracks)
 									{
-										// System.out.println(releaseId);
-									final MetaData metaData = musicBrainz.query("release/" + releaseId, new Parameter("inc", "artist-credits+recordings"));
-									for (Medium m : metaData._release._mediumList._mediums)
-									{
-										for (final Track t : m._trackList._tracks)
+										final ArtistCredit artistCredit = t._artistCredit;
+										if (artistCredit != null)
 										{
-											final ArtistCredit artistCredit = t._artistCredit;
-											if (artistCredit != null)
+											Assert.expect(artistCredit._nameCredits != null);
+											final Iterator<NameCredit> inc = artistCredit._nameCredits.iterator();
+											while (inc.hasNext())
 											{
-												Assert.expect(artistCredit._nameCredits != null);
-												final Iterator<NameCredit> inc = artistCredit._nameCredits.iterator();
-												while (inc.hasNext())
+												if (inc.next()._artist._id.equals(foreignId))
 												{
-													if (inc.next()._artist._id.equals(foreignId))
-													{
-														recordings.add(t._recording._id);
-														break;
-													}
+													recordings.add(t._recording._id);
+													break;
 												}
 											}
 										}
 									}
-								}) && browseRecordings(musicBrainz, artist, tg, mbid ->
+								}
+							}) && browseRecordings(musicBrainz, artist, tg, mbid ->
 							{
 								recordings.add(mbid);
 							}) && processRelations(entity, a -> a._relationLists, tg) && processAreas(entity, tg))
@@ -1702,14 +1728,14 @@ public final class TitanCollector
 													}
 													recordings.add(playList.getProperty("recording.mbid"));
 													// fail();
-							}
+												}
 												break;
 											default:
 												TitanCollector.fail();
 											}
 										}
 									}
-										break;
+									break;
 									case RECORDING:
 									{
 										final Iterator<Relation> ir = rel._relations.iterator();
@@ -1786,7 +1812,7 @@ public final class TitanCollector
 										current.addEdge("playlist", iRecordingVertex.next());
 									}
 								}
-									break;
+								break;
 								default:
 									final Iterator<Edge> iPlayList = current.getEdges(Direction.OUT, "playlist").iterator();
 									if (iPlayList.hasNext())
@@ -1910,7 +1936,7 @@ public final class TitanCollector
 									}
 									 */
 									// fail();
-								break;
+									break;
 								}
 							}
 							return Boolean.FALSE;
@@ -1924,77 +1950,77 @@ public final class TitanCollector
 					{
 						if (processResource(Resource.RELEASE, metaData -> metaData._release, musicBrainz,
 								Parameter.inc("area-rels+artist-rels+event-rels+instrument-rels+label-rels+place-rels+recording-rels+release-rels+release-group-rels+series-rels+url-rels+work-rels+discids"), (foreignId, entity) ->
+						{
+							final Parameter release = new Parameter("release", foreignId);
+							if (browseArtists(musicBrainz, release, tg) && browseReleaseGroups(musicBrainz, release, v ->
+							{ // empty
+							}, tg) && browseRecordings(musicBrainz, release, tg, mbid ->
+							{ // empty
+							}) && processRelations(entity, a -> a._relationLists, tg) && browse(musicBrainz, Resource.LABEL, release, metaData -> metaData._labelList, list -> list._labels, v ->
+							{ // empty
+							}, tg, Label::toString, mbid ->
+							{ // empty
+							}, Entity::getId) && processReleaseEvents(entity, tg))
+							{
+								final boolean added = false;
+								/*
+								 * for (Collection c : musicBrainz
+								 * .query("collection", release,
+								 * MetaData.PARAMETER_LIMIT,
+								 * MetaData.PARAMETER_OFFSET
+								 * )._collectionList ._collections) { if
+								 * (addEntity (Resource.COLLECTION, c,
+								 * Collection.NAME, tg)) { added = true;
+								 * break; } }
+								 */
+								if (added)
 								{
-									final Parameter release = new Parameter("release", foreignId);
-									if (browseArtists(musicBrainz, release, tg) && browseReleaseGroups(musicBrainz, release, v ->
-									{ // empty
-											}, tg) && browseRecordings(musicBrainz, release, tg, mbid ->
-									{ // empty
-											}) && processRelations(entity, a -> a._relationLists, tg) && browse(musicBrainz, Resource.LABEL, release, metaData -> metaData._labelList, list -> list._labels, v ->
-									{ // empty
-											}, tg, Label::toString, mbid ->
-											{ // empty
-											}, Entity::getId) && processReleaseEvents(entity, tg))
+									return false;
+								}
+								else
+								{
+									final Iterator<Medium> im = entity._mediumList._mediums.iterator();
+									Assert.expect(im.hasNext());
+									final LinkedList<Disc> discs = im.next()._discs._discs;
+									if (discs != null)
 									{
-										final boolean added = false;
-										/*
-										 * for (Collection c : musicBrainz
-										 * .query("collection", release,
-										 * MetaData.PARAMETER_LIMIT,
-										 * MetaData.PARAMETER_OFFSET
-										 * )._collectionList ._collections) { if
-										 * (addEntity (Resource.COLLECTION, c,
-										 * Collection.NAME, tg)) { added = true;
-										 * break; } }
-										 */
-										if (added)
+										final Iterator<Disc> id = discs.iterator();
+										if (id.hasNext())
 										{
+											final String discId = id.next()._id;
+											Assert.expect(discId != null);
+											Assert.expect(includeMBEntity(Resource.DISC_ID, discId, tg).second());
 											return false;
+										}
+									}
+									Assert.expect(!im.hasNext());
+									final Boolean wasCompleted = Key.IS_COMPLETE.get(current);
+									if (wasCompleted == null || wasCompleted == Boolean.FALSE)
+									{
+										if (isComplete(musicBrainz, release, tg))
+										{
+											completed(current, Resource.RELEASE);
+											return true;
 										}
 										else
 										{
-											final Iterator<Medium> im = entity._mediumList._mediums.iterator();
-											Assert.expect(im.hasNext());
-											final LinkedList<Disc> discs = im.next()._discs._discs;
-											if (discs != null)
-											{
-												final Iterator<Disc> id = discs.iterator();
-												if (id.hasNext())
-												{
-													final String discId = id.next()._id;
-													Assert.expect(discId != null);
-													Assert.expect(includeMBEntity(Resource.DISC_ID, discId, tg).second());
-													return false;
-												}
-											}
-											Assert.expect(!im.hasNext());
-											final Boolean wasCompleted = Key.IS_COMPLETE.get(current);
-											if (wasCompleted == null || wasCompleted == Boolean.FALSE)
-											{
-												if (isComplete(musicBrainz, release, tg))
-												{
-													completed(current, Resource.RELEASE);
-													return true;
-												}
-												else
-												{
-													TitanCollector.set(current, Key.IS_COMPLETE, false);
-													return false;
-												}
-											}
-											else
-											{
-												Assert.expect(wasCompleted == Boolean.TRUE);
-												Assert.expect(isComplete(musicBrainz, release, tg));
-												return false;
-											}
+											TitanCollector.set(current, Key.IS_COMPLETE, false);
+											return false;
 										}
 									}
 									else
 									{
+										Assert.expect(wasCompleted == Boolean.TRUE);
+										Assert.expect(isComplete(musicBrainz, release, tg));
 										return false;
 									}
-								}, tg, Release::getTitle, Release::getId))
+								}
+							}
+							else
+							{
+								return false;
+							}
+						}, tg, Release::getTitle, Release::getId))
 						{
 							break l1;
 						}
@@ -2107,7 +2133,7 @@ public final class TitanCollector
 									 */
 									// throw new
 									// RuntimeException("not implemented!");
-									});
+								});
 								for (RelationList rl : entity._relationLists)
 								{
 									switch (rl._targetType)
@@ -2301,9 +2327,9 @@ public final class TitanCollector
 							final Parameter param = new Parameter("release-group", foreignId);
 							if (browseArtists(musicBrainz, param, tg) && browseReleases(musicBrainz, param, v ->
 							{ // empty
-									}, tg, mbid ->
-									{ // empty
-									}) && processRelations(entity, a -> a._relationLists, tg))
+							}, tg, mbid ->
+							{ // empty
+							}) && processRelations(entity, a -> a._relationLists, tg))
 							{
 								final Iterator<Release> ie = releases(musicBrainz, param);
 								if (ie.hasNext())
@@ -2347,9 +2373,9 @@ public final class TitanCollector
 						{
 							if (browseReleases(musicBrainz, new Parameter("label", foreignId), v ->
 							{ // empty
-									}, tg, mbid ->
-									{ // empty
-									}) && processRelations(entity, a -> a._relationLists, tg) && !addArea(entity._area, System.out, tg))
+							}, tg, mbid ->
+							{ // empty
+							}) && processRelations(entity, a -> a._relationLists, tg) && !addArea(entity._area, System.out, tg))
 							{
 								final Iterator<RelationList> irl = entity._relationLists.iterator();
 								Assert.expect(irl.hasNext());
@@ -2658,7 +2684,7 @@ public final class TitanCollector
 												current.addEdge("playlist", iRecordingVertex.next());
 											}
 										}
-											break;
+										break;
 										default:
 											final Iterator<Edge> iPlayList = current.getEdges(Direction.OUT, "playlist").iterator();
 											if (iPlayList.hasNext())
@@ -2730,7 +2756,7 @@ public final class TitanCollector
 											}
 										}
 									}
-										break;
+									break;
 									case PLACE:
 										final Iterator<Relation> r = rl._relations.iterator();
 										Assert.expect(r.hasNext());
@@ -2787,7 +2813,7 @@ public final class TitanCollector
 								{
 									includeEntity(Entity::getId, entity, Resource.DISC_ID, tg, System.out, Entity::getId, v ->
 									{ // empty
-											}, v -> null, v -> null);
+									}, v -> null, v -> null);
 									removeCurrent(tg, "merged", foreignId, entityId);
 								}
 							}
@@ -2797,13 +2823,13 @@ public final class TitanCollector
 					case SERIES:
 						if (processResource(Resource.SERIES, metaData -> metaData._series, musicBrainz,
 								Parameter.inc("area-rels+artist-rels+event-rels+instrument-rels+label-rels+place-rels+recording-rels+release-rels+release-group-rels+series-rels+url-rels+work-rels"), (fid, entity) ->
-								{
-									if (processRelations(entity, a -> a._relationLists, tg))
-									{
-										throw unexpected();
-									}
-									return false;
-								}, tg, Series::getName, Series::getId))
+						{
+							if (processRelations(entity, a -> a._relationLists, tg))
+							{
+								throw unexpected();
+							}
+							return false;
+						}, tg, Series::getName, Series::getId))
 						{
 							fail();
 							break l1;
@@ -2812,13 +2838,13 @@ public final class TitanCollector
 					case EVENT:
 						if (processResource(Resource.EVENT, metaData -> metaData._event, musicBrainz,
 								Parameter.inc("area-rels+artist-rels+event-rels+instrument-rels+label-rels+place-rels+recording-rels+release-rels+release-group-rels+series-rels+url-rels+work-rels"), (fid, entity) ->
-								{
-									if (processRelations(entity, a -> a._relationLists, tg))
-									{
-										throw unexpected();
-									}
-									return false;
-								}, tg, Event::getName, Event::getId))
+						{
+							if (processRelations(entity, a -> a._relationLists, tg))
+							{
+								throw unexpected();
+							}
+							return false;
+						}, tg, Event::getName, Event::getId))
 						{
 							fail();
 							break l1;
@@ -3381,7 +3407,7 @@ public final class TitanCollector
 	private static <EL extends EntityList, T> Iterator<T> iterator(final IExpression<EL, MetaData> entityList, final WebService<MetaData> musicBrainz, final Resource resource, final Parameter parameter, final IExpression<LinkedList<T>, EL> listExpr)
 	{
 		return new Iterator<T>()
-				{
+		{
 			private int _offset = 0;
 
 			private EL _list;
@@ -3438,7 +3464,7 @@ public final class TitanCollector
 			{
 				_ie.remove();
 			}
-				};
+		};
 	}
 
 	private static <EL extends EntityList, T> boolean browse(final WebService<MetaData> musicBrainz, final Resource resource, final Parameter parameter, final IExpression<EL, MetaData> entityList, final IExpression<LinkedList<T>, EL> listExpr,
@@ -3522,7 +3548,7 @@ public final class TitanCollector
 					{
 						return includeEntity11(target1 -> target1._id, target, Resource.URL, tg1, System.out, target1 -> target1._target, v ->
 						{ // empty
-								}, v -> false, v -> true);
+						}, v -> false, v -> true);
 					}, tg, relation -> relation._target))
 					{
 						return false;
@@ -3710,7 +3736,7 @@ public final class TitanCollector
 			{
 				includeEntity(idl, entity, resource, tg, System.out, name, mbid ->
 				{ // empty
-						}, v -> null, v -> null);
+				}, v -> null, v -> null);
 				removeCurrent(tg, "merged", foreignId, entityId);
 				return false;
 			}
@@ -3745,23 +3771,23 @@ public final class TitanCollector
 	{
 		return browse(musicBrainz, Resource.ARTIST, parameter, metaData -> metaData._artistList, artistList -> artistList._artists, v ->
 		{ // empty
-				}, tg, Artist::toString, mbid ->
-				{ // empty
-				}, Artist::getId);
+		}, tg, Artist::toString, mbid ->
+		{ // empty
+		}, Artist::getId);
 	}
 
 	private static boolean browseReleaseGroups(final WebService<MetaData> musicBrainz, final Parameter param, IConsumer<Vertex> checkVertex, final TitanGraph tg)
 	{
 		return browse(musicBrainz, Resource.RELEASE_GROUP, param, metaData -> metaData._releaseGroupList, releaseGroupList -> releaseGroupList._releaseGroups, checkVertex, tg, ReleaseGroup::toString, mbid ->
 		{ // empty
-				}, Entity::getId);
+		}, Entity::getId);
 	}
 
 	private static boolean browseRecordings(final WebService<MetaData> musicBrainz, final Parameter param, final TitanGraph tg, IConsumer<String> inspect)
 	{
 		return browse(musicBrainz, Resource.RECORDING, param, MetaData.RECORDING_LIST, RecordingList.LIST, v ->
 		{ // empty
-				}, tg, Recording::getTitle, inspect, Recording::getId);
+		}, tg, Recording::getTitle, inspect, Recording::getId);
 	}
 
 	private static boolean browseReleases(final WebService<MetaData> musicBrainz, final Parameter parameter, IConsumer<Vertex> checkVertex, final TitanGraph tg, IConsumer<String> inspect)

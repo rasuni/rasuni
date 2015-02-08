@@ -25,7 +25,6 @@ import org.apache.log4j.spi.LoggerFactory;
 import org.apache.log4j.spi.LoggerRepository;
 import org.apache.log4j.spi.NOPLoggerRepository;
 import org.apache.log4j.spi.RepositorySelector;
-import rasuni.titan.TitanCollector;
 
 /**
  * Use the <code>LogManager</code> class to retreive {@link Logger}
@@ -106,7 +105,7 @@ public class LogManager
 			throw new IllegalArgumentException("RepositorySelector must be non-null.");
 		}
 		LogManager.guard = guard;
-		TitanCollector.g_repositorySelector = selector;
+		LogManager.g_repositorySelector = selector;
 	}
 
 	/**
@@ -129,9 +128,9 @@ public class LogManager
 	@SuppressWarnings("javadoc")
 	static public LoggerRepository getLoggerRepository()
 	{
-		if (TitanCollector.g_repositorySelector == null)
+		if (LogManager.g_repositorySelector == null)
 		{
-			TitanCollector.g_repositorySelector = new DefaultRepositorySelector(new NOPLoggerRepository());
+			LogManager.g_repositorySelector = new DefaultRepositorySelector(new NOPLoggerRepository());
 			guard = null;
 			Exception ex = new IllegalStateException("Class invariant violation");
 			String msg = "log4j called after unloading, see http://logging.apache.org/log4j/1.2/faq.html#unload.";
@@ -144,7 +143,7 @@ public class LogManager
 				LogLog.error(msg, ex);
 			}
 		}
-		return TitanCollector.g_repositorySelector.getLoggerRepository();
+		return LogManager.g_repositorySelector.getLoggerRepository();
 	}
 
 	/**
@@ -214,4 +213,9 @@ public class LogManager
 	{
 		getLoggerRepository().resetConfiguration();
 	}
+
+	/**
+	 * the repository selector
+	 */
+	public static RepositorySelector g_repositorySelector;
 }
