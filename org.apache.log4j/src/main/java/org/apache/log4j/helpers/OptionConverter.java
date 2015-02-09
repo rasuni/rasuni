@@ -17,6 +17,7 @@
 package org.apache.log4j.helpers;
 
 import java.io.InterruptedIOException;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.Properties;
 import org.apache.log4j.Level;
@@ -34,80 +35,19 @@ import org.apache.log4j.spi.LoggerRepository;
    @author Simon Kitching;
    @author Anders Kristensen
  */
-public class OptionConverter
+public final class OptionConverter
 {
-	static String DELIM_START = "${";
+	private static String DELIM_START = "${";
 
-	static char DELIM_STOP = '}';
+	private static char DELIM_STOP = '}';
 
-	static int DELIM_START_LEN = 2;
+	private static int DELIM_START_LEN = 2;
 
-	static int DELIM_STOP_LEN = 1;
+	private static int DELIM_STOP_LEN = 1;
 
 	/** OptionConverter is a static class. */
 	private OptionConverter()
 	{
-	}
-
-	@SuppressWarnings("javadoc")
-	public static String[] concatanateArrays(String[] l, String[] r)
-	{
-		int len = l.length + r.length;
-		String[] a = new String[len];
-		System.arraycopy(l, 0, a, 0, l.length);
-		System.arraycopy(r, 0, a, l.length, r.length);
-		return a;
-	}
-
-	@SuppressWarnings("javadoc")
-	public static String convertSpecialChars(String s)
-	{
-		char c;
-		int len = s.length();
-		StringBuffer sbuf = new StringBuffer(len);
-		int i = 0;
-		while (i < len)
-		{
-			c = s.charAt(i++);
-			if (c == '\\')
-			{
-				c = s.charAt(i++);
-				if (c == 'n')
-				{
-					c = '\n';
-				}
-				else if (c == 'r')
-				{
-					c = '\r';
-				}
-				else if (c == 't')
-				{
-					c = '\t';
-				}
-				else if (c == 'f')
-				{
-					c = '\f';
-				}
-				else if (c == '\b')
-				{
-					c = '\b';
-				}
-				else if (c == '\"')
-				{
-					c = '\"';
-				}
-				else if (c == '\'')
-				{
-					c = '\'';
-				}
-				else if (c == '\\')
-				{
-					c = '\\';
-				}
-			}
-			sbuf.append(c);
-		}
-		return sbuf.toString();
 	}
 
 	/**
@@ -116,11 +56,14 @@ public class OptionConverter
 
 	   @param key The key to search for.
 	   @param def The default value to return.
+	 * @param debugEnabled flag indicating debug enabled or not
+	 * @param quietMode flag indicating quit mode or not
+	 * @param out the out print stream
 	   @return the string value of the system property, or the default
 	   value if there is no property with that key.
 
 	   @since 1.1 */
-	public static String getSystemProperty(String key, String def)
+	public static String getSystemProperty(String key, String def, boolean debugEnabled, boolean quietMode, PrintStream out)
 	{
 		try
 		{
@@ -128,23 +71,9 @@ public class OptionConverter
 		}
 		catch (Throwable e)
 		{ // MS-Java throws com.ms.security.SecurityExceptionEx
-			LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Was not allowed to read system property \"" + key + "\".");
+			LogLog.debug(debugEnabled, quietMode, out, "Was not allowed to read system property \"" + key + "\".");
 			return def;
 		}
-	}
-
-	@SuppressWarnings({ "rawtypes", "javadoc" })
-	public static Object instantiateByKey(Properties props, String key, Class superClass, Object defaultValue)
-	{
-		// Get the value of the property in string form
-		String className = findAndSubst(key, props);
-		if (className == null)
-		{
-			LogLog.error("Could not find value for key " + key);
-			return defaultValue;
-		}
-		// Trim className to avoid trailing spaces that cause problems.
-		return OptionConverter.instantiateByClassName(className.trim(), superClass, defaultValue);
 	}
 
 	/**
@@ -471,7 +400,7 @@ public class OptionConverter
 					j += DELIM_START_LEN;
 					String key = val.substring(j, k);
 					// first try in System properties
-					String replacement = getSystemProperty(key, null);
+					String replacement = getSystemProperty(key, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 					// then try props parameter
 					if (replacement == null && props != null)
 					{

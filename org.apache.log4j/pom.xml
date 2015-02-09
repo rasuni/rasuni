@@ -4,7 +4,7 @@
 
 	<groupId>rasuni</groupId>
 	<artifactId>org.apache.log4j</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<packaging>jar</packaging>
 
 	<name>rasuni.org.apache.log4j</name>

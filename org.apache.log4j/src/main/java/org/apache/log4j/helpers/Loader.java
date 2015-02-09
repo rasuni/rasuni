@@ -39,7 +39,7 @@ public class Loader
 	public static boolean ignoreTCL = false;
 	static
 	{
-		String prop = OptionConverter.getSystemProperty("java.version", null);
+		String prop = OptionConverter.getSystemProperty("java.version", null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		if (prop != null)
 		{
 			int i = prop.indexOf('.');
@@ -51,7 +51,7 @@ public class Loader
 				}
 			}
 		}
-		String ignoreTCLProp = OptionConverter.getSystemProperty("log4j.ignoreTCL", null);
+		String ignoreTCLProp = OptionConverter.getSystemProperty("log4j.ignoreTCL", null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		if (ignoreTCLProp != null)
 		{
 			ignoreTCL = OptionConverter.toBoolean(ignoreTCLProp, true);
