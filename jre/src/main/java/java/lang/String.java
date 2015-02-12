@@ -37,6 +37,7 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import rasuni.java.lang.Characters;
 
 /**
  * The {@code String} class represents character strings. All
@@ -3073,14 +3074,30 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	{
 		int len = value.length;
 		int st = 0;
-		char[] val = value; /* avoid getfield opcode */
-		while (st < len && val[st] <= ' ')
+		for (;;)
 		{
+			if (st == len)
+			{
+				break;
+			}
+			if (Characters.isNonWhiteSpace(value, st))
+			{
+				for (;;)
+				{
+					int len1 = len - 1;
+					if (Characters.isNonWhiteSpace(value, len1))
+					{
+						break;
+					}
+					len = len1;
+					if (st == len)
+					{
+						break;
+					}
+				}
+				break;
+			}
 			st++;
-		}
-		while (st < len && val[len - 1] <= ' ')
-		{
-			len--;
 		}
 		return st > 0 || len < value.length ? substring(st, len) : this;
 	}
