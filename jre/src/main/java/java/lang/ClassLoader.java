@@ -24,6 +24,7 @@
  */
 package java.lang;
 
+import rasuni.java.lang.Strings;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -689,7 +690,7 @@ public abstract class ClassLoader
 		{
 			throw new NoClassDefFoundError("IllegalName: " + name);
 		}
-		if (name != null && name.startsWith("java."))
+		if (name != null && Strings.startsWith("java.", name))
 		{
 			throw new SecurityException("Prohibited package name: " + name.substring(0, name.lastIndexOf('.')));
 		}
@@ -1349,7 +1350,7 @@ public abstract class ClassLoader
 	{
 		final Enumeration<Resource> e = getBootstrapClassPath().getResources(name);
 		return new Enumeration<URL>()
-				{
+		{
 			@Override
 			public URL nextElement()
 			{
@@ -1361,7 +1362,7 @@ public abstract class ClassLoader
 			{
 				return e.hasMoreElements();
 			}
-				};
+		};
 	}
 
 	// Returns the URLClassPath that is used for finding system resources.

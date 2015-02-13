@@ -1484,24 +1484,6 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	}
 
 	/**
-	 * Tests if this string starts with the specified prefix.
-	 *
-	 * @param   prefix   the prefix.
-	 * @return  {@code true} if the character sequence represented by the
-	 *          argument is a prefix of the character sequence represented by
-	 *          this string; {@code false} otherwise.
-	 *          Note also that {@code true} will be returned if the
-	 *          argument is an empty string or is equal to this
-	 *          {@code String} object as determined by the
-	 *          {@link #equals(Object)} method.
-	 * @since   1. 0
-	 */
-	public boolean startsWith(String prefix)
-	{
-		return Strings.startsWith(0, prefix, value);
-	}
-
-	/**
 	 * Tests if this string ends with the specified suffix.
 	 *
 	 * @param   suffix   the suffix.

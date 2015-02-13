@@ -1,6 +1,7 @@
 package rasuni.java.lang.reflect;
 
 import java.lang.reflect.Field;
+import rasuni.java.lang.IFunction;
 
 /**
  * Class helpers
@@ -13,13 +14,13 @@ public final class Classes
 	 * @param name the field name
 	 * @return the field
 	 */
-	public static Field getDeclaredField(Class<String> cls, String name)
+	public static IFunction getter(Class<String> cls, String name)
 	{
 		try
 		{
-			Field result = cls.getDeclaredField(name);
-			result.setAccessible(true);
-			return result;
+			Field field = cls.getDeclaredField(name);
+			field.setAccessible(true);
+			return object -> Fields.get(field, object);
 		}
 		catch (NoSuchFieldException e)
 		{

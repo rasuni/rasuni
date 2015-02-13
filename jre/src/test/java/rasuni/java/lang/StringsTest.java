@@ -61,6 +61,16 @@ public class StringsTest
 	}
 
 	/**
+	 * Test the method {@link Strings#startsWith(int, String, char[])}. No prefix match
+	 */
+	@SuppressWarnings("static-method")
+	@Test
+	public void startWith()
+	{
+		Assert.assertTrue(Strings.startsWith("\001", "\001"));
+	}
+
+	/**
 	 * Reach 100% coverage
 	 */
 	@SuppressWarnings("static-method")

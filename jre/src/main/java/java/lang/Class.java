@@ -24,6 +24,7 @@
  */
 package java.lang;
 
+import rasuni.java.lang.Strings;
 import java.io.InputStream;
 import java.io.ObjectStreamField;
 import java.lang.annotation.Annotation;
@@ -2521,7 +2522,7 @@ public final class Class<T> implements java.io.Serializable, GenericDeclaration,
 		{
 			return name;
 		}
-		if (!name.startsWith("/"))
+		if (!Strings.startsWith("/", name))
 		{
 			Class<?> c = this;
 			while (c.isArray())
@@ -3568,20 +3569,20 @@ public final class Class<T> implements java.io.Serializable, GenericDeclaration,
 			// if System.out is non-null then the System class has been
 			// fully initialized and that the bulk of the startup code
 			// has been run.
-				if (System.out == null)
-				{
-					// java.lang.System not yet fully initialized
-					return null;
-				}
-				// Doesn't use Boolean.getBoolean to avoid class init.
-				String val = System.getProperty("sun.reflect.noCaches");
-				if (val != null && val.equals("true"))
-				{
-					useCaches = false;
-				}
-				initted = true;
+			if (System.out == null)
+			{
+				// java.lang.System not yet fully initialized
 				return null;
-			});
+			}
+			// Doesn't use Boolean.getBoolean to avoid class init.
+			String val = System.getProperty("sun.reflect.noCaches");
+			if (val != null && val.equals("true"))
+			{
+				useCaches = false;
+			}
+			initted = true;
+			return null;
+		});
 	}
 
 	/**
