@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import rasuni.java.lang.Characters;
+import rasuni.java.lang.Strings;
 
 /**
  * The {@code String} class represents character strings. All
@@ -110,7 +111,7 @@ import rasuni.java.lang.Characters;
 public final class String implements java.io.Serializable, Comparable<String>, CharSequence
 {
 	/** The value is used for character storage. */
-	private final char value[];
+	public final char value[];
 
 	/** Cache the hash code for the string */
 	private int hash; // Default to 0
@@ -328,13 +329,12 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	public String(byte ascii[], int hibyte, int offset, int count)
 	{
 		checkBounds(ascii, offset, count);
-		@SuppressWarnings("hiding")
-		char value[] = new char[count];
+		char value1[] = new char[count];
 		if (hibyte == 0)
 		{
 			for (int i = count; i-- > 0;)
 			{
-				value[i] = (char) (ascii[i + offset] & 0xff);
+				value1[i] = (char) (ascii[i + offset] & 0xff);
 			}
 		}
 		else
@@ -342,10 +342,10 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 			hibyte <<= 8;
 			for (int i = count; i-- > 0;)
 			{
-				value[i] = (char) (hibyte | ascii[i + offset] & 0xff);
+				value1[i] = (char) (hibyte | ascii[i + offset] & 0xff);
 			}
 		}
-		this.value = value;
+		value = value1;
 	}
 
 	/**
@@ -1484,45 +1484,6 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	}
 
 	/**
-	 * Tests if the substring of this string beginning at the
-	 * specified index starts with the specified prefix.
-	 *
-	 * @param   prefix    the prefix.
-	 * @param   toffset   where to begin looking in this string.
-	 * @return  {@code true} if the character sequence represented by the
-	 *          argument is a prefix of the substring of this object starting
-	 *          at index {@code toffset}; {@code false} otherwise.
-	 *          The result is {@code false} if {@code toffset} is
-	 *          negative or greater than the length of this
-	 *          {@code String} object; otherwise the result is the same
-	 *          as the result of the expression
-	 *          <pre>
-	 *          this.substring(toffset).startsWith(prefix)
-	 *          </pre>
-	 */
-	public boolean startsWith(String prefix, int toffset)
-	{
-		char ta[] = value;
-		int to = toffset;
-		char pa[] = prefix.value;
-		int po = 0;
-		int pc = prefix.value.length;
-		// Note: toffset might be near -1>>>1.
-		if (toffset < 0 || toffset > value.length - pc)
-		{
-			return false;
-		}
-		while (--pc >= 0)
-		{
-			if (ta[to++] != pa[po++])
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Tests if this string starts with the specified prefix.
 	 *
 	 * @param   prefix   the prefix.
@@ -1537,7 +1498,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public boolean startsWith(String prefix)
 	{
-		return startsWith(prefix, 0);
+		return Strings.startsWith(0, prefix, value);
 	}
 
 	/**
@@ -1553,7 +1514,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public boolean endsWith(String suffix)
 	{
-		return startsWith(suffix, value.length - suffix.value.length);
+		return Strings.startsWith(value.length - suffix.value.length, suffix, value);
 	}
 
 	/**
@@ -1653,7 +1614,6 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 *          than or equal to {@code fromIndex}, or {@code -1}
 	 *          if the character does not occur.
 	 */
-	@SuppressWarnings("hiding")
 	public int indexOf(int ch, int fromIndex)
 	{
 		final int max = value.length;
@@ -1670,10 +1630,10 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 		{
 			// handle most cases here (ch is a BMP code point or a
 			// negative value (invalid code point))
-			final char[] value = this.value;
+			final char[] value1 = value;
 			for (int i = fromIndex; i < max; i++)
 			{
-				if (value[i] == ch)
+				if (value1[i] == ch)
 				{
 					return i;
 				}
@@ -1689,18 +1649,17 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	/**
 	 * Handles (rare) calls of indexOf with a supplementary character.
 	 */
-	@SuppressWarnings("hiding")
 	private int indexOfSupplementary(int ch, int fromIndex)
 	{
 		if (Character.isValidCodePoint(ch))
 		{
-			final char[] value = this.value;
+			final char[] value1 = value;
 			final char hi = Character.highSurrogate(ch);
 			final char lo = Character.lowSurrogate(ch);
-			final int max = value.length - 1;
+			final int max = value1.length - 1;
 			for (int i = fromIndex; i < max; i++)
 			{
-				if (value[i] == hi && value[i + 1] == lo)
+				if (value1[i] == hi && value1[i + 1] == lo)
 				{
 					return i;
 				}
@@ -1771,18 +1730,17 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 *          than or equal to {@code fromIndex}, or {@code -1}
 	 *          if the character does not occur before that point.
 	 */
-	@SuppressWarnings("hiding")
 	public int lastIndexOf(int ch, int fromIndex)
 	{
 		if (ch < Character.MIN_SUPPLEMENTARY_CODE_POINT)
 		{
 			// handle most cases here (ch is a BMP code point or a
 			// negative value (invalid code point))
-			final char[] value = this.value;
-			int i = Math.min(fromIndex, value.length - 1);
+			final char[] value1 = value;
+			int i = Math.min(fromIndex, value1.length - 1);
 			for (; i >= 0; i--)
 			{
-				if (value[i] == ch)
+				if (value1[i] == ch)
 				{
 					return i;
 				}
@@ -1798,18 +1756,17 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	/**
 	 * Handles (rare) calls of lastIndexOf with a supplementary character.
 	 */
-	@SuppressWarnings("hiding")
 	private int lastIndexOfSupplementary(int ch, int fromIndex)
 	{
 		if (Character.isValidCodePoint(ch))
 		{
-			final char[] value = this.value;
+			final char[] value1 = value;
 			char hi = Character.highSurrogate(ch);
 			char lo = Character.lowSurrogate(ch);
-			int i = Math.min(fromIndex, value.length - 2);
+			int i = Math.min(fromIndex, value1.length - 2);
 			for (; i >= 0; i--)
 			{
-				if (value[i] == hi && value[i + 1] == lo)
+				if (value1[i] == hi && value1[i + 1] == lo)
 				{
 					return i;
 				}

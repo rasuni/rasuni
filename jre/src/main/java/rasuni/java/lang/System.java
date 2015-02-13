@@ -17,7 +17,7 @@ public final class System
 	 * Check the key
 	 * @param key the key to check
 	 */
-	public static void checkKey(String key)
+	public static void checkKey(java.lang.String key)
 	{
 		if (key == null)
 		{
@@ -57,7 +57,7 @@ public final class System
 	 * @see        java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
 	 * @see        java.lang.System#getProperties()
 	 */
-	public static String getProperty(String key, SecurityManager security, Properties props, String def)
+	public static String getProperty(java.lang.String key, SecurityManager security, Properties props, String def)
 	{
 		checkKey(key);
 		if (security != null)
