@@ -16,8 +16,6 @@
  */
 package org.apache.log4j.helpers;
 
-import java.io.PrintStream;
-
 /**
    This class used to output log statements from within the log4j package.
 
@@ -36,18 +34,6 @@ import java.io.PrintStream;
  */
 public class LogLog
 {
-	/**
-	   Defining this value makes log4j components print log4j-internal
-	   debug statements to <code>System.out</code>.
-
-	  <p> The value of this string is <b>log4j.configDebug</b>.
-
-	  <p>Note that the search for all option names is case sensitive.
-
-	 */
-	@Deprecated
-	public static final String CONFIG_DEBUG_KEY = "log4j.configDebug";
-
 	private static final String ERR_PREFIX = "log4j:ERROR ";
 
 	private static final String WARN_PREFIX = "log4j:WARN ";
@@ -161,23 +147,7 @@ public class LogLog
 	 */
 	public static void debug(String msg)
 	{
-		debug(g_debugEnabled, g_quietMode, System.out, msg);
-	}
-
-	/**
-	   This method is used to output log4j internal debug
-	   statements. Output goes to <code>System.out</code>.
-	 * @param debugEnabled true if debug is enabled
-	 * @param quietMode true if quiet mode
-	 * @param out the out print stream
-	 * @param msg the message
-	 */
-	public static void debug(boolean debugEnabled, boolean quietMode, PrintStream out, String msg)
-	{
-		if (debugEnabled && !quietMode)
-		{
-			out.println("log4j: " + msg);
-		}
+		rasuni.org.apache.log4j.helpers.LogLog.debug(g_debugEnabled, g_quietMode, System.out, msg);
 	}
 
 	/**

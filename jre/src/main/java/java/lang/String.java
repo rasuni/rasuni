@@ -3346,4 +3346,14 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 *          guaranteed to be from a pool of unique strings.
 	 */
 	public native String intern();
+
+	/**
+	 * Check is string starts with given prefix
+	 * @param prefix the prefix
+	 * @return the result
+	 */
+	public boolean startsWith(String prefix)
+	{
+		return Strings.startsWith(prefix, this);
+	}
 }

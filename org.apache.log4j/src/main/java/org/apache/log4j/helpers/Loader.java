@@ -39,7 +39,7 @@ public class Loader
 	public static boolean ignoreTCL = false;
 	static
 	{
-		String prop = OptionConverter.getSystemProperty("java.version", null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+		String prop = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("java.version", System.security, System.props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		if (prop != null)
 		{
 			int i = prop.indexOf('.');
@@ -51,7 +51,7 @@ public class Loader
 				}
 			}
 		}
-		String ignoreTCLProp = OptionConverter.getSystemProperty("log4j.ignoreTCL", null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+		String ignoreTCLProp = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("log4j.ignoreTCL", System.security, System.props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		if (ignoreTCLProp != null)
 		{
 			ignoreTCL = OptionConverter.toBoolean(ignoreTCLProp, true);
@@ -102,7 +102,7 @@ public class Loader
 				classLoader = getTCL();
 				if (classLoader != null)
 				{
-					LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using context classloader " + classLoader + ".");
+					rasuni.org.apache.log4j.helpers.LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using context classloader " + classLoader + ".");
 					url = classLoader.getResource(resource);
 					if (url != null)
 					{
@@ -115,7 +115,7 @@ public class Loader
 			classLoader = Loader.class.getClassLoader();
 			if (classLoader != null)
 			{
-				LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
+				rasuni.org.apache.log4j.helpers.LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
 				url = classLoader.getResource(resource);
 				if (url != null)
 				{
@@ -146,7 +146,7 @@ public class Loader
 		// may be the case that clazz was loaded by the Extentsion class
 		// loader which the parent of the system class loader. Hence the
 		// code below.
-		LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using ClassLoader.getSystemResource().");
+		rasuni.org.apache.log4j.helpers.LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using ClassLoader.getSystemResource().");
 		return ClassLoader.getSystemResource(resource);
 	}
 
