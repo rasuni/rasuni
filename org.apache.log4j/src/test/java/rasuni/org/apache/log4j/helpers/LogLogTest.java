@@ -1,9 +1,10 @@
-package org.apache.log4j.helpers;
+package rasuni.org.apache.log4j.helpers;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import org.easymock.EasyMockSupport;
 import org.junit.Test;
+import rasuni.test.Classes;
 
 /**
  * Test case for the class {@link LogLog}
@@ -34,7 +35,7 @@ public class LogLogTest extends EasyMockSupport
 	public void debugDisabled()
 	{
 		replayAll();
-		LogLog.debug(false, false, null, null);
+		LogLog.debug(false, false, null, (String) null);
 		verifyAll();
 	}
 
@@ -58,7 +59,7 @@ public class LogLogTest extends EasyMockSupport
 		_writer.write(13);
 		_writer.write(10);
 		replayAll();
-		LogLog.debug(true, false, _printStream, null);
+		LogLog.debug(true, false, _printStream, (String) null);
 		verifyAll();
 	}
 
@@ -69,7 +70,17 @@ public class LogLogTest extends EasyMockSupport
 	public void debugQuiet()
 	{
 		replayAll();
-		LogLog.debug(true, true, null, null);
+		LogLog.debug(true, true, null, (String) null);
 		verifyAll();
+	}
+
+	/**
+	 * Test full coverage
+	 */
+	@SuppressWarnings("static-method")
+	@Test
+	public void fullCoverage()
+	{
+		Classes.construct(LogLog.class);
 	}
 }

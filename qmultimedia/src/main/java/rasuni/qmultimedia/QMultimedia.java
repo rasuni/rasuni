@@ -1,4 +1,4 @@
-package rasuni.musicdb;
+package rasuni.qmultimedia;
 
 import rasuni.titan.TitanCollector;
 

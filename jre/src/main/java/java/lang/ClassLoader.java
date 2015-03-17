@@ -283,7 +283,7 @@ public abstract class ClassLoader
 
 	private static Void checkCreateClassLoader()
 	{
-		SecurityManager security = System.g_security;
+		SecurityManager security = System.security;
 		if (security != null)
 		{
 			security.checkCreateClassLoader();
@@ -520,7 +520,7 @@ public abstract class ClassLoader
 	// Invoked by the VM after loading class with this loader.
 	private void checkPackageAccess(Class<?> cls, ProtectionDomain pd)
 	{
-		final SecurityManager sm = System.g_security;
+		final SecurityManager sm = System.security;
 		if (sm != null)
 		{
 			if (ReflectUtil.isNonPublicProxyClass(cls))
@@ -1457,7 +1457,7 @@ public abstract class ClassLoader
 		{
 			return null;
 		}
-		SecurityManager sm = System.g_security;
+		SecurityManager sm = System.security;
 		if (sm != null)
 		{
 			checkClassLoaderPermission(this, Reflection.getCallerClass());
@@ -1528,7 +1528,7 @@ public abstract class ClassLoader
 		{
 			return null;
 		}
-		SecurityManager sm = System.g_security;
+		SecurityManager sm = System.security;
 		if (sm != null)
 		{
 			checkClassLoaderPermission(scl, Reflection.getCallerClass());
@@ -1626,7 +1626,7 @@ public abstract class ClassLoader
 
 	static void checkClassLoaderPermission(ClassLoader cl, Class<?> caller)
 	{
-		SecurityManager sm = System.g_security;
+		SecurityManager sm = System.security;
 		if (sm != null)
 		{
 			// caller can be null if the VM is requesting it
@@ -1927,7 +1927,7 @@ public abstract class ClassLoader
 
 	private static String[] initializePath(String propname)
 	{
-		String ldpath = rasuni.java.lang.System.getProperty(propname, System.g_security, System.g_props, "");
+		String ldpath = rasuni.java.lang.System.getProperty(propname, System.security, System.props, "");
 		String ps = File.pathSeparator;
 		int ldlen = ldpath.length();
 		int i, j, n;

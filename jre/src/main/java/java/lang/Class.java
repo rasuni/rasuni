@@ -346,7 +346,7 @@ public final class Class<T> implements java.io.Serializable, GenericDeclaration,
 	public static Class<?> forName(String name, boolean initialize, ClassLoader loader) throws ClassNotFoundException
 	{
 		Class<?> caller = null;
-		SecurityManager sm = System.g_security;
+		SecurityManager sm = System.security;
 		if (sm != null)
 		{
 			// Reflective call to get caller class is only needed if a security
@@ -407,7 +407,7 @@ public final class Class<T> implements java.io.Serializable, GenericDeclaration,
 	@CallerSensitive
 	public T newInstance() throws InstantiationException, IllegalAccessException
 	{
-		if (System.g_security != null)
+		if (System.security != null)
 		{
 			checkMemberAccess(Member.PUBLIC, Reflection.getCallerClass(), false);
 		}
@@ -703,7 +703,7 @@ public final class Class<T> implements java.io.Serializable, GenericDeclaration,
 		{
 			return null;
 		}
-		SecurityManager sm = System.g_security;
+		SecurityManager sm = System.security;
 		if (sm != null)
 		{
 			ClassLoader.checkClassLoaderPermission(cl, Reflection.getCallerClass());
@@ -2414,7 +2414,7 @@ public final class Class<T> implements java.io.Serializable, GenericDeclaration,
 	 */
 	public java.security.ProtectionDomain getProtectionDomain()
 	{
-		SecurityManager sm = System.g_security;
+		SecurityManager sm = System.security;
 		if (sm != null)
 		{
 			sm.checkPermission(SecurityConstants.GET_PD_PERMISSION);
@@ -2455,7 +2455,7 @@ public final class Class<T> implements java.io.Serializable, GenericDeclaration,
 	 */
 	private void checkMemberAccess(int which, Class<?> caller, boolean checkProxyInterfaces)
 	{
-		final SecurityManager s = System.g_security;
+		final SecurityManager s = System.security;
 		if (s != null)
 		{
 			/* Default policy allows access to all {@link Member#PUBLIC} members,
@@ -2484,7 +2484,7 @@ public final class Class<T> implements java.io.Serializable, GenericDeclaration,
 	@SuppressWarnings("hiding")
 	private void checkPackageAccess(final ClassLoader ccl, boolean checkProxyInterfaces)
 	{
-		final SecurityManager s = System.g_security;
+		final SecurityManager s = System.security;
 		if (s != null)
 		{
 			final ClassLoader cl = getClassLoader0();
