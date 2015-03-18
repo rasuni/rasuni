@@ -19,6 +19,6 @@ public final class ITunes // NO_UCD (unused code)
 		LinkedList<Iterable<String>> paths = new LinkedList<>();
 		paths.add(Arrays.asList("D:", "ITunes", "Music"));
 		paths.add(Arrays.asList("D:", "playlists"));
-		TitanCollector.run("itunes", paths, false, Arrays.asList("D:"));
+		TitanCollector.run(System.security, System.props, "itunes", paths, false, Arrays.asList("D:"));
 	}
 }

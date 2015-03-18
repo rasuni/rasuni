@@ -1037,31 +1037,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	@Override
 	public boolean equals(Object anObject)
 	{
-		if (this == anObject)
-		{
-			return true;
-		}
-		if (anObject instanceof String)
-		{
-			String anotherString = (String) anObject;
-			int n = value.length;
-			if (n == anotherString.value.length)
-			{
-				char v1[] = value;
-				char v2[] = anotherString.value;
-				int i = 0;
-				while (n-- != 0)
-				{
-					if (v1[i] != v2[i])
-					{
-						return false;
-					}
-					i++;
-				}
-				return true;
-			}
-		}
-		return false;
+		return Strings.equals(this, anObject);
 	}
 
 	/**
@@ -2706,7 +2682,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 		}
 		char[] result = new char[len];
 		int resultOffset = 0; /* result may grow, so i+resultOffset
-		 * is the write location in result */
+								* is the write location in result */
 		/* Just copy the first few lowerCase characters. */
 		System.arraycopy(value, 0, result, 0, firstUpper);
 		String lang = locale.getLanguage();

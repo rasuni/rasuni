@@ -79,4 +79,34 @@ public class StringsTest
 	{
 		Classes.construct(Strings.class);
 	}
+
+	/**
+	 * Test the method {@link Strings#equals(String, Object)}. Compare with non string object
+	 */
+	@SuppressWarnings("static-method")
+	@Test
+	public void equalsNonString()
+	{
+		Assert.assertFalse(Strings.equals("\000", null));
+	}
+
+	/**
+	 * Test the method {@link Strings#equals(String, Object)}. Compare with non string object
+	 */
+	@SuppressWarnings("static-method")
+	@Test
+	public void equalsMatch()
+	{
+		Assert.assertTrue(Strings.equals("\000", "\000"));
+	}
+
+	/**
+	 * Test the method {@link Strings#equals(String, Object)}. Compare with non string object
+	 */
+	@SuppressWarnings("static-method")
+	@Test
+	public void equalsDifferent()
+	{
+		Assert.assertFalse(Strings.equals("\000", ""));
+	}
 }

@@ -14,16 +14,11 @@ public final class Strings
 
 	private static final IFunction VALUE = Classes.getter(String.class, "value");
 
-	private static boolean startsWith(String prefix, IOffset offset, char[] value)
+	private static boolean compare(String string, IPredicate lengthMatches, IOffset offset, char[] value)
 	{
-		char[] pa = VALUE.apply(prefix);
+		char[] pa = VALUE.apply(string);
 		int pc = pa.length;
-		// Note: toffset might be near -1>>>1.
-		if (offset.apply(pc) > value.length)
-		{
-			return false;
-		}
-		else
+		if (lengthMatches.check(offset.apply(pc), value.length))
 		{
 			int po = 0;
 			for (;;)
@@ -39,6 +34,15 @@ public final class Strings
 				po++;
 			}
 		}
+		else
+		{
+			return false;
+		}
+	}
+
+	private static boolean startsWith(String prefix, IOffset offset, char[] value)
+	{
+		return compare(prefix, (l1, l2) -> l1 <= l2, offset, value);
 	}
 
 	/**
@@ -81,5 +85,24 @@ public final class Strings
 	public static boolean startsWith(String prefix, String string)
 	{
 		return startsWith(prefix, pos -> pos, VALUE.apply(string));
+	}
+
+	/**
+	 * Compares a string to the specified object.  The result is {@code
+	 * true} if and only if the argument is not {@code null} and is a {@code
+	 * String} object that represents the same sequence of characters as this
+	 * object.
+	 * @param string the string to compare
+	 *
+	 * @param  anObject
+	 *         The object to compare this {@code String} against
+	 *
+	 * @return  {@code true} if the given object represents a {@code String}
+	 *          equivalent to this string, {@code false} otherwise
+	 *
+	 */
+	public static boolean equals(String string, Object anObject)
+	{
+		return anObject instanceof String && compare(string, (l1, l2) -> l1 == l2, pos -> pos, VALUE.apply((String) anObject));
 	}
 }

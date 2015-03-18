@@ -141,4 +141,17 @@ public class SystemTest extends EasyMockSupport
 			Assert.assertNull(System.getProperty("\0", null, _properties, null));
 		});
 	}
+
+	/**
+	 * Test the method {@link System#getProperty(String, SecurityManager, Properties)}
+	 */
+	@Test
+	public void getPropertyDefault()
+	{
+		expectGetProperty();
+		replay(() ->
+		{
+			Assert.assertNull(System.getProperty("\0", null, _properties));
+		});
+	}
 }

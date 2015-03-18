@@ -23,7 +23,8 @@ public final class System
 		{
 			throw new NullPointerException("key can't be null");
 		}
-		if (key.equals(""))
+		boolean equals = key.equals("");
+		if (equals)
 		{
 			throw new IllegalArgumentException("key can't be empty");
 		}
@@ -65,5 +66,17 @@ public final class System
 			security.checkPropertyAccess(key);
 		}
 		return props.getProperty(key, def);
+	}
+
+	/**
+	 * Gets the system property indicated by the specified key. Return null if system property does not exist.
+	 * @param key the key
+	 * @param security the security manager
+	 * @param props the properties
+	 * @return he system property indicated by the specified key
+	 */
+	public static String getProperty(String key, SecurityManager security, Properties props)
+	{
+		return getProperty(key, security, props, null);
 	}
 }

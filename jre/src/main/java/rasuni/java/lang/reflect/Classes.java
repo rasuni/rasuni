@@ -14,7 +14,7 @@ public final class Classes
 	 * @param name the field name
 	 * @return the field
 	 */
-	public static IFunction getter(Class<String> cls, String name)
+	public static IFunction getter(Class<?> cls, String name)
 	{
 		try
 		{

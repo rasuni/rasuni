@@ -137,7 +137,7 @@ public final class System
 	/**
 	 *  The security manager for the system.
 	 */
-	public static volatile SecurityManager g_security = null;
+	public static volatile SecurityManager security = null;
 
 	/**
 	 * Reassigns the "standard" input stream.
@@ -269,7 +269,7 @@ public final class System
 
 	private static void checkIO()
 	{
-		SecurityManager sm = g_security;
+		SecurityManager sm = security;
 		if (sm != null)
 		{
 			sm.checkPermission(new RuntimePermission("setIO"));
@@ -319,7 +319,7 @@ public final class System
 
 	private static synchronized void setSecurityManager0(final SecurityManager s)
 	{
-		SecurityManager sm = g_security;
+		SecurityManager sm = security;
 		if (sm != null)
 		{
 			// ask the currently installed security manager if we
@@ -342,7 +342,7 @@ public final class System
 				return null;
 			});
 		}
-		g_security = s;
+		security = s;
 	}
 
 	/**
@@ -536,9 +536,9 @@ public final class System
 	 * <dt>user.dir             <dd>User's current working directory
 	 * </dl>
 	 */
-	public static Properties g_props;
+	public static Properties props;
 
-	private static native Properties initProperties(Properties props);
+	private static native Properties initProperties(Properties props1);
 
 	/**
 	 * Determines the current system properties.
@@ -632,12 +632,12 @@ public final class System
 	 */
 	public static Properties getProperties()
 	{
-		SecurityManager sm = g_security;
+		SecurityManager sm = security;
 		if (sm != null)
 		{
 			sm.checkPropertiesAccess();
 		}
-		return g_props;
+		return props;
 	}
 
 	/**
@@ -682,7 +682,7 @@ public final class System
 	 */
 	public static void setProperties(Properties props)
 	{
-		SecurityManager sm = g_security;
+		SecurityManager sm = security;
 		if (sm != null)
 		{
 			sm.checkPropertiesAccess();
@@ -692,7 +692,7 @@ public final class System
 			props = new Properties();
 			initProperties(props);
 		}
-		System.g_props = props;
+		System.props = props;
 	}
 
 	/**
@@ -724,12 +724,12 @@ public final class System
 	public static String getProperty(String key)
 	{
 		rasuni.java.lang.System.checkKey(key);
-		SecurityManager sm = g_security;
+		SecurityManager sm = security;
 		if (sm != null)
 		{
 			sm.checkPropertyAccess(key);
 		}
-		return g_props.getProperty(key);
+		return props.getProperty(key);
 	}
 
 	/**
@@ -764,12 +764,12 @@ public final class System
 	public static String setProperty(String key, String value)
 	{
 		rasuni.java.lang.System.checkKey(key);
-		SecurityManager sm = g_security;
+		SecurityManager sm = security;
 		if (sm != null)
 		{
 			sm.checkPermission(new PropertyPermission(key, SecurityConstants.PROPERTY_WRITE_ACTION));
 		}
-		return (String) g_props.setProperty(key, value);
+		return (String) props.setProperty(key, value);
 	}
 
 	/**
@@ -802,12 +802,12 @@ public final class System
 	public static String clearProperty(String key)
 	{
 		rasuni.java.lang.System.checkKey(key);
-		SecurityManager sm = g_security;
+		SecurityManager sm = security;
 		if (sm != null)
 		{
 			sm.checkPermission(new PropertyPermission(key, "write"));
 		}
-		return (String) g_props.remove(key);
+		return (String) props.remove(key);
 	}
 
 	/**
@@ -858,7 +858,7 @@ public final class System
 	 */
 	public static String getenv(String name)
 	{
-		SecurityManager sm = g_security;
+		SecurityManager sm = security;
 		if (sm != null)
 		{
 			sm.checkPermission(new RuntimePermission("getenv." + name));
@@ -908,7 +908,7 @@ public final class System
 	 */
 	public static java.util.Map<String, String> getenv()
 	{
-		SecurityManager sm = g_security;
+		SecurityManager sm = security;
 		if (sm != null)
 		{
 			sm.checkPermission(new RuntimePermission("getenv.*"));
@@ -1135,7 +1135,7 @@ public final class System
 	 * Initialize the system class.  Called after thread initialization.
 	 */
 	@SuppressWarnings("resource")
-	private static void initializeSystemClass()
+	public static void initializeSystemClass()
 	{
 		// VM might invoke JNU_NewStringPlatform() to set those encoding
 		// sensitive properties (user.home, user.name, boot.class.path, etc.)
@@ -1145,8 +1145,8 @@ public final class System
 		// initialization. So make sure the "props" is available at the
 		// very beginning of the initialization and all system properties to
 		// be put into it directly.
-		g_props = new Properties();
-		initProperties(g_props); // initialized by the VM
+		props = new Properties();
+		initProperties(props); // initialized by the VM
 		// There are certain system configurations that may be controlled by
 		// VM options such as the maximum amount of direct memory and
 		// Integer cache size used to support the object identity semantics
@@ -1161,15 +1161,15 @@ public final class System
 		// Save a private copy of the system properties object that
 		// can only be accessed by the internal implementation. Remove
 		// certain system properties that are not intended for public access.
-		sun.misc.VM.saveAndRemoveProperties(g_props);
-		lineSeparator = g_props.getProperty("line.separator");
+		sun.misc.VM.saveAndRemoveProperties(props);
+		lineSeparator = props.getProperty("line.separator");
 		sun.misc.Version.init();
 		FileInputStream fdIn = new FileInputStream(FileDescriptor.in);
 		FileOutputStream fdOut = new FileOutputStream(FileDescriptor.out);
 		FileOutputStream fdErr = new FileOutputStream(FileDescriptor.err);
 		setIn0(new BufferedInputStream(fdIn));
-		setOut0(newPrintStream(fdOut, g_props.getProperty("sun.stdout.encoding")));
-		setErr0(newPrintStream(fdErr, g_props.getProperty("sun.stderr.encoding")));
+		setOut0(newPrintStream(fdOut, props.getProperty("sun.stdout.encoding")));
+		setErr0(newPrintStream(fdErr, props.getProperty("sun.stderr.encoding")));
 		// Load the zip library now in order to keep java.util.zip.ZipFile
 		// from trying to use itself to load this library later.
 		loadLibrary("zip");
@@ -1290,5 +1290,25 @@ public final class System
 				o.finalize();
 			}
 		});
+	}
+
+	/**
+	 * get property
+	 * @param key the key
+	 * @param def the default value
+	 * @return the property
+	 */
+	public static String getProperty(String key, String def)
+	{
+		return rasuni.java.lang.System.getProperty(key, security, props, def);
+	}
+
+	/**
+	 * Return the security manager
+	 * @return the security manager
+	 */
+	public static SecurityManager getSecurityManager()
+	{
+		return security;
 	}
 }
