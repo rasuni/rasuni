@@ -12,6 +12,6 @@ public final class Music // NO_UCD (unused code)
 	 */
 	public static void main_deprecated()
 	{
-		TitanCollector.run("music", true, new String[] { "\\\\qnap", "music" });
+		TitanCollector.run(System.security, System.props, "music", true, new String[] { "\\\\qnap", "music" });
 	}
 }

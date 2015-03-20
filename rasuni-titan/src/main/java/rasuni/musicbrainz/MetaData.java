@@ -3,7 +3,6 @@ package rasuni.musicbrainz;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import rasuni.functional.IExpression;
-import rasuni.webservice.Parameter;
 
 /**
  * MetaData root element
@@ -147,11 +146,6 @@ public class MetaData
 	 * the release list getter
 	 */
 	public static final IExpression<ReleaseList, MetaData> RELEASE_LIST = metaData -> metaData._releaseList;
-
-	/**
-	 * the limit parameter
-	 */
-	public static final Parameter PARAMETER_LIMIT = new Parameter("limit", "100");
 
 	/**
 	 * the recording list

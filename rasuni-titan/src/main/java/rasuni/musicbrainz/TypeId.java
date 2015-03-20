@@ -54,6 +54,11 @@ public enum TypeId
 	@XmlEnumValue("3e48faba-ec01-47fd-8e89-30e81161661c")
 	ARTIST_WORK_LYRICIST,
 	/**
+	 * Artist - recording - producer
+	 */
+	@XmlEnumValue("5c0ceac3-feb4-41f0-868d-dc06f6e27fc0")
+	ARTIST_RECORDING_PRODUCER,
+	/**
 	 * Artist member of band
 	 */
 	@XmlEnumValue("5be4c609-9afa-4ea0-910b-12ffb71e3821")
