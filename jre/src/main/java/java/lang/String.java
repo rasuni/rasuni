@@ -192,8 +192,8 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public String(char value[], int offset, int count)
 	{
-		StringIndexOutOfBoundsExceptions.failOnSmaller(offset, 0, offset);
-		StringIndexOutOfBoundsExceptions.failOnSmaller(count, 0, count);
+		StringIndexOutOfBoundsExceptions.failOnNegative(offset);
+		StringIndexOutOfBoundsExceptions.failOnNegative(count);
 		// Note: offset or count might be near -1>>>1.
 		StringIndexOutOfBoundsExceptions.failOnSmaller(value.length, offset + count, offset + count);
 		this.value = Arrays.copyOfRange(value, offset, offset + count);
@@ -229,8 +229,8 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public String(int[] codePoints, int offset, int count)
 	{
-		StringIndexOutOfBoundsExceptions.failOnSmaller(offset, 0, offset);
-		StringIndexOutOfBoundsExceptions.failOnSmaller(count, 0, count);
+		StringIndexOutOfBoundsExceptions.failOnNegative(offset);
+		StringIndexOutOfBoundsExceptions.failOnNegative(count);
 		// Note: offset or count might be near -1>>>1.
 		StringIndexOutOfBoundsExceptions.failOnSmaller(codePoints.length, offset + count, offset + count);
 		final int end = offset + count;
@@ -373,8 +373,8 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	private static void checkBounds(byte[] bytes, int offset, int length)
 	{
-		StringIndexOutOfBoundsExceptions.failOnSmaller(length, 0, length);
-		StringIndexOutOfBoundsExceptions.failOnSmaller(offset, 0, offset);
+		StringIndexOutOfBoundsExceptions.failOnNegative(length);
+		StringIndexOutOfBoundsExceptions.failOnNegative(offset);
 		StringIndexOutOfBoundsExceptions.failOnSmaller(bytes.length, offset + length, offset + length);
 	}
 
@@ -835,7 +835,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public void getChars(int srcBegin, int srcEnd, char dst[], int dstBegin)
 	{
-		StringIndexOutOfBoundsExceptions.failOnSmaller(srcBegin, 0, srcBegin);
+		StringIndexOutOfBoundsExceptions.failOnNegative(srcBegin);
 		StringIndexOutOfBoundsExceptions.failOnSmaller(value.length, srcEnd, srcEnd);
 		StringIndexOutOfBoundsExceptions.failOnSmaller(srcEnd, srcBegin, srcEnd - srcBegin);
 		System.arraycopy(value, srcBegin, dst, dstBegin, srcEnd - srcBegin);
@@ -887,7 +887,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	@Deprecated
 	public void getBytes(int srcBegin, int srcEnd, byte dst[], int dstBegin)
 	{
-		StringIndexOutOfBoundsExceptions.failOnSmaller(srcBegin, 0, srcBegin);
+		StringIndexOutOfBoundsExceptions.failOnNegative(srcBegin);
 		StringIndexOutOfBoundsExceptions.failOnSmaller(value.length, srcEnd, srcEnd);
 		StringIndexOutOfBoundsExceptions.failOnSmaller(srcEnd, srcBegin, srcEnd - srcBegin);
 		Objects.requireNonNull(dst);
@@ -1941,9 +1941,9 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public String substring(int beginIndex)
 	{
-		StringIndexOutOfBoundsExceptions.failOnSmaller(beginIndex, 0, beginIndex);
+		StringIndexOutOfBoundsExceptions.failOnNegative(beginIndex);
 		int subLen = value.length - beginIndex;
-		StringIndexOutOfBoundsExceptions.failOnSmaller(subLen, 0, subLen);
+		StringIndexOutOfBoundsExceptions.failOnNegative(subLen);
 		return beginIndex == 0 ? this : new String(value, beginIndex, subLen);
 	}
 
@@ -1971,10 +1971,10 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public String substring(int beginIndex, int endIndex)
 	{
-		StringIndexOutOfBoundsExceptions.failOnSmaller(beginIndex, 0, beginIndex);
+		StringIndexOutOfBoundsExceptions.failOnNegative(beginIndex);
 		StringIndexOutOfBoundsExceptions.failOnSmaller(value.length, endIndex, endIndex);
 		int subLen = endIndex - beginIndex;
-		StringIndexOutOfBoundsExceptions.failOnSmaller(subLen, 0, subLen);
+		StringIndexOutOfBoundsExceptions.failOnNegative(subLen);
 		return beginIndex == 0 && endIndex == value.length ? this : new String(value, beginIndex, subLen);
 	}
 
@@ -2623,7 +2623,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 		}
 		char[] result = new char[len];
 		int resultOffset = 0; /* result may grow, so i+resultOffset
-								* is the write location in result */
+		 * is the write location in result */
 		/* Just copy the first few lowerCase characters. */
 		System.arraycopy(value, 0, result, 0, firstUpper);
 		String lang = locale.getLanguage();
