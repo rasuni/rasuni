@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import rasuni.java.lang.Characters;
+import rasuni.java.lang.Integers;
 import rasuni.java.lang.StringIndexOutOfBoundsExceptions;
 import rasuni.java.lang.Strings;
 
@@ -665,7 +666,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	@Override
 	public char charAt(int index)
 	{
-		if (index < 0 || index >= value.length)
+		if (Integers.isNegative(index) || index >= value.length)
 		{
 			throw new StringIndexOutOfBoundsException(index);
 		}
@@ -696,7 +697,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public int codePointAt(int index)
 	{
-		if (index < 0 || index >= value.length)
+		if (Integers.isNegative(index) || index >= value.length)
 		{
 			throw new StringIndexOutOfBoundsException(index);
 		}
@@ -728,7 +729,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	public int codePointBefore(int index)
 	{
 		int i = index - 1;
-		if (i < 0 || i >= value.length)
+		if (Integers.isNegative(i) || i >= value.length)
 		{
 			throw new StringIndexOutOfBoundsException(index);
 		}
@@ -758,7 +759,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public int codePointCount(int beginIndex, int endIndex)
 	{
-		if (beginIndex < 0 || endIndex > value.length || beginIndex > endIndex)
+		if (Integers.isNegative(beginIndex) || endIndex > value.length || beginIndex > endIndex)
 		{
 			throw new IndexOutOfBoundsException();
 		}
@@ -787,7 +788,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public int offsetByCodePoints(int index, int codePointOffset)
 	{
-		if (index < 0 || index > value.length)
+		if (Integers.isNegative(index) || index > value.length)
 		{
 			throw new IndexOutOfBoundsException();
 		}
@@ -1120,7 +1121,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public boolean equalsIgnoreCase(String anotherString)
 	{
-		return this == anotherString ? true : anotherString != null && anotherString.value.length == value.length && regionMatches(true, 0, anotherString, 0, value.length);
+		return this == anotherString || anotherString != null && anotherString.value.length == value.length && regionMatches(true, 0, anotherString, 0, value.length);
 	}
 
 	/**
@@ -1306,7 +1307,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 		char pa[] = other.value;
 		int po = ooffset;
 		// Note: toffset, ooffset, or len might be near -1>>>1.
-		if (ooffset < 0 || toffset < 0 || toffset > (long) value.length - len || ooffset > (long) other.value.length - len)
+		if (Integers.isNegative(ooffset) || Integers.isNegative(toffset) || toffset > (long) value.length - len || ooffset > (long) other.value.length - len)
 		{
 			return false;
 		}
@@ -1372,18 +1373,17 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public boolean regionMatches(boolean ignoreCase, int toffset, String other, int ooffset, int len)
 	{
-		char ta[] = value;
 		int to = toffset;
 		char pa[] = other.value;
 		int po = ooffset;
 		// Note: toffset, ooffset, or len might be near -1>>>1.
-		if (ooffset < 0 || toffset < 0 || toffset > (long) value.length - len || ooffset > (long) other.value.length - len)
+		if (Integers.isNegative(ooffset) || Integers.isNegative(toffset) || toffset > (long) value.length - len || ooffset > (long) other.value.length - len)
 		{
 			return false;
 		}
 		while (len-- > 0)
 		{
-			char c1 = ta[to++];
+			char c1 = value[to++];
 			char c2 = pa[po++];
 			if (c1 == c2)
 			{
@@ -1531,7 +1531,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	public int indexOf(int ch, int fromIndex)
 	{
 		final int max = value.length;
-		if (fromIndex < 0)
+		if (Integers.isNegative(fromIndex))
 		{
 			fromIndex = 0;
 		}
@@ -1764,7 +1764,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 		{
 			return targetCount == 0 ? sourceCount : -1;
 		}
-		if (fromIndex < 0)
+		if (Integers.isNegative(fromIndex))
 		{
 			fromIndex = 0;
 		}
@@ -1880,7 +1880,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 		 * consistency, don't check for null str.
 		 */
 		int rightIndex = sourceCount - targetCount;
-		if (fromIndex < 0)
+		if (Integers.isNegative(fromIndex))
 		{
 			return -1;
 		}
@@ -2357,8 +2357,8 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 		    the second is not the ascii digit or ascii letter.
 		 */
 		char ch = 0;
-		if ((regex.value.length == 1 && ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1 || regex.length() == 2 && regex.charAt(0) == '\\' && ((ch = regex.charAt(1)) - '0' | '9' - ch) < 0 && (ch - 'a' | 'z' - ch) < 0 && (ch - 'A' | 'Z' - ch) < 0)
-				&& (ch < Character.MIN_HIGH_SURROGATE || ch > Character.MAX_LOW_SURROGATE))
+		if ((regex.value.length == 1 && ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1 || regex.length() == 2 && regex.charAt(0) == '\\' && Integers.isNegative((ch = regex.charAt(1)) - '0' | '9' - ch)) && Integers.isNegative(ch - 'a' | 'z' - ch)
+				&& Integers.isNegative(ch - 'A' | 'Z' - ch) && (ch < Character.MIN_HIGH_SURROGATE || ch > Character.MAX_LOW_SURROGATE))
 		{
 			int off = 0;
 			int next = 0;
@@ -2623,7 +2623,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 		}
 		char[] result = new char[len];
 		int resultOffset = 0; /* result may grow, so i+resultOffset
-		 * is the write location in result */
+								* is the write location in result */
 		/* Just copy the first few lowerCase characters. */
 		System.arraycopy(value, 0, result, 0, firstUpper);
 		String lang = locale.getLanguage();

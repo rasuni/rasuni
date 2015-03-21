@@ -292,7 +292,7 @@ public class Throwable implements Serializable
 	 *         unknown.)
 	 * @since  1.4
 	 */
-	public Throwable(String message, Throwable cause)
+	Throwable(String message, Throwable cause)
 	{
 		fillInStackTrace();
 		detailMessage = message;
@@ -441,7 +441,7 @@ public class Throwable implements Serializable
 	 * within the constructor, or immediately after creating the
 	 * throwable.  If this throwable was created
 	 * with {@link #Throwable(Throwable)} or
-	 * {@link #Throwable(String,Throwable)}, this method cannot be called
+	 * #Throwable(String,Throwable), this method cannot be called
 	 * even once.
 	 *
 	 * <p>An example of using this method on a legacy throwable type
@@ -465,7 +465,7 @@ public class Throwable implements Serializable
 	 *         throwable.  (A throwable cannot be its own cause.)
 	 * @throws IllegalStateException if this throwable was
 	 *         created with {@link #Throwable(Throwable)} or
-	 *         {@link #Throwable(String,Throwable)}, or this method has already
+	 *         Throwable(String,Throwable), or this method has already
 	 *         been called on this throwable.
 	 * @since  1.4
 	 */
@@ -1023,7 +1023,7 @@ public class Throwable implements Serializable
 				stackTrace = UNASSIGNED_STACK.clone();
 			}
 			else if (stackTrace.length == 1 &&
-					// Check for the marker of an immutable stack trace
+			// Check for the marker of an immutable stack trace
 					SentinelHolder.STACK_TRACE_ELEMENT_SENTINEL.equals(stackTrace[0]))
 			{
 				stackTrace = null;
