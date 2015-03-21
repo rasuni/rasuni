@@ -8,7 +8,7 @@ import org.junit.Test;
 import rasuni.test.Classes;
 
 /**
- * Test the class {@link System}
+ * Test the class {@link SystemUtil}
  *
  */
 public class SystemTest extends EasyMockSupport
@@ -53,7 +53,7 @@ public class SystemTest extends EasyMockSupport
 	}
 
 	/**
-	 * Test the method {@link System#checkKey(String)}. Null Key.
+	 * Test the method {@link SystemUtil#checkKey(String)}. Null Key.
 	 */
 	@Test
 	public void checkKeyNull()
@@ -62,7 +62,7 @@ public class SystemTest extends EasyMockSupport
 		{
 			try
 			{
-				System.checkKey(null);
+				SystemUtil.checkKey(null);
 				Assert.fail();
 			}
 			catch (NullPointerException e1)
@@ -73,7 +73,7 @@ public class SystemTest extends EasyMockSupport
 	}
 
 	/**
-	 * Test the method {@link System#checkKey(String)}. Illegal argument
+	 * Test the method {@link SystemUtil#checkKey(String)}. Illegal argument
 	 */
 	@Test
 	public void checkKeyIllegal()
@@ -82,7 +82,7 @@ public class SystemTest extends EasyMockSupport
 		{
 			try
 			{
-				System.checkKey("");
+				SystemUtil.checkKey("");
 				Assert.fail();
 			}
 			catch (IllegalArgumentException e1)
@@ -93,12 +93,12 @@ public class SystemTest extends EasyMockSupport
 	}
 
 	/**
-	 * Test the method {@link System#checkKey(String)}. Success.
+	 * Test the method {@link SystemUtil#checkKey(String)}. Success.
 	 */
 	@Test
 	public void checkKeySuccess()
 	{
-		replay(() -> System.checkKey("\0"));
+		replay(() -> SystemUtil.checkKey("\0"));
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class SystemTest extends EasyMockSupport
 	@Test
 	public void coverage()
 	{
-		replay(() -> Classes.construct(System.class));
+		replay(() -> Classes.construct(SystemUtil.class));
 	}
 
 	private void expectGetProperty()
@@ -116,7 +116,7 @@ public class SystemTest extends EasyMockSupport
 	}
 
 	/**
-	 * Test the method {@link System#getProperty(String, SecurityManager, Properties, String)}
+	 * Test the method {@link SystemUtil#getProperty(String, SecurityManager, Properties, String)}
 	 */
 	@Test
 	public void getProperty()
@@ -125,12 +125,12 @@ public class SystemTest extends EasyMockSupport
 		expectGetProperty();
 		replay(() ->
 		{
-			Assert.assertNull(System.getProperty("\0", _securityManager, _properties, null));
+			Assert.assertNull(SystemUtil.getProperty("\0", _securityManager, _properties, null));
 		});
 	}
 
 	/**
-	 * Test the method {@link System#getProperty(String, SecurityManager, Properties, String)}. No security manager
+	 * Test the method {@link SystemUtil#getProperty(String, SecurityManager, Properties, String)}. No security manager
 	 */
 	@Test
 	public void getPropertyNoSecurityManager()
@@ -138,12 +138,12 @@ public class SystemTest extends EasyMockSupport
 		expectGetProperty();
 		replay(() ->
 		{
-			Assert.assertNull(System.getProperty("\0", null, _properties, null));
+			Assert.assertNull(SystemUtil.getProperty("\0", null, _properties, null));
 		});
 	}
 
 	/**
-	 * Test the method {@link System#getProperty(String, SecurityManager, Properties)}
+	 * Test the method {@link SystemUtil#getProperty(String, SecurityManager, Properties)}
 	 */
 	@Test
 	public void getPropertyDefault()
@@ -151,7 +151,7 @@ public class SystemTest extends EasyMockSupport
 		expectGetProperty();
 		replay(() ->
 		{
-			Assert.assertNull(System.getProperty("\0", null, _properties));
+			Assert.assertNull(SystemUtil.getProperty("\0", null, _properties));
 		});
 	}
 }

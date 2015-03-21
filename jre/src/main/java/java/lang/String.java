@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import rasuni.java.lang.Characters;
+import rasuni.java.lang.StringIndexOutOfBoundsExceptions;
 import rasuni.java.lang.Strings;
 
 /**
@@ -191,19 +192,10 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public String(char value[], int offset, int count)
 	{
-		if (offset < 0)
-		{
-			throw new StringIndexOutOfBoundsException(offset);
-		}
-		if (count < 0)
-		{
-			throw new StringIndexOutOfBoundsException(count);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(offset, 0, offset);
+		StringIndexOutOfBoundsExceptions.failOnSmaller(count, 0, count);
 		// Note: offset or count might be near -1>>>1.
-		if (offset > value.length - count)
-		{
-			throw new StringIndexOutOfBoundsException(offset + count);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(value.length, offset + count, offset + count);
 		this.value = Arrays.copyOfRange(value, offset, offset + count);
 	}
 
@@ -237,19 +229,10 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public String(int[] codePoints, int offset, int count)
 	{
-		if (offset < 0)
-		{
-			throw new StringIndexOutOfBoundsException(offset);
-		}
-		if (count < 0)
-		{
-			throw new StringIndexOutOfBoundsException(count);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(offset, 0, offset);
+		StringIndexOutOfBoundsExceptions.failOnSmaller(count, 0, count);
 		// Note: offset or count might be near -1>>>1.
-		if (offset > codePoints.length - count)
-		{
-			throw new StringIndexOutOfBoundsException(offset + count);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(codePoints.length, offset + count, offset + count);
 		final int end = offset + count;
 		// Pass 1: Compute precise size of char[]
 		int n = count;
@@ -390,18 +373,9 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	private static void checkBounds(byte[] bytes, int offset, int length)
 	{
-		if (length < 0)
-		{
-			throw new StringIndexOutOfBoundsException(length);
-		}
-		if (offset < 0)
-		{
-			throw new StringIndexOutOfBoundsException(offset);
-		}
-		if (offset > bytes.length - length)
-		{
-			throw new StringIndexOutOfBoundsException(offset + length);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(length, 0, length);
+		StringIndexOutOfBoundsExceptions.failOnSmaller(offset, 0, offset);
+		StringIndexOutOfBoundsExceptions.failOnSmaller(bytes.length, offset + length, offset + length);
 	}
 
 	/**
@@ -861,18 +835,9 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public void getChars(int srcBegin, int srcEnd, char dst[], int dstBegin)
 	{
-		if (srcBegin < 0)
-		{
-			throw new StringIndexOutOfBoundsException(srcBegin);
-		}
-		if (srcEnd > value.length)
-		{
-			throw new StringIndexOutOfBoundsException(srcEnd);
-		}
-		if (srcBegin > srcEnd)
-		{
-			throw new StringIndexOutOfBoundsException(srcEnd - srcBegin);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(srcBegin, 0, srcBegin);
+		StringIndexOutOfBoundsExceptions.failOnSmaller(value.length, srcEnd, srcEnd);
+		StringIndexOutOfBoundsExceptions.failOnSmaller(srcEnd, srcBegin, srcEnd - srcBegin);
 		System.arraycopy(value, srcBegin, dst, dstBegin, srcEnd - srcBegin);
 	}
 
@@ -922,18 +887,9 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	@Deprecated
 	public void getBytes(int srcBegin, int srcEnd, byte dst[], int dstBegin)
 	{
-		if (srcBegin < 0)
-		{
-			throw new StringIndexOutOfBoundsException(srcBegin);
-		}
-		if (srcEnd > value.length)
-		{
-			throw new StringIndexOutOfBoundsException(srcEnd);
-		}
-		if (srcBegin > srcEnd)
-		{
-			throw new StringIndexOutOfBoundsException(srcEnd - srcBegin);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(srcBegin, 0, srcBegin);
+		StringIndexOutOfBoundsExceptions.failOnSmaller(value.length, srcEnd, srcEnd);
+		StringIndexOutOfBoundsExceptions.failOnSmaller(srcEnd, srcBegin, srcEnd - srcBegin);
 		Objects.requireNonNull(dst);
 		int j = dstBegin;
 		int n = srcEnd;
@@ -1242,7 +1198,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 * @see     java.text.Collator#compare(String, String)
 	 * @since   1.2
 	 */
-	public static final Comparator<String> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
+	private static final Comparator<String> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
 
 	private static class CaseInsensitiveComparator implements Comparator<String>, java.io.Serializable
 	{
@@ -1985,15 +1941,9 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public String substring(int beginIndex)
 	{
-		if (beginIndex < 0)
-		{
-			throw new StringIndexOutOfBoundsException(beginIndex);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(beginIndex, 0, beginIndex);
 		int subLen = value.length - beginIndex;
-		if (subLen < 0)
-		{
-			throw new StringIndexOutOfBoundsException(subLen);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(subLen, 0, subLen);
 		return beginIndex == 0 ? this : new String(value, beginIndex, subLen);
 	}
 
@@ -2021,19 +1971,10 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 	 */
 	public String substring(int beginIndex, int endIndex)
 	{
-		if (beginIndex < 0)
-		{
-			throw new StringIndexOutOfBoundsException(beginIndex);
-		}
-		if (endIndex > value.length)
-		{
-			throw new StringIndexOutOfBoundsException(endIndex);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(beginIndex, 0, beginIndex);
+		StringIndexOutOfBoundsExceptions.failOnSmaller(value.length, endIndex, endIndex);
 		int subLen = endIndex - beginIndex;
-		if (subLen < 0)
-		{
-			throw new StringIndexOutOfBoundsException(subLen);
-		}
+		StringIndexOutOfBoundsExceptions.failOnSmaller(subLen, 0, subLen);
 		return beginIndex == 0 && endIndex == value.length ? this : new String(value, beginIndex, subLen);
 	}
 
@@ -2995,20 +2936,17 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 			{
 				break;
 			}
-			if (Characters.isNonWhiteSpace(value, st))
+			IIntPredicate nonWhiteSpace = (int pos) -> Characters.isNonWhiteSpace(value, pos);
+			if (nonWhiteSpace.check(st))
 			{
 				for (;;)
 				{
 					int len1 = len - 1;
-					if (Characters.isNonWhiteSpace(value, len1))
+					if (nonWhiteSpace.check(len1))
 					{
 						break;
 					}
 					len = len1;
-					if (st == len)
-					{
-						break;
-					}
 				}
 				break;
 			}

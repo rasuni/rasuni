@@ -723,7 +723,7 @@ public final class System
 	 */
 	public static String getProperty(String key)
 	{
-		rasuni.java.lang.System.checkKey(key);
+		rasuni.java.lang.SystemUtil.checkKey(key);
 		SecurityManager sm = security;
 		if (sm != null)
 		{
@@ -756,14 +756,14 @@ public final class System
 	 * @exception  IllegalArgumentException if <code>key</code> is empty.
 	 * @see        #getProperty
 	 * @see        java.lang.System#getProperty(java.lang.String)
-	 * @see        rasuni.java.lang.System#getProperty(java.lang.String, SecurityManager, Properties, java.lang.String)
+	 * @see        rasuni.java.lang.SystemUtil#getProperty(java.lang.String, SecurityManager, Properties, java.lang.String)
 	 * @see        java.util.PropertyPermission
 	 * @see        SecurityManager#checkPermission
 	 * @since      1.2
 	 */
 	public static String setProperty(String key, String value)
 	{
-		rasuni.java.lang.System.checkKey(key);
+		rasuni.java.lang.SystemUtil.checkKey(key);
 		SecurityManager sm = security;
 		if (sm != null)
 		{
@@ -801,7 +801,7 @@ public final class System
 	 */
 	public static String clearProperty(String key)
 	{
-		rasuni.java.lang.System.checkKey(key);
+		rasuni.java.lang.SystemUtil.checkKey(key);
 		SecurityManager sm = security;
 		if (sm != null)
 		{
@@ -1300,7 +1300,7 @@ public final class System
 	 */
 	public static String getProperty(String key, String def)
 	{
-		return rasuni.java.lang.System.getProperty(key, security, props, def);
+		return rasuni.java.lang.SystemUtil.getProperty(key, security, props, def);
 	}
 
 	/**

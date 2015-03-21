@@ -12,11 +12,14 @@ public final class Strings
 		// disallow construction
 	}
 
-	private static final IFunction VALUE = Classes.getter(String.class, "value");
+	/**
+	 * The value getter
+	 */
+	public static final IFunction VALUE = Classes.getter(String.class, "value");
 
-	private static boolean compare(String string, IPredicate lengthMatches, IOffset offset, char[] value)
+	static boolean compare(String string, IPredicate lengthMatches, IIntFunction offset, char[] value)
 	{
-		char[] pa = VALUE.apply(string);
+		char[] pa = string.value;
 		int pc = pa.length;
 		if (lengthMatches.check(offset.apply(pc), value.length))
 		{
@@ -40,7 +43,7 @@ public final class Strings
 		}
 	}
 
-	private static boolean startsWith(String prefix, IOffset offset, char[] value)
+	private static boolean startsWith(String prefix, IIntFunction offset, char[] value)
 	{
 		return compare(prefix, (l1, l2) -> l1 <= l2, offset, value);
 	}
@@ -84,7 +87,7 @@ public final class Strings
 	 */
 	public static boolean startsWith(String prefix, String string)
 	{
-		return startsWith(prefix, pos -> pos, VALUE.apply(string));
+		return startsWith(prefix, Integers::identity, VALUE.apply(string));
 	}
 
 	/**
@@ -103,6 +106,6 @@ public final class Strings
 	 */
 	public static boolean equals(String string, Object anObject)
 	{
-		return anObject instanceof String && compare(string, (l1, l2) -> l1 == l2, pos -> pos, VALUE.apply((String) anObject));
+		return anObject instanceof String && compare(string, (l1, l2) -> l1 == l2, Integers::identity, ((String) anObject).value);
 	}
 }

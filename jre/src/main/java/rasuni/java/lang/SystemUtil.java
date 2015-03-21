@@ -6,9 +6,9 @@ import java.util.Properties;
  * The system utilities
  *
  */
-public final class System
+public final class SystemUtil
 {
-	private System()
+	private SystemUtil()
 	{
 		// do not allow creation
 	}
@@ -23,8 +23,7 @@ public final class System
 		{
 			throw new NullPointerException("key can't be null");
 		}
-		boolean equals = key.equals("");
-		if (equals)
+		if (Strings.VALUE.apply(key).length == 0)
 		{
 			throw new IllegalArgumentException("key can't be empty");
 		}

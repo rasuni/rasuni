@@ -1927,7 +1927,7 @@ public abstract class ClassLoader
 
 	private static String[] initializePath(String propname)
 	{
-		String ldpath = rasuni.java.lang.System.getProperty(propname, System.security, System.props, "");
+		String ldpath = rasuni.java.lang.SystemUtil.getProperty(propname, System.security, System.props, "");
 		String ps = File.pathSeparator;
 		int ldlen = ldpath.length();
 		int i, j, n;

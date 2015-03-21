@@ -89,9 +89,9 @@ public interface CharSequence
 	 */
 	public default IntStream chars()
 	{
-		class CharIterator implements PrimitiveIterator.OfInt
+		return StreamSupport.intStream(() -> Spliterators.spliterator(new PrimitiveIterator.OfInt()
 		{
-			int cur = 0;
+			private int cur = 0;
 
 			@Override
 			public boolean hasNext()
@@ -120,8 +120,7 @@ public interface CharSequence
 					block.accept(charAt(cur));
 				}
 			}
-		}
-		return StreamSupport.intStream(() -> Spliterators.spliterator(new CharIterator(), length(), Spliterator.ORDERED), Spliterator.SUBSIZED | Spliterator.SIZED | Spliterator.ORDERED, false);
+		}, length(), Spliterator.ORDERED), Spliterator.SUBSIZED | Spliterator.SIZED | Spliterator.ORDERED, false);
 	}
 
 	/**
@@ -142,7 +141,7 @@ public interface CharSequence
 	{
 		class CodePointIterator implements PrimitiveIterator.OfInt
 		{
-			int cur = 0;
+			private int cur = 0;
 
 			@Override
 			public void forEachRemaining(IntConsumer block)
