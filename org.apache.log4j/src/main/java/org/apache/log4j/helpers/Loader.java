@@ -17,9 +17,12 @@
 package org.apache.log4j.helpers;
 
 import java.io.InterruptedIOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Properties;
+import rasuni.java.lang.reflect.Fields;
 
 /**
    Load resources (or images) from various sources.
@@ -39,7 +42,18 @@ public class Loader
 	public static boolean ignoreTCL = false;
 	static
 	{
-		String prop = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("java.version", System.security, System.props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+		Properties props;
+		try
+		{
+			Field propsField = System.class.getDeclaredField("props");
+			propsField.setAccessible(true);
+			props = Fields.get(propsField, null);
+		}
+		catch (NoSuchFieldException e)
+		{
+			throw new RuntimeException(e);
+		}
+		String prop = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("java.version", System.getSecurityManager(), props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		if (prop != null)
 		{
 			int i = prop.indexOf('.');
@@ -51,7 +65,7 @@ public class Loader
 				}
 			}
 		}
-		String ignoreTCLProp = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("log4j.ignoreTCL", System.security, System.props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+		String ignoreTCLProp = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("log4j.ignoreTCL", System.getSecurityManager(), props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		if (ignoreTCLProp != null)
 		{
 			ignoreTCL = OptionConverter.toBoolean(ignoreTCLProp, true);
@@ -112,7 +126,7 @@ public class Loader
 			}
 			// We could not find resource. Ler us now try with the
 			// classloader that loaded this class.
-			classLoader = Loader.class.getClassLoader();
+			classLoader = Loader.class.getClassLoader(System.security);
 			if (classLoader != null)
 			{
 				rasuni.org.apache.log4j.helpers.LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Trying to find [" + resource + "] using " + classLoader + " class loader.");
