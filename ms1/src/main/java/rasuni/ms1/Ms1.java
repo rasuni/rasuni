@@ -15,6 +15,6 @@ public class Ms1 // NO_UCD (unused code)
 	 */
 	public static void main(String[] args)
 	{
-		TitanCollector.run("ms1", true, new String[] { "\\\\MUSIKSERVER", "Musik" });
+		TitanCollector.run(System.security, System.props, "ms1", true, new String[] { "\\\\MUSIKSERVER", "Musik" });
 	}
 }
