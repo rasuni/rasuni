@@ -34,8 +34,8 @@
 		</dependency>
 		<dependency>
 			<groupId>rasuni</groupId>
-			<artifactId>jre</artifactId>
-			<version>0.0.5</version>
+			<artifactId>rt</artifactId>
+			<version>0.0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>rasuni</groupId>
