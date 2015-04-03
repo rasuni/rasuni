@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -40,6 +40,34 @@ import rasuni.java.lang.Strings;
  */
 public final class OptionConverter
 {
+	private static final char UPPER_CASE_S = Character.toUpperCase('s');
+
+	private static final char LOWER_CASE_S = Character.toLowerCase(UPPER_CASE_S);
+
+	private static final char UPPER_CASE_L = Character.toUpperCase('l');
+
+	private static final char LOWER_CASE_L = Character.toLowerCase(UPPER_CASE_L);
+
+	private static final char UPPER_CASE_A = Character.toUpperCase('a');
+
+	private static final char LOWER_CASE_A = Character.toLowerCase(UPPER_CASE_A);
+
+	private static final char UPPER_CASE_F = Character.toUpperCase('f');
+
+	private static final char LOWER_CASE_F = Character.toLowerCase(UPPER_CASE_F);
+
+	private static final char UPPER_CASE_T = Character.toUpperCase('t');
+
+	private static final char LOWER_CASE_T = Character.toLowerCase(UPPER_CASE_T);
+
+	private static final char UPPER_CASE_R = Character.toUpperCase('r');
+
+	private static final char LOWER_CASE_R = Character.toLowerCase(UPPER_CASE_R);
+
+	private static final char UPPER_CASE_U = Character.toUpperCase('u');
+
+	private static final char LOWER_CASE_U = Character.toLowerCase(UPPER_CASE_U);
+
 	private static final char UPPER_CASE_E = Character.toUpperCase('e');
 
 	private static final char LOWER_CASE_E = Character.toLowerCase(UPPER_CASE_E);
@@ -86,23 +114,107 @@ public final class OptionConverter
 				final char pa[] = value.value;
 				if (pa.length == 4)
 				{
-					final char c = pa[3];
-					if (c == UPPER_CASE_E || c == LOWER_CASE_E)
+					final char u3 = Characters.toUpperCase(pa, 3);
+					if (u3 == UPPER_CASE_E || Character.toLowerCase(u3) == LOWER_CASE_E)
 					{
-						char c2 = pa[2];
-						if ('u' != c2)
+						// If characters don't match but case may be ignored,
+						// try converting both characters to uppercase.
+						// If the results match, then the comparison scan should
+						// continue.
+						final char u21 = Characters.toUpperCase(pa, 2);
+						// Unfortunately, conversion to uppercase does not work properly
+						// for the Georgian alphabet, which has strange rules about case
+						// conversion. So we need to make one last check before
+						// exiting.
+						if (u21 == UPPER_CASE_U || Character.toLowerCase(u21) == LOWER_CASE_U)
 						{
 							// If characters don't match but case may be ignored,
 							// try converting both characters to uppercase.
 							// If the results match, then the comparison scan should
 							// continue.
-							char u1 = Character.toUpperCase('u');
-							char u2 = Character.toUpperCase(c2);
+							final char u211 = Characters.toUpperCase(pa, 1);
 							// Unfortunately, conversion to uppercase does not work properly
 							// for the Georgian alphabet, which has strange rules about case
 							// conversion. So we need to make one last check before
 							// exiting.
-							if (u1 != u2 || Character.toLowerCase(u1) != Character.toLowerCase(u2))
+							if (u211 == UPPER_CASE_R || Character.toLowerCase(u211) == LOWER_CASE_R)
+							{
+								// If characters don't match but case may be ignored,
+								// try converting both characters to uppercase.
+								// If the results match, then the comparison scan should
+								// continue.
+								char u22 = Characters.toUpperCase(pa, 0);
+								// Unfortunately, conversion to uppercase does not work properly
+								// for the Georgian alphabet, which has strange rules about case
+								// conversion. So we need to make one last check before
+								// exiting.
+								if (UPPER_CASE_T != u22 || LOWER_CASE_T != Character.toLowerCase(u22))
+								{
+									int length = 5;
+									if (pa.length == length)
+									{
+										// Note: toffset, ooffset, or len might be near -1>>>1.
+										while (length != 0)
+										{
+											length--;
+											// If characters don't match but case may be ignored,
+											// try converting both characters to uppercase.
+											// If the results match, then the comparison scan should
+											// continue.
+											final char u2 = Characters.toUpperCase(pa, length);
+											// Unfortunately, conversion to uppercase does not work properly
+											// for the Georgian alphabet, which has strange rules about case
+											// conversion. So we need to make one last check before
+											// exiting.
+											switch (length)
+											{
+											case 0:
+												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_F, LOWER_CASE_F))
+												{
+													return false;
+												}
+												break;
+											case 1:
+												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_A, LOWER_CASE_A))
+												{
+													return false;
+												}
+												break;
+											case 2:
+												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_L, LOWER_CASE_L))
+												{
+													return false;
+												}
+												break;
+											case 3:
+												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_S, LOWER_CASE_S))
+												{
+													return false;
+												}
+												break;
+											case 4:
+												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_E, LOWER_CASE_E))
+												{
+													return false;
+												}
+												break;
+											default:
+												throw new ArrayIndexOutOfBoundsException();
+											}
+										}
+										return true;
+									}
+									else
+									{
+										return false;
+									}
+								}
+								else
+								{
+									return true;
+								}
+							}
+							else
 							{
 								if ("false".equalsIgnoreCase(value))
 								{
@@ -114,61 +226,17 @@ public final class OptionConverter
 								}
 							}
 						}
-						int length = 1;
-						char c1 = "true".value[length];
-						c2 = pa[length];
-						if (c1 != c2)
+						else
 						{
-							// If characters don't match but case may be ignored,
-							// try converting both characters to uppercase.
-							// If the results match, then the comparison scan should
-							// continue.
-							char u1 = Character.toUpperCase(c1);
-							char u2 = Character.toUpperCase(c2);
-							// Unfortunately, conversion to uppercase does not work properly
-							// for the Georgian alphabet, which has strange rules about case
-							// conversion. So we need to make one last check before
-							// exiting.
-							if (u1 != u2 || Character.toLowerCase(u1) != Character.toLowerCase(u2))
+							if ("false".equalsIgnoreCase(value))
 							{
-								if ("false".equalsIgnoreCase(value))
-								{
-									return false;
-								}
-								else
-								{
-									return dEfault;
-								}
+								return false;
+							}
+							else
+							{
+								return dEfault;
 							}
 						}
-						length = 0;
-						c1 = "true".value[length];
-						c2 = pa[length];
-						if (c1 != c2)
-						{
-							// If characters don't match but case may be ignored,
-							// try converting both characters to uppercase.
-							// If the results match, then the comparison scan should
-							// continue.
-							char u1 = Character.toUpperCase(c1);
-							char u2 = Character.toUpperCase(c2);
-							// Unfortunately, conversion to uppercase does not work properly
-							// for the Georgian alphabet, which has strange rules about case
-							// conversion. So we need to make one last check before
-							// exiting.
-							if (u1 != u2 || Character.toLowerCase(u1) != Character.toLowerCase(u2))
-							{
-								if ("false".equalsIgnoreCase(value))
-								{
-									return false;
-								}
-								else
-								{
-									return dEfault;
-								}
-							}
-						}
-						return true;
 					}
 					else
 					{
