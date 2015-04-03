@@ -1,5 +1,6 @@
 rasuni.listold.ListOld.main
-org.apache.log4j.helpers.OptionConverter.getSystemProperty
 
-org.apache.log4j.helpers.LogLog.debug
+org.apache.log4j.helpers.OptionConverter.getSystemProperty
+org.apache.log4j.helpers.LogLog.debug(boolean, boolean, java.io.PrintStream, Provider<String>)
+
 
