@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * contributor license agreements. See the NOTICE file distributed with this
+ * work for additional information regarding copyright ownership. The ASF
+ * licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.log4j.helpers;
 
@@ -23,16 +23,20 @@ import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.spi.Configurator;
 import org.apache.log4j.spi.LoggerRepository;
+import rasuni.java.lang.Characters;
+import rasuni.java.lang.IIntPredicate;
+import rasuni.java.lang.Integers;
+import rasuni.java.lang.Strings;
 
 // Contributors:   Avy Sharell (sharell@online.fr)
 //                 Matthieu Verbert (mve@zurich.ibm.com)
 //                 Colin Sampaleanu
 /**
-   A convenience class to convert property values to specific types.
-
-   @author Ceki G&uuml;lc&uuml;
-   @author Simon Kitching;
-   @author Anders Kristensen
+ * A convenience class to convert property values to specific types.
+ *
+ * @author Ceki G&uuml;lc&uuml;
+ * @author Simon Kitching;
+ * @author Anders Kristensen
  */
 public final class OptionConverter
 {
@@ -50,31 +54,128 @@ public final class OptionConverter
 	}
 
 	/**
-	   If <code>value</code> is "true", then <code>true</code> is
-	   returned. If <code>value</code> is "false", then
-	   <code>true</code> is returned. Otherwise, <code>default</code> is
-	   returned.
-
-	   <p>Case of value is unimportant.
-	 * @param value the value to convert
-	 * @param dEfault the default value
-	 * @return the converted value*/
+	 * If <code>value</code> is "true", then <code>true</code> is returned. If
+	 * <code>value</code> is "false", then <code>true</code> is returned.
+	 * Otherwise, <code>default</code> is returned.
+	 *
+	 * <p>
+	 * Case of value is unimportant.
+	 *
+	 * @param value
+	 *            the value to convert
+	 * @param dEfault
+	 *            the default value
+	 * @return the converted value
+	 */
 	public static boolean toBoolean(String value, boolean dEfault)
 	{
 		if (value == null)
 		{
 			return dEfault;
 		}
-		String trimmedVal = value.trim();
-		if ("true".equalsIgnoreCase(trimmedVal))
+		else
 		{
-			return true;
+			final char[] v = value.value;
+			final int vlen = v.length;
+			if (vlen == 0)
+			{
+				if ("true".equalsIgnoreCase(value))
+				{
+					return true;
+				}
+				if ("false".equalsIgnoreCase(value))
+				{
+					return false;
+				}
+				return dEfault;
+			}
+			else
+			{
+				IIntPredicate nonWhiteSpace = (int pos) -> Characters.isNonWhiteSpace(v, pos);
+				if (nonWhiteSpace.check(0))
+				{
+					int len1 = Integers.predecessor(vlen);
+					if (nonWhiteSpace.check(len1))
+					{
+						String trimmedVal = value;
+						if ("true".equalsIgnoreCase(trimmedVal))
+						{
+							return true;
+						}
+						if ("false".equalsIgnoreCase(trimmedVal))
+						{
+							return false;
+						}
+						return dEfault;
+					}
+					else
+					{
+						for (;;)
+						{
+							final int len = len1;
+							len1--;
+							if (nonWhiteSpace.check(len1))
+							{
+								String trimmedVal = Strings.copyOfRange(v, 0, len);
+								if ("true".equalsIgnoreCase(trimmedVal))
+								{
+									return true;
+								}
+								if ("false".equalsIgnoreCase(trimmedVal))
+								{
+									return false;
+								}
+								return dEfault;
+							}
+						}
+					}
+				}
+				else
+				{
+					int st = 1;
+					for (;;)
+					{
+						if (st == vlen)
+						{
+							String trimmedVal = Strings.copyOfRange(v, st, vlen);
+							if ("true".equalsIgnoreCase(trimmedVal))
+							{
+								return true;
+							}
+							if ("false".equalsIgnoreCase(trimmedVal))
+							{
+								return false;
+							}
+							return dEfault;
+						}
+						if (nonWhiteSpace.check(st))
+						{
+							int len = vlen;
+							for (;;)
+							{
+								final int len1 = Integers.predecessor(len);
+								if (nonWhiteSpace.check(len1))
+								{
+									break;
+								}
+								len = len1;
+							}
+							String trimmedVal = Strings.copyOfRange(v, st, len);
+							if ("true".equalsIgnoreCase(trimmedVal))
+							{
+								return true;
+							}
+							if ("false".equalsIgnoreCase(trimmedVal))
+							{
+								return false;
+							}
+							return dEfault;
+						}
+						st++;
+					}
+				}
+			}
 		}
-		if ("false".equalsIgnoreCase(trimmedVal))
-		{
-			return false;
-		}
-		return dEfault;
 	}
 
 	@SuppressWarnings("javadoc")
@@ -97,25 +198,28 @@ public final class OptionConverter
 	}
 
 	/**
-	   Converts a standard or custom priority level to a Level
-	   object.  <p> If <code>value</code> is of form
-	   "level#classname", then the specified class' toLevel method
-	   is called to process the specified level string; if no '#'
-	   character is present, then the default {@link org.apache.log4j.Level}
-	   class is used to process the level value.
-
-	   <p>As a special case, if the <code>value</code> parameter is
-	   equal to the string "NULL", then the value <code>null</code> will
-	   be returned.
-
-	   <p> If any error occurs while converting the value to a level,
-	   the <code>defaultValue</code> parameter, which may be
-	   <code>null</code>, is returned.
-
-	   <p> Case of <code>value</code> is insignificant for the level level, but is
-	   significant for the class name part, if present.
-
-	   @since 1.1 */
+	 * Converts a standard or custom priority level to a Level object.
+	 * <p>
+	 * If <code>value</code> is of form "level#classname", then the specified
+	 * class' toLevel method is called to process the specified level string; if
+	 * no '#' character is present, then the default
+	 * {@link org.apache.log4j.Level} class is used to process the level value.
+	 *
+	 * <p>
+	 * As a special case, if the <code>value</code> parameter is equal to the
+	 * string "NULL", then the value <code>null</code> will be returned.
+	 *
+	 * <p>
+	 * If any error occurs while converting the value to a level, the
+	 * <code>defaultValue</code> parameter, which may be <code>null</code>, is
+	 * returned.
+	 *
+	 * <p>
+	 * Case of <code>value</code> is insignificant for the level level, but is
+	 * significant for the class name part, if present.
+	 *
+	 * @since 1.1
+	 */
 	@SuppressWarnings({ "rawtypes", "javadoc" })
 	public static Level toLevel(String value, Level defaultValue)
 	{
@@ -231,10 +335,8 @@ public final class OptionConverter
 	}
 
 	/**
-	   Find the value corresponding to <code>key</code> in
-	   <code>props</code>. Then perform variable substitution on the
-	   found value.
-
+	 * Find the value corresponding to <code>key</code> in <code>props</code>.
+	 * Then perform variable substitution on the found value.
 	 */
 	@SuppressWarnings("javadoc")
 	public static String findAndSubst(String key, Properties props)
@@ -256,14 +358,17 @@ public final class OptionConverter
 	}
 
 	/**
-	   Instantiate an object given a class name. Check that the
-	   <code>className</code> is a subclass of
-	   <code>superClass</code>. If that test fails or the object could
-	   not be instantiated, then <code>defaultValue</code> is returned.
-
-	   @param className The fully qualified class name of the object to instantiate.
-	   @param superClass The class to which the new object should belong.
-	   @param defaultValue The object to return in case of non-fulfillment
+	 * Instantiate an object given a class name. Check that the
+	 * <code>className</code> is a subclass of <code>superClass</code>. If that
+	 * test fails or the object could not be instantiated, then
+	 * <code>defaultValue</code> is returned.
+	 *
+	 * @param className
+	 *            The fully qualified class name of the object to instantiate.
+	 * @param superClass
+	 *            The class to which the new object should belong.
+	 * @param defaultValue
+	 *            The object to return in case of non-fulfillment
 	 */
 	@SuppressWarnings({ "javadoc", "rawtypes", "unchecked" })
 	public static Object instantiateByClassName(String className, Class superClass, Object defaultValue)
@@ -277,8 +382,8 @@ public final class OptionConverter
 				{
 					LogLog.error("A \"" + className + "\" object is not assignable to a \"" + superClass.getName() + "\" variable.");
 					LogLog.error("The class \"" + superClass.getName() + "\" was loaded by ");
-					LogLog.error("[" + superClass.getClassLoader() + "] whereas object of type ");
-					LogLog.error("\"" + classObj.getName() + "\" was loaded by [" + classObj.getClassLoader() + "].");
+					LogLog.error("[" + superClass.getClassLoader(System.security) + "] whereas object of type ");
+					LogLog.error("\"" + classObj.getName() + "\" was loaded by [" + classObj.getClassLoader(System.security) + "].");
 					return defaultValue;
 				}
 				return classObj.newInstance();
@@ -304,40 +409,50 @@ public final class OptionConverter
 	}
 
 	/**
-	   Perform variable substitution in string <code>val</code> from the
-	   values of keys found in the system propeties.
-
-	   <p>The variable substitution delimeters are <b>${</b> and <b>}</b>.
-
-	   <p>For example, if the System properties contains "key=value", then
-	   the call
-	   <pre>
-	   String s = OptionConverter.substituteVars("Value of key is ${key}.");
-	   </pre>
-
-	   will set the variable <code>s</code> to "Value of key is value.".
-
-	   <p>If no value could be found for the specified key, then the
-	   <code>props</code> parameter is searched, if the value could not
-	   be found there, then substitution defaults to the empty string.
-
-	   <p>For example, if system propeties contains no value for the key
-	   "inexistentKey", then the call
-
-	   <pre>
-	   String s = OptionConverter.subsVars("Value of inexistentKey is [${inexistentKey}]");
-	   </pre>
-	   will set <code>s</code> to "Value of inexistentKey is []"
-
-	   <p>An {@link java.lang.IllegalArgumentException} is thrown if
-	   <code>val</code> contains a start delimeter "${" which is not
-	   balanced by a stop delimeter "}". </p>
-
-	   <p><b>Author</b> Avy Sharell</a></p>
-
-	   @param val The string on which variable substitution is performed.
-	   @throws IllegalArgumentException if <code>val</code> is malformed.
-
+	 * Perform variable substitution in string <code>val</code> from the values
+	 * of keys found in the system propeties.
+	 *
+	 * <p>
+	 * The variable substitution delimeters are <b>${</b> and <b>}</b>.
+	 *
+	 * <p>
+	 * For example, if the System properties contains "key=value", then the call
+	 *
+	 * <pre>
+	 * String s = OptionConverter.substituteVars(&quot;Value of key is ${key}.&quot;);
+	 * </pre>
+	 *
+	 * will set the variable <code>s</code> to "Value of key is value.".
+	 *
+	 * <p>
+	 * If no value could be found for the specified key, then the
+	 * <code>props</code> parameter is searched, if the value could not be found
+	 * there, then substitution defaults to the empty string.
+	 *
+	 * <p>
+	 * For example, if system propeties contains no value for the key
+	 * "inexistentKey", then the call
+	 *
+	 * <pre>
+	 * String s = OptionConverter.subsVars(&quot;Value of inexistentKey is [${inexistentKey}]&quot;);
+	 * </pre>
+	 *
+	 * will set <code>s</code> to "Value of inexistentKey is []"
+	 *
+	 * <p>
+	 * An {@link java.lang.IllegalArgumentException} is thrown if
+	 * <code>val</code> contains a start delimeter "${" which is not balanced by
+	 * a stop delimeter "}".
+	 * </p>
+	 *
+	 * <p>
+	 * <b>Author</b> Avy Sharell</a>
+	 * </p>
+	 *
+	 * @param val
+	 *            The string on which variable substitution is performed.
+	 * @throws IllegalArgumentException
+	 *             if <code>val</code> is malformed.
 	 */
 	@SuppressWarnings("javadoc")
 	public static String substVars(String val, Properties props) throws IllegalArgumentException
@@ -398,25 +513,32 @@ public final class OptionConverter
 	}
 
 	/**
-	   Configure log4j given a URL.
-
-	   <p>The url must point to a file or resource which will be interpreted by
-	   a new instance of a log4j configurator.
-
-	   <p>All configurations steps are taken on the
-	   <code>hierarchy</code> passed as a parameter.
-
-	   <p>
-	   @param url The location of the configuration file or resource.
-	   @param clazz The classname, of the log4j configurator which will parse
-	   the file or resource at <code>url</code>. This must be a subclass of
-	   {@link Configurator}, or null. If this value is null then a default
-	   configurator of {@link PropertyConfigurator} is used, unless the
-	   filename pointed to by <code>url</code> ends in '.xml', in which case
-	   {@link org.apache.log4j.xml.DOMConfigurator} is used.
-	   @param hierarchy The {@link org.apache.log4j.Hierarchy} to act on.
-
-	   @since 1.1.4 */
+	 * Configure log4j given a URL.
+	 *
+	 * <p>
+	 * The url must point to a file or resource which will be interpreted by a
+	 * new instance of a log4j configurator.
+	 *
+	 * <p>
+	 * All configurations steps are taken on the <code>hierarchy</code> passed
+	 * as a parameter.
+	 *
+	 * <p>
+	 *
+	 * @param url
+	 *            The location of the configuration file or resource.
+	 * @param clazz
+	 *            The classname, of the log4j configurator which will parse the
+	 *            file or resource at <code>url</code>. This must be a subclass
+	 *            of {@link Configurator}, or null. If this value is null then a
+	 *            default configurator of {@link PropertyConfigurator} is used,
+	 *            unless the filename pointed to by <code>url</code> ends in
+	 *            '.xml', in which case
+	 *            {@link org.apache.log4j.xml.DOMConfigurator} is used.
+	 * @param hierarchy
+	 *            The {@link org.apache.log4j.Hierarchy} to act on.
+	 * @since 1.1.4
+	 */
 	static public void selectAndConfigure(URL url, String clazz, LoggerRepository hierarchy)
 	{
 		Configurator configurator = null;
