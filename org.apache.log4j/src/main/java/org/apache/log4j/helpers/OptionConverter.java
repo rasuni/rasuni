@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -40,6 +40,10 @@ import rasuni.java.lang.Strings;
  */
 public final class OptionConverter
 {
+	private static final char UPPER_CASE_E = Character.toUpperCase('e');
+
+	private static final char LOWER_CASE_E = Character.toLowerCase(UPPER_CASE_E);
+
 	private static String DELIM_START = "${";
 
 	private static char DELIM_STOP = '}';
@@ -79,15 +83,116 @@ public final class OptionConverter
 			final int vlen = v.length;
 			if (vlen == 0)
 			{
-				if ("true".equalsIgnoreCase(value))
+				final char pa[] = value.value;
+				if (pa.length == 4)
 				{
-					return true;
+					final char c = pa[3];
+					if (c == UPPER_CASE_E || c == LOWER_CASE_E)
+					{
+						char c2 = pa[2];
+						if ('u' != c2)
+						{
+							// If characters don't match but case may be ignored,
+							// try converting both characters to uppercase.
+							// If the results match, then the comparison scan should
+							// continue.
+							char u1 = Character.toUpperCase('u');
+							char u2 = Character.toUpperCase(c2);
+							// Unfortunately, conversion to uppercase does not work properly
+							// for the Georgian alphabet, which has strange rules about case
+							// conversion. So we need to make one last check before
+							// exiting.
+							if (u1 != u2 || Character.toLowerCase(u1) != Character.toLowerCase(u2))
+							{
+								if ("false".equalsIgnoreCase(value))
+								{
+									return false;
+								}
+								else
+								{
+									return dEfault;
+								}
+							}
+						}
+						int length = 1;
+						char c1 = "true".value[length];
+						c2 = pa[length];
+						if (c1 != c2)
+						{
+							// If characters don't match but case may be ignored,
+							// try converting both characters to uppercase.
+							// If the results match, then the comparison scan should
+							// continue.
+							char u1 = Character.toUpperCase(c1);
+							char u2 = Character.toUpperCase(c2);
+							// Unfortunately, conversion to uppercase does not work properly
+							// for the Georgian alphabet, which has strange rules about case
+							// conversion. So we need to make one last check before
+							// exiting.
+							if (u1 != u2 || Character.toLowerCase(u1) != Character.toLowerCase(u2))
+							{
+								if ("false".equalsIgnoreCase(value))
+								{
+									return false;
+								}
+								else
+								{
+									return dEfault;
+								}
+							}
+						}
+						length = 0;
+						c1 = "true".value[length];
+						c2 = pa[length];
+						if (c1 != c2)
+						{
+							// If characters don't match but case may be ignored,
+							// try converting both characters to uppercase.
+							// If the results match, then the comparison scan should
+							// continue.
+							char u1 = Character.toUpperCase(c1);
+							char u2 = Character.toUpperCase(c2);
+							// Unfortunately, conversion to uppercase does not work properly
+							// for the Georgian alphabet, which has strange rules about case
+							// conversion. So we need to make one last check before
+							// exiting.
+							if (u1 != u2 || Character.toLowerCase(u1) != Character.toLowerCase(u2))
+							{
+								if ("false".equalsIgnoreCase(value))
+								{
+									return false;
+								}
+								else
+								{
+									return dEfault;
+								}
+							}
+						}
+						return true;
+					}
+					else
+					{
+						if ("false".equalsIgnoreCase(value))
+						{
+							return false;
+						}
+						else
+						{
+							return dEfault;
+						}
+					}
 				}
-				if ("false".equalsIgnoreCase(value))
+				else
 				{
-					return false;
+					if ("false".equalsIgnoreCase(value))
+					{
+						return false;
+					}
+					else
+					{
+						return dEfault;
+					}
 				}
-				return dEfault;
 			}
 			else
 			{
