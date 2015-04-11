@@ -18,7 +18,12 @@ public final class Strings
 	/**
 	 * The value getter
 	 */
-	public static final IFunction<char[], String> VALUE = Classes.getter(String.class, "value");
+	public static final IFunction<char[], String> VALUE;
+	static
+	{
+		//VALUE = str -> str.value;
+		VALUE = Classes.getter(String.class, "value");
+	}
 
 	private static final Constructor<String> CONSTRUCTOR;
 	static
