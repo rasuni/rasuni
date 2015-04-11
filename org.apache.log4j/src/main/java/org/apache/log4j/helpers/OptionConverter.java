@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -51,10 +51,6 @@ public final class OptionConverter
 	private static final char UPPER_CASE_A = Character.toUpperCase('a');
 
 	private static final char LOWER_CASE_A = Character.toLowerCase(UPPER_CASE_A);
-
-	private static final char UPPER_CASE_F = Character.toUpperCase('f');
-
-	private static final char LOWER_CASE_F = Character.toLowerCase(UPPER_CASE_F);
 
 	private static final char UPPER_CASE_T = Character.toUpperCase('t');
 
@@ -143,64 +139,55 @@ public final class OptionConverter
 								// try converting both characters to uppercase.
 								// If the results match, then the comparison scan should
 								// continue.
-								char u22 = Characters.toUpperCase(pa, 0);
+								final char u22 = Characters.toUpperCase(pa, 0);
 								// Unfortunately, conversion to uppercase does not work properly
 								// for the Georgian alphabet, which has strange rules about case
 								// conversion. So we need to make one last check before
 								// exiting.
 								if (UPPER_CASE_T != u22 || LOWER_CASE_T != Character.toLowerCase(u22))
 								{
-									int length = 5;
+									final int length = 5;
 									if (pa.length == length)
 									{
 										// Note: toffset, ooffset, or len might be near -1>>>1.
-										while (length != 0)
+										switch (length)
 										{
-											length--;
-											// If characters don't match but case may be ignored,
-											// try converting both characters to uppercase.
-											// If the results match, then the comparison scan should
-											// continue.
-											final char u2 = Characters.toUpperCase(pa, length);
-											// Unfortunately, conversion to uppercase does not work properly
-											// for the Georgian alphabet, which has strange rules about case
-											// conversion. So we need to make one last check before
-											// exiting.
-											switch (length)
+										case 0:
+											break;
+										case 1:
+											if (Characters.noMatchIgnoreCase0F(pa))
 											{
-											case 0:
-												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_F, LOWER_CASE_F))
-												{
-													return false;
-												}
-												break;
-											case 1:
-												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_A, LOWER_CASE_A))
-												{
-													return false;
-												}
-												break;
-											case 2:
-												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_L, LOWER_CASE_L))
-												{
-													return false;
-												}
-												break;
-											case 3:
-												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_S, LOWER_CASE_S))
-												{
-													return false;
-												}
-												break;
-											case 4:
-												if (Characters.noMatchIgnoreCase(u2, UPPER_CASE_E, LOWER_CASE_E))
-												{
-													return false;
-												}
-												break;
-											default:
-												throw new ArrayIndexOutOfBoundsException();
+												return false;
 											}
+											break;
+										case 2:
+											if (Characters.noMatchIgnoreCase(pa, 1, UPPER_CASE_A, LOWER_CASE_A) || Characters.noMatchIgnoreCase0F(pa))
+											{
+												return false;
+											}
+											break;
+										case 3:
+											if (Characters.noMatchIgnoreCase(pa, 2, UPPER_CASE_L, LOWER_CASE_L) || Characters.noMatchIgnoreCase(pa, 1, UPPER_CASE_A, LOWER_CASE_A) || Characters.noMatchIgnoreCase0F(pa))
+											{
+												return false;
+											}
+											break;
+										case 4:
+											if (Characters.noMatchIgnoreCase(pa, 3, UPPER_CASE_S, LOWER_CASE_S) || Characters.noMatchIgnoreCase(pa, 2, UPPER_CASE_L, LOWER_CASE_L) || Characters.noMatchIgnoreCase(pa, 1, UPPER_CASE_A, LOWER_CASE_A)
+													|| Characters.noMatchIgnoreCase0F(pa))
+											{
+												return false;
+											}
+											break;
+										case 5:
+											if (Characters.noMatchIgnoreCase(pa, 4, UPPER_CASE_E, LOWER_CASE_E) || Characters.noMatchIgnoreCase(pa, 3, UPPER_CASE_S, LOWER_CASE_S) || Characters.noMatchIgnoreCase(pa, 2, UPPER_CASE_L, LOWER_CASE_L)
+													|| Characters.noMatchIgnoreCase(pa, 1, UPPER_CASE_A, LOWER_CASE_A) || Characters.noMatchIgnoreCase0F(pa))
+											{
+												return false;
+											}
+											break;
+										default:
+											throw new ArrayIndexOutOfBoundsException();
 										}
 										return true;
 									}
