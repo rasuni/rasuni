@@ -40,10 +40,6 @@ import rasuni.java.lang.Strings;
  */
 public final class OptionConverter
 {
-	private static final char UPPER_CASE_S = Character.toUpperCase('s');
-
-	private static final char LOWER_CASE_S = Character.toLowerCase(UPPER_CASE_S);
-
 	private static final char UPPER_CASE_T = Character.toUpperCase('t');
 
 	private static final char LOWER_CASE_T = Character.toLowerCase(UPPER_CASE_T);
@@ -145,41 +141,36 @@ public final class OptionConverter
 										switch (length)
 										{
 										case 0:
-											break;
+											return true;
 										case 1:
-											if (Characters.noMatchIgnoreCase0F(pa))
-											{
-												return false;
-											}
-											break;
+											return Characters.matchIgnoreCase0F(pa, (b1, b2) -> (b1 || b2.get()), (ch1, ch2) -> ch1 == ch2);
 										case 2:
 											if (Characters.noMatchIgnoreCase0Fa(pa))
 											{
 												return false;
 											}
-											break;
+											return true;
 										case 3:
 											if (Characters.noMatchIgnoreCase0Fal(pa))
 											{
 												return false;
 											}
-											break;
+											return true;
 										case 4:
-											if (Characters.noMatchIgnoreCase(pa, 3, UPPER_CASE_S, LOWER_CASE_S) || Characters.noMatchIgnoreCase0Fal(pa))
+											if (Characters.noMatchIgnoreCase0Fals(pa))
 											{
 												return false;
 											}
-											break;
+											return true;
 										case 5:
-											if (Characters.noMatchIgnoreCase(pa, 4, UPPER_CASE_E, LOWER_CASE_E) || Characters.noMatchIgnoreCase(pa, 3, UPPER_CASE_S, LOWER_CASE_S) || Characters.noMatchIgnoreCase0Fal(pa))
+											if (Characters.noMatchIgnoreCase(pa, 4, UPPER_CASE_E, LOWER_CASE_E) || Characters.noMatchIgnoreCase0Fals(pa))
 											{
 												return false;
 											}
-											break;
+											return true;
 										default:
 											throw new ArrayIndexOutOfBoundsException();
 										}
-										return true;
 									}
 									else
 									{
