@@ -27,9 +27,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Hierarchy;
 import org.apache.log4j.Level;
@@ -44,6 +46,7 @@ import org.apache.log4j.spi.NOPLoggerRepository;
 import org.apache.log4j.spi.RootLogger;
 import rasuni.check.Assert;
 import rasuni.functional.IConsumer2;
+import rasuni.java.lang.SystemUtil;
 import rasuni.titan.Edges;
 import rasuni.titan.TaskType;
 import rasuni.titan.TitanCollector;
@@ -54,34 +57,69 @@ import rasuni.titan.TitanCollector;
 public final class ListOld
 {
 	/**
-	 * The main entry point
+	 * The new main method
 	 *
 	 * @param args
-	 *            the arguments
+	 *            the argznebts
 	 */
-	@SuppressWarnings("deprecation")
 	public static void main(String[] args)
 	{
-		String debugKey = OptionConverter.getSystemProperty("log4j.debug", null);
-		if (debugKey == null)
+		LogLog.g_debugEnabled = false;
+		LogLog.g_quietMode = false;
+		main(System.getSecurityManager(), System.getProperties(), LogLog.g_debugEnabled, LogLog.g_quietMode);
+	}
+
+	@SuppressWarnings("deprecation")
+	private static void main(SecurityManager securityManager, Properties properties, boolean debugEnabled, boolean quietMode)
+	{
+		// java.lang.System.initializeSystemClass();
+		//String debugKey = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("log4j.debug", securityManager, properties, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+		try
 		{
-			debugKey = OptionConverter.getSystemProperty(LogLog.CONFIG_DEBUG_KEY, null);
+			String debugKey = SystemUtil.getProperty("log4j.debug", securityManager, properties);
+			if (debugKey == null)
+			{
+				try
+				{
+					debugKey = SystemUtil.getProperty("log4j.configDebug", securityManager, properties);
+					if (debugKey != null)
+					{
+						LogLog.g_debugEnabled = OptionConverter.toBoolean(debugKey, true);
+					}
+				}
+				catch (Throwable e)
+				{ // MS-Java throws com.ms.security.SecurityExceptionEx
+					rasuni.org.apache.log4j.helpers.LogLog.debug(debugEnabled, quietMode, System.out, () -> "log4j: Was not allowed to read system property \"log4j.configDebug\".");
+					debugKey = null;
+				}
+			}
+			else
+			{
+				LogLog.g_debugEnabled = OptionConverter.toBoolean(debugKey, true);
+			}
 		}
-		if (debugKey != null)
-		{
-			LogLog.g_debugEnabled = OptionConverter.toBoolean(debugKey, true);
+		catch (Throwable e)
+		{ // MS-Java throws com.ms.security.SecurityExceptionEx
+			rasuni.org.apache.log4j.helpers.LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, () -> "log4j: Was not allowed to read system property \"" + "log4j.debug" + "\".");
+			String debugKey = null;
+			debugKey = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("log4j.configDebug", System.getSecurityManager(), System.getProperties(), null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+			if (debugKey != null)
+			{
+				LogLog.g_debugEnabled = OptionConverter.toBoolean(debugKey, true);
+			}
 		}
 		Level debug = new Level(Priority.DEBUG_INT, "DEBUG", 7);
 		Level.DEBUG = debug;
 		final DefaultRepositorySelector defaultRepositorySelector = new DefaultRepositorySelector(new Hierarchy(new RootLogger(debug)));
 		LogManager.g_repositorySelector = defaultRepositorySelector;
-		/** Search for the properties file log4j.properties in the CLASSPATH.  */
-		final String override = OptionConverter.getSystemProperty(LogManager.DEFAULT_INIT_OVERRIDE_KEY, null);
+		/** Search for the properties file log4j.properties in the CLASSPATH. */
+		final String override = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty(LogManager.DEFAULT_INIT_OVERRIDE_KEY, System.getSecurityManager(), System.getProperties(), null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		// if there is no default init override, then get the resource
 		// specified by the user or the default config file.
 		if (override == null || "false".equalsIgnoreCase(override))
 		{
-			final String configurationOptionStr = OptionConverter.getSystemProperty(LogManager.DEFAULT_CONFIGURATION_KEY, null);
+			final String configurationOptionStr = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty(LogManager.DEFAULT_CONFIGURATION_KEY, System.getSecurityManager(), System.getProperties(), null, LogLog.g_debugEnabled, LogLog.g_quietMode,
+					System.out);
 			// final String configuratorClassName =
 			// getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY);
 			// if the user has not specified the log4j.configuration
@@ -109,7 +147,9 @@ public final class ListOld
 					TitanCollector.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "Using URL [", url, "] for automatic log4j configuration.");
 					try
 					{
-						OptionConverter.selectAndConfigure(url, OptionConverter.getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY, null), LogManager.getLoggerRepository());
+						OptionConverter.selectAndConfigure(url,
+								rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY, System.security, System.props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out),
+								LogManager.getLoggerRepository());
 					}
 					catch (NoClassDefFoundError e)
 					{
@@ -422,7 +462,7 @@ public final class ListOld
 				registry.register(Arrays.asList("\\\\qnap\\music"));
 				registry.register(Arrays.asList("\\\\qnap\\itunes"));
 				registry.register(Arrays.asList("\\\\MUSIKSERVER\\Kunde"));
-				registry.register(Arrays.asList("\\\\MUSIKSERVER\\Lighs-Out"));
+				registry.register(Arrays.asList("\\\\MUSIKSERVER\\Lights-Out"));
 				registry.register(Arrays.asList("\\\\MUSIKSERVER\\Musik"));
 			}
 
@@ -435,6 +475,7 @@ public final class ListOld
 	private static void process(TitanGraph tg)
 	{
 		final Vertex system = tg.getVertexLabel("system").getVertices(Direction.OUT, "system").iterator().next();
+		// LinkedList<String> lines = new LinkedList<>();
 		l1: for (;;)
 		{
 			Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
@@ -443,19 +484,30 @@ public final class ListOld
 			{
 			case ROOT:
 				System.out.println("root");
-				registerRoot(tg, "C:\\", () ->
+				if (registerRoot(tg, "C:\\", () ->
 				{
-					registerRoot(tg, "D:\\", () ->
+					return registerRoot(tg, "D:\\", () ->
 					{
-						registerRoot(tg, "\\\\qnap\\backup", () ->
+						return registerRoot(tg, "\\\\qnap\\backup", () ->
 						{
-							registerRoot(tg, "\\\\qnap\\Network Recycle Bin 1", () ->
+							return registerRoot(tg, "\\\\qnap\\Public", () ->
 							{
-								TitanCollector.fail();
+								return registerRoot(tg, "\\\\qnap\\Qdownload", () ->
+								{
+									return registerRoot(tg, "\\\\qnap\\Qmultimedia", () ->
+									{
+										TitanCollector.fail();
+										return false;
+									});
+								});
 							});
 						});
 					});
-				});
+				}))
+				{
+					break l1;
+				}
+				// TitanCollector.fail();
 				break;
 			case FILESYSTEMOBJECT:
 				final File file = toFile(current);
@@ -472,7 +524,51 @@ public final class ListOld
 						final int lEntries = entries.length;
 						if (lEntries == 0)
 						{
-							TitanCollector.fail();
+							try
+							{
+								BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+								long ct = attrs.creationTime().to(TimeUnit.DAYS);
+								long lmt = attrs.lastModifiedTime().to(TimeUnit.DAYS);
+								if (ct < lmt)
+								{
+									// creation time is min
+									long lat = attrs.lastAccessTime().to(TimeUnit.DAYS);
+									if (lat < ct)
+									{
+										// last access time is min
+										current.setProperty("fso.lastAccess", lat);
+										System.out.println("  set last access to '" + LocalDate.ofEpochDay(lat) + "'");
+									}
+									else
+									{
+										// creation time is min
+										current.setProperty("fso.lastAccess", ct);
+										System.out.println("  set last access to '" + LocalDate.ofEpochDay(ct) + "'");
+									}
+								}
+								else
+								{
+									// last modification time is min
+									long lat = attrs.lastAccessTime().to(TimeUnit.DAYS);
+									if (lat < ct)
+									{
+										// last access time is min
+										current.setProperty("fso.lastAccess", lat);
+										System.out.println("  set last access to '" + LocalDate.ofEpochDay(lat) + "'");
+									}
+									else
+									{
+										// last modification time is max
+										current.setProperty("fso.lastAccess", lmt);
+										System.out.println("  set last access to '" + LocalDate.ofEpochDay(lmt) + "'");
+									}
+								}
+							}
+							catch (IOException e)
+							{
+								throw new RuntimeException(e);
+							}
+							complete(tg);
 						}
 						else
 						{
@@ -480,12 +576,7 @@ public final class ListOld
 							for (;;)
 							{
 								final String name = entries[iEntries];
-								if (current.query().direction(Direction.OUT).labels("directory.entry").has("name", name).edges().iterator().hasNext())
-								{
-									System.out.println("  already added " + name);
-									iEntries++;
-								}
-								else
+								if (!current.query().direction(Direction.OUT).labels("directory.entry").has("name", name).edges().iterator().hasNext())
 								{
 									System.out.println("  adding " + name);
 									Vertex newEntry = TitanCollector.newTask(tg, TaskType.FILESYSTEMOBJECT);
@@ -495,12 +586,18 @@ public final class ListOld
 									eLastTask.remove();
 									last.addEdge("next.task", newEntry);
 									newEntry.addEdge("next.task", current);
-									currentEdge.remove();
-									system.addEdge("system.currentTask", current.getVertices(Direction.OUT, "next.task").iterator().next());
-									tg.commit();
 									break;
-									// TitanCollector.fail();
 								}
+								System.out.println("  already added " + name);
+								iEntries++;
+								if (iEntries == lEntries)
+								{
+									break;
+								}
+							}
+							if (completeDirectory(tg))
+							{
+								break l1;
 							}
 						}
 					}
@@ -513,91 +610,36 @@ public final class ListOld
 							long lmt = attrs.lastModifiedTime().to(TimeUnit.DAYS);
 							if (ct < lmt)
 							{
-								TitanCollector.fail();
-							}
-							else
-							{
+								// last modification time is max
 								long lat = attrs.lastAccessTime().to(TimeUnit.DAYS);
 								if (lat < lmt)
 								{
-									TitanCollector.fail();
+									// last modified time is max
+									current.setProperty("fso.lastAccess", lmt);
+									System.out.println("  set last access to '" + LocalDate.ofEpochDay(lmt) + "'");
 								}
 								else
 								{
-									Vertex currentPEntry = current;
-									long minTime = lat;
-									for (;;)
-									{
-										Long currentLat = currentPEntry.getProperty("fso.lastAccess");
-										if (currentLat == null)
-										{
-											currentPEntry.setProperty("fso.lastAccess", minTime);
-											Iterator<Vertex> iParent = currentPEntry.getVertices(Direction.IN, "directory.entry").iterator();
-											if (iParent.hasNext())
-											{
-												currentPEntry = iParent.next();
-												Iterator<Vertex> iEntries = currentPEntry.getVertices(Direction.OUT, "directory.entry").iterator();
-												if (iEntries.hasNext())
-												{
-													final Long lat1 = iEntries.next().getProperty("fso.lastAccess");
-													if (lat1 == null)
-													{
-														TitanCollector.fail();
-													}
-													else
-													{
-														minTime = lat1.longValue();
-														for (;;)
-														{
-															if (!iEntries.hasNext())
-															{
-																break;
-															}
-															final Long lat2 = iEntries.next().getProperty("fso.lastAccess");
-															if (lat2 != null)
-															{
-																TitanCollector.fail();
-															}
-														}
-													}
-												}
-												else
-												{
-													TitanCollector.fail();
-												}
-											}
-											else
-											{
-												LinkedList<String> lines = new LinkedList<>();
-												dump(system, minTime, lines);
-												Iterator<String> iline = lines.iterator();
-												if (iline.hasNext())
-												{
-													System.out.println();
-													for (;;)
-													{
-														System.out.println(iline.next());
-														if (!iline.hasNext())
-														{
-															break;
-														}
-													}
-													currentEdge.remove();
-													system.addEdge("system.currentTask", current.getVertices(Direction.OUT, "next.task").iterator().next());
-													tg.commit();
-													break l1;
-												}
-												else
-												{
-													TitanCollector.fail();
-												}
-											}
-										}
-										else
-										{
-											TitanCollector.fail();
-										}
-									}
+									// last access time is max
+									current.setProperty("fso.lastAccess", lat);
+									System.out.println("  set last access to '" + LocalDate.ofEpochDay(lat) + "'");
+								}
+							}
+							else
+							{
+								// creation time is max
+								long lat = attrs.lastAccessTime().to(TimeUnit.DAYS);
+								if (lat < ct)
+								{
+									// creation time is max
+									current.setProperty("fso.lastAccess", ct);
+									System.out.println("  set last access to '" + LocalDate.ofEpochDay(ct) + "'");
+								}
+								else
+								{
+									// last access time is max
+									current.setProperty("fso.lastAccess", lat);
+									System.out.println("  set last access to '" + LocalDate.ofEpochDay(lat) + "'");
 								}
 							}
 						}
@@ -605,15 +647,91 @@ public final class ListOld
 						{
 							throw new RuntimeException(e);
 						}
+						complete(tg);
 					}
 				}
 				else
 				{
-					TitanCollector.fail();
+					System.out.println("  removing");
+					final Edge ePrevious = current.getEdges(Direction.IN, "next.task").iterator().next();
+					Vertex previous = ePrevious.getVertex(Direction.OUT);
+					ePrevious.remove();
+					final Edge eNext = current.getEdges(Direction.OUT, "next.task").iterator().next();
+					Vertex next = eNext.getVertex(Direction.IN);
+					eNext.remove();
+					previous.addEdge("next.task", next);
+					current.remove();
+					system.addEdge("system.currentTask", next);
+					tg.commit();
 				}
 				break;
 			default:
 				TitanCollector.fail();
+			}
+		}
+	}
+
+	private static boolean completeDirectory(TitanGraph tg)
+	{
+		final Vertex system = tg.getVertexLabel("system").getVertices(Direction.OUT, "system").iterator().next();
+		Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
+		Vertex current = Edges.getHead(currentEdge);
+		Iterator<Vertex> iEntries2 = current.getVertices(Direction.OUT, "directory.entry").iterator();
+		for (;;)
+		{
+			if (!iEntries2.hasNext())
+			{
+				current.removeProperty("fso.lastAccess");
+				System.out.println("  clear last access");
+				complete(tg);
+				return false;
+			}
+			final Long lat1 = iEntries2.next().getProperty("fso.lastAccess");
+			if (lat1 != null)
+			{
+				long minTime = lat1.longValue();
+				while (iEntries2.hasNext())
+				{
+					final Long lat2 = iEntries2.next().getProperty("fso.lastAccess");
+					if (lat2 != null)
+					{
+						long lat2v = lat2.longValue();
+						if (lat2v < minTime)
+						{
+							minTime = lat2v;
+						}
+					}
+				}
+				current.setProperty("fso.lastAccess", minTime);
+				System.out.println("  set last access to '" + LocalDate.ofEpochDay(minTime) + "'");
+				Long smt = system.getProperty("fso.lastAccess");
+				if (smt == null)
+				{
+					complete(tg);
+					return false;
+				}
+				else
+				{
+					LinkedList<String> lines = new LinkedList<>();
+					dump(system, smt.longValue(), lines);
+					if (lines.isEmpty())
+					{
+						//TitanCollector.fail();
+						System.out.println("Info: dump empty!");
+						complete(tg);
+						return false;
+					}
+					else
+					{
+						System.out.println();
+						for (String line : lines)
+						{
+							System.out.println(line);
+						}
+						complete(tg);
+						return true;
+					}
+				}
 			}
 		}
 	}
@@ -642,10 +760,6 @@ public final class ListOld
 		return file;
 	}
 
-	/**
-	 * @param system
-	 * @param minTime
-	 */
 	private static void dump(final Vertex parent, long minTime, LinkedList<String> lines)
 	{
 		Iterator<Edge> iEntries = parent.getEdges(Direction.OUT, "directory.entry").iterator();
@@ -664,7 +778,7 @@ public final class ListOld
 					}
 					else
 					{
-						TitanCollector.fail();
+						// TitanCollector.fail();
 					}
 				}
 				if (!iEntries.hasNext())
@@ -680,7 +794,14 @@ public final class ListOld
 			{
 				if (file.isDirectory())
 				{
-					TitanCollector.fail();
+					if (file.list().length == 0)
+					{
+						lines.add("RD \"" + file.toString() + "\"");
+					}
+					else
+					{
+						TitanCollector.fail();
+					}
 				}
 				else
 				{
@@ -700,7 +821,15 @@ public final class ListOld
 						}
 						else
 						{
-							TitanCollector.fail();
+							if (attr.isReadOnly())
+							{
+								lines.add("ATTRIB -R \"" + file.toString() + "\"");
+								//TitanCollector.fail();
+							}
+							else
+							{
+								TitanCollector.fail();
+							}
 						}
 					}
 					catch (IOException e)
@@ -712,12 +841,12 @@ public final class ListOld
 			}
 			else
 			{
-				TitanCollector.fail();
+				System.out.println("dump - Warning: file '" + file + "' does not exists!");
 			}
 		}
 	}
 
-	private static void registerRoot(TitanGraph tg, String root, Runnable next)
+	private static boolean registerRoot(TitanGraph tg, String root, IRunnable next)
 	{
 		final Vertex system = tg.getVertexLabel("system").getVertices(Direction.OUT, "system").iterator().next();
 		Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
@@ -725,7 +854,7 @@ public final class ListOld
 		if (current.query().direction(Direction.OUT).labels("directory.entry").has("name", root).edges().iterator().hasNext())
 		{
 			System.out.println("  already added " + root);
-			next.run();
+			return next.run();
 		}
 		else
 		{
@@ -737,9 +866,17 @@ public final class ListOld
 			eLastTask.remove();
 			last.addEdge("next.task", newEntry);
 			newEntry.addEdge("next.task", current);
-			currentEdge.remove();
-			system.addEdge("system.currentTask", current.getVertices(Direction.OUT, "next.task").iterator().next());
-			tg.commit();
+			return completeDirectory(tg);
 		}
+	}
+
+	private static void complete(TitanGraph tg)
+	{
+		final Vertex system = tg.getVertexLabel("system").getVertices(Direction.OUT, "system").iterator().next();
+		Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
+		Vertex current = Edges.getHead(currentEdge);
+		currentEdge.remove();
+		system.addEdge("system.currentTask", current.getVertices(Direction.OUT, "next.task").iterator().next());
+		tg.commit();
 	}
 }
