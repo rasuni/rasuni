@@ -11,11 +11,11 @@
   	<dependency>
   		<groupId>rasuni</groupId>
   		<artifactId>org.apache.log4j</artifactId>
-  		<version>0.0.1</version>
+  		<version>0.0.2</version>
   	</dependency>
   	<dependency>
   		<groupId>rasuni</groupId>
-  		<artifactId>rasuni-titan</artifactId>
+  		<artifactId>titan</artifactId>
   		<version>0.0.1</version>
   	</dependency>
   	<dependency>
@@ -25,8 +25,8 @@
   	</dependency>
   	<dependency>
   		<groupId>rasuni</groupId>
-  		<artifactId>rasuni-jre</artifactId>
-  		<version>0.0.1</version>
+  		<artifactId>rt</artifactId>
+  		<version>0.0.8</version>
   	</dependency>
   </dependencies>
   
