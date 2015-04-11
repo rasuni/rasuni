@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -47,10 +47,6 @@ public final class OptionConverter
 	private static final char UPPER_CASE_L = Character.toUpperCase('l');
 
 	private static final char LOWER_CASE_L = Character.toLowerCase(UPPER_CASE_L);
-
-	private static final char UPPER_CASE_A = Character.toUpperCase('a');
-
-	private static final char LOWER_CASE_A = Character.toLowerCase(UPPER_CASE_A);
 
 	private static final char UPPER_CASE_T = Character.toUpperCase('t');
 
@@ -161,27 +157,26 @@ public final class OptionConverter
 											}
 											break;
 										case 2:
-											if (Characters.noMatchIgnoreCase(pa, 1, UPPER_CASE_A, LOWER_CASE_A) || Characters.noMatchIgnoreCase0F(pa))
+											if (Characters.noMatchIgnoreCase0Fa(pa))
 											{
 												return false;
 											}
 											break;
 										case 3:
-											if (Characters.noMatchIgnoreCase(pa, 2, UPPER_CASE_L, LOWER_CASE_L) || Characters.noMatchIgnoreCase(pa, 1, UPPER_CASE_A, LOWER_CASE_A) || Characters.noMatchIgnoreCase0F(pa))
+											if (Characters.noMatchIgnoreCase(pa, 2, UPPER_CASE_L, LOWER_CASE_L) || Characters.noMatchIgnoreCase0Fa(pa))
 											{
 												return false;
 											}
 											break;
 										case 4:
-											if (Characters.noMatchIgnoreCase(pa, 3, UPPER_CASE_S, LOWER_CASE_S) || Characters.noMatchIgnoreCase(pa, 2, UPPER_CASE_L, LOWER_CASE_L) || Characters.noMatchIgnoreCase(pa, 1, UPPER_CASE_A, LOWER_CASE_A)
-													|| Characters.noMatchIgnoreCase0F(pa))
+											if (Characters.noMatchIgnoreCase(pa, 3, UPPER_CASE_S, LOWER_CASE_S) || Characters.noMatchIgnoreCase(pa, 2, UPPER_CASE_L, LOWER_CASE_L) || Characters.noMatchIgnoreCase0Fa(pa))
 											{
 												return false;
 											}
 											break;
 										case 5:
 											if (Characters.noMatchIgnoreCase(pa, 4, UPPER_CASE_E, LOWER_CASE_E) || Characters.noMatchIgnoreCase(pa, 3, UPPER_CASE_S, LOWER_CASE_S) || Characters.noMatchIgnoreCase(pa, 2, UPPER_CASE_L, LOWER_CASE_L)
-													|| Characters.noMatchIgnoreCase(pa, 1, UPPER_CASE_A, LOWER_CASE_A) || Characters.noMatchIgnoreCase0F(pa))
+													|| Characters.noMatchIgnoreCase0Fa(pa))
 											{
 												return false;
 											}
