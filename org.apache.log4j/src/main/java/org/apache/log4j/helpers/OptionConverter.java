@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -23,6 +23,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.spi.Configurator;
 import org.apache.log4j.spi.LoggerRepository;
+import rasuni.java.lang.Booleans;
 import rasuni.java.lang.Characters;
 import rasuni.java.lang.IIntPredicate;
 import rasuni.java.lang.Integers;
@@ -143,19 +144,11 @@ public final class OptionConverter
 										case 0:
 											return true;
 										case 1:
-											return Characters.matchIgnoreCase0F(pa, (b1, b2) -> (b1 || b2.get()), (ch1, ch2) -> ch1 == ch2);
+											return Characters.matchIgnoreCase0F(pa, Booleans::or, (ch1, ch2) -> ch1 == ch2);
 										case 2:
-											if (Characters.noMatchIgnoreCase0Fa(pa))
-											{
-												return false;
-											}
-											return true;
+											return Characters.matchIgnoreCase0Fa(Booleans::and, pa, Booleans::or, (ch1, ch2) -> ch1 == ch2);
 										case 3:
-											if (Characters.noMatchIgnoreCase0Fal(pa))
-											{
-												return false;
-											}
-											return true;
+											return Characters.matchIgnoreCase0Fal(Booleans::and, pa, Booleans::or, (ch1, ch2) -> ch1 == ch2);
 										case 4:
 											if (Characters.noMatchIgnoreCase0Fals(pa))
 											{
