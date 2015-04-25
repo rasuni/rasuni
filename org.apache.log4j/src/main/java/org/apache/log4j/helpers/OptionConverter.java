@@ -114,60 +114,16 @@ public final class OptionConverter
 				final char pa[] = value.value;
 				if (pa.length == 4)
 				{
-					final char u3 = Characters.toUpperCase(pa, 3);
-					if (u3 == UPPER_CASE_E || Character.toLowerCase(u3) == LOWER_CASE_E)
-					{
-						// If characters don't match but case may be ignored,
-						// try converting both characters to uppercase.
-						// If the results match, then the comparison scan should
-						// continue.
-						final char u21 = Characters.toUpperCase(pa, 2);
-						// Unfortunately, conversion to uppercase does not work properly
-						// for the Georgian alphabet, which has strange rules about case
-						// conversion. So we need to make one last check before
-						// exiting.
-						if (u21 == UPPER_CASE_U || Character.toLowerCase(u21) == LOWER_CASE_U)
-						{
-							return Characters.matchIgnoreCase(pa, 0, UPPER_CASE_T, LOWER_CASE_T)
-									&& Characters.matchIgnoreCase(pa, 1, UPPER_CASE_R, LOWER_CASE_R)
-									|| (pa.length != 5 || Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
-											Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, UPPER_CASE_F, LOWER_CASE_F), pa, 1, UPPER_CASE_A, LOWER_CASE_A), pa, 2, UPPER_CASE_L, LOWER_CASE_L),
-											pa, 3, UPPER_CASE_S, LOWER_CASE_S), pa, 4, UPPER_CASE_E, LOWER_CASE_E)) && dEfault;
-						}
-						else
-						{
-							if ("false".equalsIgnoreCase(value))
-							{
-								return false;
-							}
-							else
-							{
-								return dEfault;
-							}
-						}
-					}
-					else
-					{
-						if ("false".equalsIgnoreCase(value))
-						{
-							return false;
-						}
-						else
-						{
-							return dEfault;
-						}
-					}
+					return Characters.combinedMatchIgnoreCase(
+							Characters.combinedMatchIgnoreCase(Characters.combinedMatchIgnoreCase(Characters.matchIgnoreCase(pa, 0, UPPER_CASE_T, LOWER_CASE_T), pa, 1, UPPER_CASE_R, LOWER_CASE_R), pa, 2, UPPER_CASE_U, LOWER_CASE_U), pa, 3, UPPER_CASE_E,
+							LOWER_CASE_E) || dEfault;
 				}
 				else
 				{
-					if ("false".equalsIgnoreCase(value))
-					{
-						return false;
-					}
-					else
-					{
-						return dEfault;
-					}
+					return (pa.length != 5 || Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
+							Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, UPPER_CASE_F, LOWER_CASE_F), pa, 1, UPPER_CASE_A, LOWER_CASE_A), pa, 2, UPPER_CASE_L, LOWER_CASE_L), pa, 3,
+							UPPER_CASE_S, LOWER_CASE_S), pa, 4, UPPER_CASE_E, LOWER_CASE_E))
+							&& dEfault;
 				}
 			}
 			else
