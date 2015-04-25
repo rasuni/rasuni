@@ -492,13 +492,10 @@ public final class ListOld
 						{
 							return registerRoot(tg, "\\\\qnap\\Public", () ->
 							{
-								return registerRoot(tg, "\\\\qnap\\Qdownload", () ->
+								return registerRoot(tg, "\\\\qnap\\Qmultimedia", () ->
 								{
-									return registerRoot(tg, "\\\\qnap\\Qmultimedia", () ->
-									{
-										TitanCollector.fail();
-										return false;
-									});
+									TitanCollector.fail();
+									return false;
 								});
 							});
 						});
@@ -825,10 +822,6 @@ public final class ListOld
 							{
 								lines.add("ATTRIB -R \"" + file.toString() + "\"");
 								//TitanCollector.fail();
-							}
-							else
-							{
-								TitanCollector.fail();
 							}
 						}
 					}
