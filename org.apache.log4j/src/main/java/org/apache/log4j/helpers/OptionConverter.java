@@ -23,7 +23,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.spi.Configurator;
 import org.apache.log4j.spi.LoggerRepository;
-import rasuni.java.lang.Booleans;
 import rasuni.java.lang.Characters;
 import rasuni.java.lang.IIntPredicate;
 import rasuni.java.lang.Integers;
@@ -129,34 +128,11 @@ public final class OptionConverter
 						// exiting.
 						if (u21 == UPPER_CASE_U || Character.toLowerCase(u21) == LOWER_CASE_U)
 						{
-							// If characters don't match but case may be ignored,
-							// try converting both characters to uppercase.
-							// If the results match, then the comparison scan should
-							// continue.
-							final char u211 = Characters.toUpperCase(pa, 1);
-							// Unfortunately, conversion to uppercase does not work properly
-							// for the Georgian alphabet, which has strange rules about case
-							// conversion. So we need to make one last check before
-							// exiting.
-							if (u211 == UPPER_CASE_R || Character.toLowerCase(u211) == LOWER_CASE_R)
-							{
-								return Characters.matchIgnoreCase(pa, 0, Booleans::or, (ch1, ch2) -> ch1 == ch2, UPPER_CASE_T, LOWER_CASE_T)
-										|| (pa.length != 5 || Characters.combinedNoMatchIgnoreCase(
-												Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
-														Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, UPPER_CASE_F, LOWER_CASE_F), pa, 1, UPPER_CASE_A, LOWER_CASE_A), pa, 2, UPPER_CASE_L, LOWER_CASE_L), pa, 3, UPPER_CASE_S,
-														LOWER_CASE_S), pa, 4, UPPER_CASE_E, LOWER_CASE_E)) && dEfault;
-							}
-							else
-							{
-								if ("false".equalsIgnoreCase(value))
-								{
-									return false;
-								}
-								else
-								{
-									return dEfault;
-								}
-							}
+							return Characters.matchIgnoreCase(pa, 0, UPPER_CASE_T, LOWER_CASE_T)
+									&& Characters.matchIgnoreCase(pa, 1, UPPER_CASE_R, LOWER_CASE_R)
+									|| (pa.length != 5 || Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
+											Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, UPPER_CASE_F, LOWER_CASE_F), pa, 1, UPPER_CASE_A, LOWER_CASE_A), pa, 2, UPPER_CASE_L, LOWER_CASE_L),
+											pa, 3, UPPER_CASE_S, LOWER_CASE_S), pa, 4, UPPER_CASE_E, LOWER_CASE_E)) && dEfault;
 						}
 						else
 						{
