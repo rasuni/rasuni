@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -64,6 +64,22 @@ public final class OptionConverter
 	private static int DELIM_START_LEN = 2;
 
 	private static int DELIM_STOP_LEN = 1;
+
+	private static final char UPPER_CASE_S = Character.toUpperCase('s');
+
+	private static final char LOWER_CASE_S = Character.toLowerCase(UPPER_CASE_S);
+
+	private static final char UPPER_CASE_L = Character.toUpperCase('l');
+
+	private static final char LOWER_CASE_L = Character.toLowerCase(UPPER_CASE_L);
+
+	private static final char UPPER_CASE_F = Character.toUpperCase('f');
+
+	private static final char LOWER_CASE_F = Character.toLowerCase(UPPER_CASE_F);
+
+	private static final char UPPER_CASE_A = Character.toUpperCase('a');
+
+	private static final char LOWER_CASE_A = Character.toLowerCase(UPPER_CASE_A);
 
 	/** OptionConverter is a static class. */
 	private OptionConverter()
@@ -124,56 +140,11 @@ public final class OptionConverter
 							// exiting.
 							if (u211 == UPPER_CASE_R || Character.toLowerCase(u211) == LOWER_CASE_R)
 							{
-								// If characters don't match but case may be ignored,
-								// try converting both characters to uppercase.
-								// If the results match, then the comparison scan should
-								// continue.
-								final char u22 = Characters.toUpperCase(pa, 0);
-								// Unfortunately, conversion to uppercase does not work properly
-								// for the Georgian alphabet, which has strange rules about case
-								// conversion. So we need to make one last check before
-								// exiting.
-								if (UPPER_CASE_T != u22 || LOWER_CASE_T != Character.toLowerCase(u22))
-								{
-									final int length = 5;
-									if (pa.length == length)
-									{
-										// Note: toffset, ooffset, or len might be near -1>>>1.
-										switch (length)
-										{
-										case 0:
-											return true;
-										case 1:
-											return Characters.matchIgnoreCase0F(pa, Booleans::or, (ch1, ch2) -> ch1 == ch2);
-										case 2:
-											return Characters.matchIgnoreCase0Fa(Booleans::and, pa, Booleans::or, (ch1, ch2) -> ch1 == ch2);
-										case 3:
-											return Characters.matchIgnoreCase0Fal(Booleans::and, pa, Booleans::or, (ch1, ch2) -> ch1 == ch2);
-										case 4:
-											if (Characters.noMatchIgnoreCase0Fals(pa))
-											{
-												return false;
-											}
-											return true;
-										case 5:
-											if (Characters.noMatchIgnoreCase(pa, 4, UPPER_CASE_E, LOWER_CASE_E) || Characters.noMatchIgnoreCase0Fals(pa))
-											{
-												return false;
-											}
-											return true;
-										default:
-											throw new ArrayIndexOutOfBoundsException();
-										}
-									}
-									else
-									{
-										return false;
-									}
-								}
-								else
-								{
-									return true;
-								}
+								return Characters.matchIgnoreCase(pa, 0, Booleans::or, (ch1, ch2) -> ch1 == ch2, UPPER_CASE_T, LOWER_CASE_T)
+										|| (pa.length != 5 || Characters.combinedNoMatchIgnoreCase(
+												Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
+														Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, UPPER_CASE_F, LOWER_CASE_F), pa, 1, UPPER_CASE_A, LOWER_CASE_A), pa, 2, UPPER_CASE_L, LOWER_CASE_L), pa, 3, UPPER_CASE_S,
+														LOWER_CASE_S), pa, 4, UPPER_CASE_E, LOWER_CASE_E)) && dEfault;
 							}
 							else
 							{

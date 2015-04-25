@@ -18,7 +18,7 @@ public final class Strings
 	/**
 	 * The value getter
 	 */
-	public static final IFunction<char[], String> VALUE;
+	static final IFunction<char[], String> VALUE;
 	static
 	{
 		//VALUE = str -> str.value;
@@ -32,7 +32,7 @@ public final class Strings
 		CONSTRUCTOR.setAccessible(true);
 	}
 
-	static boolean compare(String string, IPredicate lengthMatches, IIntFunction offset, char[] value)
+	private static boolean compare(String string, IPredicate lengthMatches, IIntFunction offset, char[] value)
 	{
 		char[] pa = VALUE.apply(string);
 		int pc = pa.length;
