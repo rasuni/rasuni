@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -40,22 +40,6 @@ import rasuni.java.lang.Strings;
  */
 public final class OptionConverter
 {
-	private static final char UPPER_CASE_T = Character.toUpperCase('t');
-
-	private static final char LOWER_CASE_T = Character.toLowerCase(UPPER_CASE_T);
-
-	private static final char UPPER_CASE_R = Character.toUpperCase('r');
-
-	private static final char LOWER_CASE_R = Character.toLowerCase(UPPER_CASE_R);
-
-	private static final char UPPER_CASE_U = Character.toUpperCase('u');
-
-	private static final char LOWER_CASE_U = Character.toLowerCase(UPPER_CASE_U);
-
-	private static final char UPPER_CASE_E = Character.toUpperCase('e');
-
-	private static final char LOWER_CASE_E = Character.toLowerCase(UPPER_CASE_E);
-
 	private static String DELIM_START = "${";
 
 	private static char DELIM_STOP = '}';
@@ -63,22 +47,6 @@ public final class OptionConverter
 	private static int DELIM_START_LEN = 2;
 
 	private static int DELIM_STOP_LEN = 1;
-
-	private static final char UPPER_CASE_S = Character.toUpperCase('s');
-
-	private static final char LOWER_CASE_S = Character.toLowerCase(UPPER_CASE_S);
-
-	private static final char UPPER_CASE_L = Character.toUpperCase('l');
-
-	private static final char LOWER_CASE_L = Character.toLowerCase(UPPER_CASE_L);
-
-	private static final char UPPER_CASE_F = Character.toUpperCase('f');
-
-	private static final char LOWER_CASE_F = Character.toLowerCase(UPPER_CASE_F);
-
-	private static final char UPPER_CASE_A = Character.toUpperCase('a');
-
-	private static final char LOWER_CASE_A = Character.toLowerCase(UPPER_CASE_A);
 
 	/** OptionConverter is a static class. */
 	private OptionConverter()
@@ -112,18 +80,19 @@ public final class OptionConverter
 			if (vlen == 0)
 			{
 				final char pa[] = value.value;
-				if (pa.length == 4)
+				switch (pa.length)
 				{
+				case 4:
 					return Characters.combinedMatchIgnoreCase(
-							Characters.combinedMatchIgnoreCase(Characters.combinedMatchIgnoreCase(Characters.matchIgnoreCase(pa, 0, UPPER_CASE_T, LOWER_CASE_T), pa, 1, UPPER_CASE_R, LOWER_CASE_R), pa, 2, UPPER_CASE_U, LOWER_CASE_U), pa, 3, UPPER_CASE_E,
-							LOWER_CASE_E) || dEfault;
-				}
-				else
-				{
-					return (pa.length != 5 || Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
-							Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, UPPER_CASE_F, LOWER_CASE_F), pa, 1, UPPER_CASE_A, LOWER_CASE_A), pa, 2, UPPER_CASE_L, LOWER_CASE_L), pa, 3,
-							UPPER_CASE_S, LOWER_CASE_S), pa, 4, UPPER_CASE_E, LOWER_CASE_E))
+							Characters.combinedMatchIgnoreCase(Characters.combinedMatchIgnoreCase(Characters.matchIgnoreCase(pa, 0, Characters.UPPER_CASE_T, Characters.LOWER_CASE_T), pa, 1, Characters.UPPER_CASE_R, Characters.LOWER_CASE_R), pa, 2, Characters.UPPER_CASE_U, Characters.LOWER_CASE_U), pa, 3, Characters.UPPER_CASE_E,
+							Characters.LOWER_CASE_E) || dEfault;
+				case 5:
+					return Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
+							Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, Characters.UPPER_CASE_F, Characters.LOWER_CASE_F), pa, 1, Characters.UPPER_CASE_A, Characters.LOWER_CASE_A), pa, 2, Characters.UPPER_CASE_L, Characters.LOWER_CASE_L), pa, 3,
+							Characters.UPPER_CASE_S, Characters.LOWER_CASE_S), pa, 4, Characters.UPPER_CASE_E, Characters.LOWER_CASE_E)
 							&& dEfault;
+				default:
+					return dEfault;
 				}
 			}
 			else
@@ -134,16 +103,8 @@ public final class OptionConverter
 					int len1 = Integers.predecessor(vlen);
 					if (nonWhiteSpace.check(len1))
 					{
-						String trimmedVal = value;
-						if ("true".equalsIgnoreCase(trimmedVal))
-						{
-							return true;
-						}
-						if ("false".equalsIgnoreCase(trimmedVal))
-						{
-							return false;
-						}
-						return dEfault;
+						final char pa[] = value.value;
+						return Characters.parseBoolean(pa.length, pa, dEfault);
 					}
 					else
 					{
@@ -153,16 +114,7 @@ public final class OptionConverter
 							len1--;
 							if (nonWhiteSpace.check(len1))
 							{
-								String trimmedVal = Strings.copyOfRange(v, 0, len);
-								if ("true".equalsIgnoreCase(trimmedVal))
-								{
-									return true;
-								}
-								if ("false".equalsIgnoreCase(trimmedVal))
-								{
-									return false;
-								}
-								return dEfault;
+								return Characters.parseBoolean(len, v, dEfault);
 							}
 						}
 					}
