@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -83,13 +83,14 @@ public final class OptionConverter
 				switch (pa.length)
 				{
 				case 4:
-					return Characters.combinedMatchIgnoreCase(
-							Characters.combinedMatchIgnoreCase(Characters.combinedMatchIgnoreCase(Characters.matchIgnoreCase(pa, 0, Characters.UPPER_CASE_T, Characters.LOWER_CASE_T), pa, 1, Characters.UPPER_CASE_R, Characters.LOWER_CASE_R), pa, 2, Characters.UPPER_CASE_U, Characters.LOWER_CASE_U), pa, 3, Characters.UPPER_CASE_E,
-							Characters.LOWER_CASE_E) || dEfault;
+					return Characters.combinedMatchIgnoreCase(Characters.combinedMatchIgnoreCase(
+							Characters.combinedMatchIgnoreCase(Characters.matchIgnoreCase(pa, 0, Characters.UPPER_CASE_T, Characters.LOWER_CASE_T), pa, 1, Characters.UPPER_CASE_R, Characters.LOWER_CASE_R), pa, 2, Characters.UPPER_CASE_U,
+							Characters.LOWER_CASE_U), pa, 3, Characters.UPPER_CASE_E, Characters.LOWER_CASE_E)
+							|| dEfault;
 				case 5:
-					return Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
-							Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, Characters.UPPER_CASE_F, Characters.LOWER_CASE_F), pa, 1, Characters.UPPER_CASE_A, Characters.LOWER_CASE_A), pa, 2, Characters.UPPER_CASE_L, Characters.LOWER_CASE_L), pa, 3,
-							Characters.UPPER_CASE_S, Characters.LOWER_CASE_S), pa, 4, Characters.UPPER_CASE_E, Characters.LOWER_CASE_E)
+					return Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
+							Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, Characters.UPPER_CASE_F, Characters.LOWER_CASE_F), pa, 1, Characters.UPPER_CASE_A, Characters.LOWER_CASE_A), pa, 2, Characters.UPPER_CASE_L,
+							Characters.LOWER_CASE_L), pa, 3, Characters.UPPER_CASE_S, Characters.LOWER_CASE_S), pa, 4, Characters.UPPER_CASE_E, Characters.LOWER_CASE_E)
 							&& dEfault;
 				default:
 					return dEfault;
@@ -126,16 +127,7 @@ public final class OptionConverter
 					{
 						if (st == vlen)
 						{
-							String trimmedVal = Strings.copyOfRange(v, st, vlen);
-							if ("true".equalsIgnoreCase(trimmedVal))
-							{
-								return true;
-							}
-							if ("false".equalsIgnoreCase(trimmedVal))
-							{
-								return false;
-							}
-							return dEfault;
+							return Characters.parseBoolean(vlen - st, v, st, st + 1, st + 2, st + 3, dEfault, st + 4);
 						}
 						if (nonWhiteSpace.check(st))
 						{
