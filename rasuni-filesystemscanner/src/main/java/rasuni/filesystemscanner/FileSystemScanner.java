@@ -16,7 +16,6 @@ import rasuni.taskqueue.IRow;
 import rasuni.taskqueue.ITaskContext;
 import rasuni.taskqueue.ITaskHandler;
 import rasuni.taskqueue.IValue;
-import rasuni.taskqueue.IValueVisitor;
 import rasuni.taskqueue.Index;
 import rasuni.taskqueue.LongValue;
 import rasuni.taskqueue.Reference;
@@ -24,21 +23,29 @@ import rasuni.taskqueue.TaskQueue;
 
 /**
  * Filesystem scanner
- * 
+ *
  */
 public class FileSystemScanner implements ITaskHandler
 {
 	private static final String NAME = "name";
+
 	private static final String REF_PARENT = "parent";
+
 	private static final Column<Long> COLUMN_FILESYSTEMOBJECT_TASK = new Column<>(TaskQueue.TASK, TaskQueue.LONG);
+
 	private static final Column<String> COLUMN_FILESYSTEMOBJECT_NAME = Column.text(NAME);
+
 	private static final Column<Long> COLUMN_FILESYSTEMOBJECT_PARENT = new Column<>(REF_PARENT, TaskQueue.LONG);
+
 	/**
 	 */
 	public static final String TABLE_FILESYSTEMOBJECT = "filesystemobject";
+
 	private static final int TASKKIND_FILESYSTEMOBJECT = 0;
+
 	private static final int TASKKIND_ROOT = 1;
-	private ICommander _commander;
+
+	private final ICommander _commander;
 
 	@Override
 	public HandlerResult handle(final ITaskContext connection, final long taskId, int taskKind, String foreignId)
@@ -48,7 +55,7 @@ public class FileSystemScanner implements ITaskHandler
 		switch (taskKind /*row.get(TaskQueue.COLUMN_TASK_KIND).intValue()*/)
 		{
 		case TASKKIND_FILESYSTEMOBJECT:
-			final IRow stmtfs = connection.selectOne(Arrays.asList(new Column<?>[] { COLUMN_FILESYSTEMOBJECT_NAME, COLUMN_FILESYSTEMOBJECT_PARENT, TaskQueue.COLUMN_ID }), TABLE_FILESYSTEMOBJECT, "task=?", Arrays.asList(new IValue [] {taskid}));
+			final IRow stmtfs = connection.selectOne(Arrays.asList(new Column<?>[] { COLUMN_FILESYSTEMOBJECT_NAME, COLUMN_FILESYSTEMOBJECT_PARENT, TaskQueue.COLUMN_ID }), TABLE_FILESYSTEMOBJECT, "task=?", Arrays.asList(new IValue[] { taskid }));
 			Long parent = stmtfs.get(COLUMN_FILESYSTEMOBJECT_PARENT);
 			Long currentParent = parent;
 			IRow newStmtfs = stmtfs;
@@ -110,27 +117,16 @@ public class FileSystemScanner implements ITaskHandler
 				}
 				else
 				{
-					_commander.visit(file, new IFileProcessingContext()
+					_commander.visit(file, (table, columnValue) ->
 					{
-						@Override
-						public void createOrUpdate(String table, final ColumnValue<?> columnValue)
+						ColumnValue<Long> fso = new ColumnValue<>(new Column<>(TABLE_FILESYSTEMOBJECT, TaskQueue.LONG), id);
+						if (connection.exists(table, Arrays.asList(new IColumnValue[] { fso })))
 						{
-							ColumnValue<Long> fso = new ColumnValue<>(new Column<>(TABLE_FILESYSTEMOBJECT, TaskQueue.LONG), id);
-							if (connection.exists(table, Arrays.asList(new IColumnValue[] { fso })))
-							{
-								connection.exec("UPDATE " + table + " SET " + columnValue.getColumnName() + "=? WHERE filesystemobject=?", Arrays.asList(new IValue[] { new IValue()
-								{
-									@Override
-									public void visit(IValueVisitor visitor)
-									{
-										columnValue.visitValue(visitor);
-									}
-								}, new LongValue(id) }));
-							}
-							else
-							{
-								connection.insert(table, Arrays.asList(new IColumnValue[] { fso, columnValue }));
-							}
+							connection.exec("UPDATE " + table + " SET " + columnValue.getColumnName() + "=? WHERE filesystemobject=?", Arrays.asList(new IValue[] { visitor -> columnValue.visitValue(visitor), new LongValue(id) }));
+						}
+						else
+						{
+							connection.insert(table, Arrays.asList(new IColumnValue[] { fso, columnValue }));
 						}
 					});
 				}
@@ -140,14 +136,7 @@ public class FileSystemScanner implements ITaskHandler
 			{
 				IValue parentValue = new LongValue(parent);
 				Assert.expect(fileSystemObjectExists(Arrays.asList(new IColumnValue[] { new ColumnValue<>(COLUMN_FILESYSTEMOBJECT_PARENT, parent) }), connection));
-				_commander.fileDeleted(new IDeleteProcessingContext()
-				{
-					@Override
-					public void delete(String table)
-					{
-						connection.delete(table, TABLE_FILESYSTEMOBJECT, new LongValue(stmtfs.get(TaskQueue.COLUMN_ID).intValue()));
-					}
-				});
+				_commander.fileDeleted(table -> connection.delete(table, TABLE_FILESYSTEMOBJECT, new LongValue(stmtfs.get(TaskQueue.COLUMN_ID).intValue())));
 				System.out.println("  removing");
 				connection.delete(TABLE_FILESYSTEMOBJECT, TaskQueue.ID_NAME, new LongValue(stmtfs.get(TaskQueue.COLUMN_ID).intValue()));
 				IRow task = connection.selectOne(Arrays.asList(new Column<?>[] { COLUMN_FILESYSTEMOBJECT_TASK }), TABLE_FILESYSTEMOBJECT, "id=?", Arrays.asList(parentValue));
@@ -157,14 +146,7 @@ public class FileSystemScanner implements ITaskHandler
 			break;
 		case TASKKIND_ROOT:
 			System.out.println("Query root entries");
-			_commander.provideRootEntries(new IRootRegistry()
-			{
-				@Override
-				public void register(Iterable<String> pathEntries)
-				{
-					FileSystemScanner.register(pathEntries, connection);
-				}
-			});
+			_commander.provideRootEntries(pathEntries -> FileSystemScanner.register(pathEntries, connection));
 			requeue = true;
 			break;
 		default:
@@ -191,7 +173,7 @@ public class FileSystemScanner implements ITaskHandler
 			}
 		});
 		//connection.commit();
-		return new HandlerResult (next, requeue);
+		return new HandlerResult(next, requeue);
 	}
 
 	private static boolean fileSystemObjectExists(Iterable<IColumnValue> condition, ITaskContext _db)
@@ -235,7 +217,7 @@ public class FileSystemScanner implements ITaskHandler
 	 *            the database file name
 	 * @param updaters
 	 *            the updaters to apply depending on the current version
-	 * 
+	 *
 	 */
 	public static void start(ICommander processor, String name, IDatabaseApplication[] updaters)
 	{
@@ -274,7 +256,6 @@ public class FileSystemScanner implements ITaskHandler
 		addFileSystemObjectTask(parent1, name1, _db);
 	}
 
-	@SuppressWarnings("null")
 	private static <T> T getMin(Column<T> column, String table, ITaskContext _db)
 	{
 		IRow row = _db.selectAtMostOne(Arrays.asList(new Column<?>[] { column }), table, null, Arrays.asList(new IValue[] {}), column.getName());
@@ -284,71 +265,54 @@ public class FileSystemScanner implements ITaskHandler
 	private static Iterable<File> select(String table, final IColumnValue columnValue, final ITaskContext _db)
 	{
 		final Column<Long> fso = new Column<>(TABLE_FILESYSTEMOBJECT, TaskQueue.LONG);
-		final Iterable<IRow> rows = _db.select(Arrays.asList(new Column<?>[] { fso }), table, columnValue.getColumnName() + "=?", Arrays.asList(new IValue[] { new IValue()
+		final Iterable<IRow> rows = _db.select(Arrays.asList(new Column<?>[] { fso }), table, columnValue.getColumnName() + "=?", Arrays.asList(new IValue[] { visitor -> columnValue.visitValue(visitor) }), false, null);
+		return () ->
 		{
-			@Override
-			public void visit(IValueVisitor visitor)
-			{
-				columnValue.visitValue(visitor);
-			}
-		} }), false, null);
-		return new Iterable<File>()
-		{
-			@Override
-			public Iterator<File> iterator()
-			{
-				final Iterator<IRow> rowi = rows.iterator();
-				return new Iterator<File>()
+			final Iterator<IRow> rowi = rows.iterator();
+			return new Iterator<File>()
+					{
+				@Override
+				public boolean hasNext()
 				{
-					@Override
-					public boolean hasNext()
-					{
-						return rowi.hasNext();
-					}
+					return rowi.hasNext();
+				}
 
-					@Override
-					public File next()
+				@Override
+				public File next()
+				{
+					LinkedList<String> names = new LinkedList<>();
+					Long fsoid = rowi.next().get(fso);
+					while (fsoid != null)
 					{
-						LinkedList<String> names = new LinkedList<>();
-						Long fsoid = rowi.next().get(fso);
-						while (fsoid != null)
+						IRow newStmtfs = _db.selectOne(Arrays.asList(new Column<?>[] { COLUMN_FILESYSTEMOBJECT_NAME, COLUMN_FILESYSTEMOBJECT_PARENT, TaskQueue.COLUMN_ID }), TABLE_FILESYSTEMOBJECT, "id=?",
+								Arrays.asList(new IValue[] { new LongValue(fsoid) }));
+						if (newStmtfs == null)
 						{
-							IRow newStmtfs = _db.selectOne(Arrays.asList(new Column<?>[] { COLUMN_FILESYSTEMOBJECT_NAME, COLUMN_FILESYSTEMOBJECT_PARENT, TaskQueue.COLUMN_ID }), TABLE_FILESYSTEMOBJECT, "id=?",
-									Arrays.asList(new IValue[] { new LongValue(fsoid) }));
-							if (newStmtfs == null) {
-								return null;
-							}
-							fsoid = newStmtfs.get(COLUMN_FILESYSTEMOBJECT_PARENT);
-							names.addFirst(newStmtfs.get(COLUMN_FILESYSTEMOBJECT_NAME));
+							return null;
 						}
-						Iterator<String> n = names.iterator();
-						File file = new File(n.next());
-						while (n.hasNext())
-						{
-							file = new File(file, n.next());
-						}
-						return file;
+						fsoid = newStmtfs.get(COLUMN_FILESYSTEMOBJECT_PARENT);
+						names.addFirst(newStmtfs.get(COLUMN_FILESYSTEMOBJECT_NAME));
 					}
+					Iterator<String> n = names.iterator();
+					File file = new File(n.next());
+					while (n.hasNext())
+					{
+						file = new File(file, n.next());
+					}
+					return file;
+				}
 
-					@Override
-					public void remove()
-					{
-						throw new RuntimeException("not implemented!");
-					}
-				};
-			}
+				@Override
+				public void remove()
+				{
+					throw new RuntimeException("not implemented!");
+				}
+					};
 		};
 	}
 
 	private static void delete(String table, final IColumnValue criteria, ITaskContext _db)
 	{
-		_db.delete(table, criteria.getColumnName(), new IValue()
-		{
-			@Override
-			public void visit(IValueVisitor visitor)
-			{
-				criteria.visitValue(visitor);
-			}
-		});
+		_db.delete(table, criteria.getColumnName(), visitor -> criteria.visitValue(visitor));
 	}
 }
