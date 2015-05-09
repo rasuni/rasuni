@@ -66,7 +66,8 @@ public final class ListOld
 	{
 		LogLog.g_debugEnabled = false;
 		LogLog.g_quietMode = false;
-		main(System.getSecurityManager(), System.getProperties(), LogLog.g_debugEnabled, LogLog.g_quietMode);
+		final SecurityManager securityManager = System.getSecurityManager();
+		main(securityManager, System.getProperties(), LogLog.g_debugEnabled, LogLog.g_quietMode);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -190,7 +191,7 @@ public final class ListOld
 		loggerRepository.getRootLogger().setLevel(Level.WARN);
 		final TitanGraph tg = TitanFactory.open(new ReadConfiguration()
 		{
-			@SuppressWarnings({ "unchecked", "null" })
+			@SuppressWarnings({ "unchecked" })
 			@Override
 			public <O> O get(String key, Class<O> datatype)
 			{
@@ -255,7 +256,7 @@ public final class ListOld
 				case "log.titan.read-threads":
 				case "log.titan.read-batch-size":
 					Assert.expect(datatype == Integer.class);
-					return (O) null;
+					return null;
 				case "metrics.prefix":
 					Assert.expect(datatype == String.class);
 					return (O) "com.thinkaurelius.titan";
@@ -281,11 +282,11 @@ public final class ListOld
 				case "log.titan.read-lag-time":
 				case "log.titan.max-read-time":
 					Assert.expect(datatype == StandardDuration.class);
-					return (O) null;
+					return null;
 				case "log.tx.read-interval":
 				case "log.titan.read-interval":
 					Assert.expect(datatype == Duration.class);
-					return (O) null;
+					return null;
 				case "ids.renew-timeout":
 					Assert.expect(datatype == Duration.class);
 					return (O) new StandardDuration(120000, TimeUnit.MILLISECONDS);
@@ -311,7 +312,7 @@ public final class ListOld
 				case "index":
 				case "attributes.custom":
 					return () -> new Iterator<String>()
-							{
+					{
 						@Override
 						public boolean hasNext()
 						{
@@ -323,7 +324,7 @@ public final class ListOld
 						{
 							throw new RuntimeException("not implemented!");
 						}
-							};
+					};
 				default:
 					throw new RuntimeException("not implemented!");
 				}
@@ -381,96 +382,96 @@ public final class ListOld
 	}
 
 	/*
-			@Override
-			public boolean execute(IFileSystemScanner scanner)
+	@Override
+	public boolean execute(IFileSystemScanner scanner)
+	{
+		Long lastAccessTime = scanner.getMin(COLUMN_LAST_ACCESS_TIME, FILE);
+		if (lastAccessTime != null && (_requirements == null || _requirements.fulfilled(lastAccessTime, _scanCount)))
+		{
+			LinkedList<String> commands = new LinkedList<>();
+			IColumnValue criteria = new ColumnValue<>(COLUMN_LAST_ACCESS_TIME, lastAccessTime);
+			int count = 0;
+			for (File file : scanner.select(FILE, criteria))
 			{
-				Long lastAccessTime = scanner.getMin(COLUMN_LAST_ACCESS_TIME, FILE);
-				if (lastAccessTime != null && (_requirements == null || _requirements.fulfilled(lastAccessTime, _scanCount)))
+				if (file != null)
 				{
-					LinkedList<String> commands = new LinkedList<>();
-					IColumnValue criteria = new ColumnValue<>(COLUMN_LAST_ACCESS_TIME, lastAccessTime);
-					int count = 0;
-					for (File file : scanner.select(FILE, criteria))
+					if (file.isHidden())
 					{
-						if (file != null)
-						{
-							if (file.isHidden())
-							{
-								commands.add("ATTRIB -S -H \"" + file + '"');
-							}
-							commands.add("DEL \"" + file + '"');
-						}
-						count++;
+						commands.add("ATTRIB -S -H \"" + file + '"');
 					}
-					int requiredCount = Math.max(count * 3 / 2, 2);
-					if (requiredCount <= _scanCount)
-					{
-						System.out.println("Scan-count: " + _scanCount);
-						for (String cmd : commands)
-						{
-							System.out.println(cmd);
-						}
-						scanner.delete(FILE, criteria);
-						return false;
-					}
-					else
-					{
-						System.out.println("Required-count: " + requiredCount);
-						_requirements = new Requirements(lastAccessTime, requiredCount);
-						return true;
-					}
+					commands.add("DEL \"" + file + '"');
 				}
-				else
+				count++;
+			}
+			int requiredCount = Math.max(count * 3 / 2, 2);
+			if (requiredCount <= _scanCount)
+			{
+				System.out.println("Scan-count: " + _scanCount);
+				for (String cmd : commands)
 				{
-					return true;
+					System.out.println(cmd);
 				}
+				scanner.delete(FILE, criteria);
+				return false;
 			}
-
-			@Override
-			public void visit(File file, IFileProcessingContext context)
+			else
 			{
-				try
-				{
-					BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-					context.createOrUpdate(FILE, new ColumnValue<>(COLUMN_LAST_ACCESS_TIME, Math.max(Math.max(toDays(attrs.lastAccessTime()), toDays(attrs.creationTime())), toDays(attrs.lastModifiedTime()))));
-					_scanCount++;
-				}
-				catch (IOException e)
-				{
-					throw new RuntimeException(e);
-				}
+				System.out.println("Required-count: " + requiredCount);
+				_requirements = new Requirements(lastAccessTime, requiredCount);
+				return true;
 			}
+		}
+		else
+		{
+			return true;
+		}
+	}
 
-			private static long toDays(FileTime time)
-			{
-				return time.to(TimeUnit.DAYS);
-			}
+	@Override
+	public void visit(File file, IFileProcessingContext context)
+	{
+		try
+		{
+			BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+			context.createOrUpdate(FILE, new ColumnValue<>(COLUMN_LAST_ACCESS_TIME, Math.max(Math.max(toDays(attrs.lastAccessTime()), toDays(attrs.creationTime())), toDays(attrs.lastModifiedTime()))));
+			_scanCount++;
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 
-			@Override
-			public void provideRootEntries(IRootRegistry registry)
-			{
-				registry.register(Arrays.asList("C:\\"));
-				registry.register(Arrays.asList("D:\\"));
-				registry.register(Arrays.asList("\\\\qnap\\backup"));
-				registry.register(Arrays.asList("\\\\qnap\\Network Recycle Bin 1"));
-				registry.register(Arrays.asList("\\\\qnap\\Public"));
-				registry.register(Arrays.asList("\\\\qnap\\Qdownload"));
-				registry.register(Arrays.asList("\\\\qnap\\Qmultimedia"));
-				registry.register(Arrays.asList("\\\\qnap\\Qrecordings"));
-				registry.register(Arrays.asList("\\\\qnap\\Qusb"));
-				registry.register(Arrays.asList("\\\\qnap\\Qweb"));
-				registry.register(Arrays.asList("\\\\qnap\\music"));
-				registry.register(Arrays.asList("\\\\qnap\\itunes"));
-				registry.register(Arrays.asList("\\\\MUSIKSERVER\\Kunde"));
-				registry.register(Arrays.asList("\\\\MUSIKSERVER\\Lights-Out"));
-				registry.register(Arrays.asList("\\\\MUSIKSERVER\\Musik"));
-			}
+	private static long toDays(FileTime time)
+	{
+		return time.to(TimeUnit.DAYS);
+	}
 
-			@Override
-			public void fileDeleted(IDeleteProcessingContext context)
-			{
-				context.delete(FILE);
-			}
+	@Override
+	public void provideRootEntries(IRootRegistry registry)
+	{
+		registry.register(Arrays.asList("C:\\"));
+		registry.register(Arrays.asList("D:\\"));
+		registry.register(Arrays.asList("\\\\qnap\\backup"));
+		registry.register(Arrays.asList("\\\\qnap\\Network Recycle Bin 1"));
+		registry.register(Arrays.asList("\\\\qnap\\Public"));
+		registry.register(Arrays.asList("\\\\qnap\\Qdownload"));
+		registry.register(Arrays.asList("\\\\qnap\\Qmultimedia"));
+		registry.register(Arrays.asList("\\\\qnap\\Qrecordings"));
+		registry.register(Arrays.asList("\\\\qnap\\Qusb"));
+		registry.register(Arrays.asList("\\\\qnap\\Qweb"));
+		registry.register(Arrays.asList("\\\\qnap\\music"));
+		registry.register(Arrays.asList("\\\\qnap\\itunes"));
+		registry.register(Arrays.asList("\\\\MUSIKSERVER\\Kunde"));
+		registry.register(Arrays.asList("\\\\MUSIKSERVER\\Lights-Out"));
+		registry.register(Arrays.asList("\\\\MUSIKSERVER\\Musik"));
+	}
+
+	@Override
+	public void fileDeleted(IDeleteProcessingContext context)
+	{
+		context.delete(FILE);
+	}
 	 */
 	private static void process(TitanGraph tg)
 	{
