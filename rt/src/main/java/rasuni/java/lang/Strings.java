@@ -18,12 +18,7 @@ public final class Strings
 	/**
 	 * The value getter
 	 */
-	static final IFunction<char[], String> VALUE;
-	static
-	{
-		//VALUE = str -> str.value;
-		VALUE = Classes.getter(String.class, "value");
-	}
+	static final IField<char[], String> VALUE = Classes.field(String.class, "value");
 
 	private static final Constructor<String> CONSTRUCTOR;
 	static
@@ -34,7 +29,7 @@ public final class Strings
 
 	private static boolean compare(String string, IPredicate lengthMatches, IIntFunction offset, char[] value)
 	{
-		char[] pa = VALUE.apply(string);
+		char[] pa = VALUE.get(string);
 		int pc = pa.length;
 		if (lengthMatches.check(offset.apply(pc), value.length))
 		{
@@ -107,7 +102,7 @@ public final class Strings
 	 */
 	public static boolean startsWith(String prefix, String string)
 	{
-		return startsWith(prefix, Integers::identity, VALUE.apply(string));
+		return startsWith(prefix, Integers::identity, VALUE.get(string));
 	}
 
 	/**
@@ -127,7 +122,7 @@ public final class Strings
 	 */
 	public static boolean equals(String string, Object anObject)
 	{
-		return anObject instanceof String && compare(string, (l1, l2) -> l1 == l2, Integers::identity, VALUE.apply((String) anObject));
+		return anObject instanceof String && compare(string, (l1, l2) -> l1 == l2, Integers::identity, VALUE.get((String) anObject));
 	}
 
 	/**
@@ -146,5 +141,25 @@ public final class Strings
 	public static String copyOfRange(char[] value, int start, final int len)
 	{
 		return Constructors.newInstance(CONSTRUCTOR, Arrays.copyOfRange(value, start, len), Boolean.TRUE);
+	}
+
+	/**
+	 * Calculate the hash code of a string
+	 *
+	 * @param string
+	 *            the string
+	 * @return the hash code
+	 */
+	public static int hashCode(String string)
+	{
+		char[] value = VALUE.get(string);
+		int i = 0;
+		int h = 0;
+		while (i != value.length)
+		{
+			h = 31 * h + value[i];
+			i++;
+		}
+		return h;
 	}
 }
