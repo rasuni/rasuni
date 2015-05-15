@@ -54,6 +54,11 @@ public enum TypeId
 	@XmlEnumValue("3e48faba-ec01-47fd-8e89-30e81161661c")
 	ARTIST_WORK_LYRICIST,
 	/**
+	 * Area event held in
+	 */
+	@XmlEnumValue("542f8484-8bc7-3ce5-a022-747850b2b928")
+	AREA_EVENT_HELDIN,
+	/**
 	 * Artist - recording - producer
 	 */
 	@XmlEnumValue("5c0ceac3-feb4-41f0-868d-dc06f6e27fc0")
