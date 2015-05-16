@@ -5,9 +5,9 @@
  * licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -26,7 +26,6 @@ import org.apache.log4j.spi.LoggerRepository;
 import rasuni.java.lang.Characters;
 import rasuni.java.lang.IIntPredicate;
 import rasuni.java.lang.Integers;
-import rasuni.java.lang.Strings;
 
 // Contributors:   Avy Sharell (sharell@online.fr)
 //                 Matthieu Verbert (mve@zurich.ibm.com)
@@ -127,7 +126,7 @@ public final class OptionConverter
 					{
 						if (st == vlen)
 						{
-							return Characters.parseBoolean(vlen - st, v, st, st + 1, st + 2, st + 3, dEfault, st + 4);
+							return Characters.parseBooleanFromRange(vlen, st, v, dEfault);
 						}
 						if (nonWhiteSpace.check(st))
 						{
@@ -141,6 +140,8 @@ public final class OptionConverter
 								}
 								len = len1;
 							}
+							return Characters.parseBooleanFromRange(len, st, v, dEfault);
+							/*
 							String trimmedVal = Strings.copyOfRange(v, st, len);
 							if ("true".equalsIgnoreCase(trimmedVal))
 							{
@@ -151,6 +152,7 @@ public final class OptionConverter
 								return false;
 							}
 							return dEfault;
+							 */
 						}
 						st++;
 					}
