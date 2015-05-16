@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import rasuni.java.lang.reflect.Classes;
 import rasuni.java.lang.reflect.Constructors;
+import rasuni.java.lang.reflect.Fields;
 
 /**
  * String utilities
@@ -18,7 +19,7 @@ public final class Strings
 	/**
 	 * The value getter
 	 */
-	static final IField<char[], String> VALUE = Classes.field(String.class, "value");
+	static final IField<char[], String> VALUE = Fields.field(String.class, "value");
 
 	private static final Constructor<String> CONSTRUCTOR;
 	static

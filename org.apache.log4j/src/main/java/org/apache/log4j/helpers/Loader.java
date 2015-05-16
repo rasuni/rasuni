@@ -47,7 +47,7 @@ public class Loader
 		{
 			Field propsField = System.class.getDeclaredField("props");
 			propsField.setAccessible(true);
-			props = Fields.get(propsField, null);
+			props = Fields.getValue(propsField, null);
 		}
 		catch (NoSuchFieldException e)
 		{
