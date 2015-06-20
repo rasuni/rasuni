@@ -27,11 +27,13 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
+import java.security.AccessController;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Properties;
+import java.util.PropertyPermission;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Hierarchy;
 import org.apache.log4j.Level;
@@ -46,14 +48,21 @@ import org.apache.log4j.spi.NOPLoggerRepository;
 import org.apache.log4j.spi.RootLogger;
 import rasuni.check.Assert;
 import rasuni.functional.IConsumer2;
+import rasuni.java.lang.Objects;
 import rasuni.java.lang.SystemUtil;
+import rasuni.java.lang.reflect.Fields;
+import rasuni.java.util.Hashtables;
+import rasuni.java.util.PropertiesUtil;
+import rasuni.org.apache.log4j.helpers.OptionConverters;
 import rasuni.titan.Edges;
 import rasuni.titan.TaskType;
 import rasuni.titan.TitanCollector;
+import sun.security.util.SecurityConstants;
 
 /**
  * Lists old files
  */
+@SuppressWarnings("restriction")
 public final class ListOld
 {
 	/**
@@ -70,43 +79,79 @@ public final class ListOld
 		main(securityManager, System.getProperties(), LogLog.g_debugEnabled, LogLog.g_quietMode);
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation" })
 	private static void main(SecurityManager securityManager, Properties properties, boolean debugEnabled, boolean quietMode)
 	{
 		// java.lang.System.initializeSystemClass();
 		//String debugKey = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("log4j.debug", securityManager, properties, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		try
 		{
-			String debugKey = SystemUtil.getProperty("log4j.debug", securityManager, properties);
-			if (debugKey == null)
+			if (securityManager != null)
 			{
-				try
+				if (securityManager.getClass() == SecurityManager.class)
 				{
-					debugKey = SystemUtil.getProperty("log4j.configDebug", securityManager, properties);
-					if (debugKey != null)
-					{
-						LogLog.g_debugEnabled = OptionConverter.toBoolean(debugKey, true);
-					}
+					AccessController.checkPermission(new PropertyPermission("log4j.debug", SecurityConstants.PROPERTY_READ_ACTION));
 				}
-				catch (Throwable e)
-				{ // MS-Java throws com.ms.security.SecurityExceptionEx
-					rasuni.org.apache.log4j.helpers.LogLog.debug(debugEnabled, quietMode, System.out, () -> "log4j: Was not allowed to read system property \"log4j.configDebug\".");
-					debugKey = null;
+				else
+				{
+					securityManager.checkPropertyAccess("log4j.debug");
 				}
 			}
-			else
+			l1: for (;;)
 			{
-				LogLog.g_debugEnabled = OptionConverter.toBoolean(debugKey, true);
+				final Object tab[] = Hashtables.TABLE.get(properties);
+				Object e = tab[958220383 % tab.length];
+				for (;;)
+				{
+					if (Objects.isNull(e))
+					{
+						break;
+					}
+					if (((Integer) Fields.get(e, "hash")).intValue() == -1189263265)
+					{
+						final Object k1 = Fields.get(e, "key");
+						if (k1.getClass() == Object.class || k1.equals("log4j.debug"))
+						{
+							Object oval = Fields.get(e, "value");
+							if (oval instanceof String)
+							{
+								LogLog.g_debugEnabled = OptionConverters.toBoolean((String) oval, true);
+								break l1;
+							}
+							break;
+						}
+					}
+					e = Fields.get(e, "next");
+				}
+				properties = PropertiesUtil.DEFAULTS.get(properties);
+				if (Objects.isNull(properties))
+				{
+					String debugKey = null;
+					try
+					{
+						debugKey = SystemUtil.getProperty("log4j.configDebug", securityManager, properties);
+						if (debugKey != null)
+						{
+							LogLog.g_debugEnabled = OptionConverters.toBoolean(debugKey, true);
+						}
+					}
+					catch (Throwable e1)
+					{ // MS-Java throws com.ms.security.SecurityExceptionEx
+						rasuni.org.apache.log4j.helpers.LogLog.debug(debugEnabled, quietMode, System.out, () -> "log4j: Was not allowed to read system property \"log4j.configDebug\".");
+						debugKey = null;
+					}
+					break;
+				}
 			}
 		}
 		catch (Throwable e)
 		{ // MS-Java throws com.ms.security.SecurityExceptionEx
 			rasuni.org.apache.log4j.helpers.LogLog.debug(LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, () -> "log4j: Was not allowed to read system property \"" + "log4j.debug" + "\".");
 			String debugKey = null;
-			debugKey = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("log4j.configDebug", System.getSecurityManager(), System.getProperties(), null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+			debugKey = rasuni.org.apache.log4j.helpers.OptionConverters.getSystemProperty("log4j.configDebug", System.getSecurityManager(), System.getProperties(), null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 			if (debugKey != null)
 			{
-				LogLog.g_debugEnabled = OptionConverter.toBoolean(debugKey, true);
+				LogLog.g_debugEnabled = OptionConverters.toBoolean(debugKey, true);
 			}
 		}
 		Level debug = new Level(Priority.DEBUG_INT, "DEBUG", 7);
@@ -114,13 +159,13 @@ public final class ListOld
 		final DefaultRepositorySelector defaultRepositorySelector = new DefaultRepositorySelector(new Hierarchy(new RootLogger(debug)));
 		LogManager.g_repositorySelector = defaultRepositorySelector;
 		/** Search for the properties file log4j.properties in the CLASSPATH. */
-		final String override = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty(LogManager.DEFAULT_INIT_OVERRIDE_KEY, System.getSecurityManager(), System.getProperties(), null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+		final String override = rasuni.org.apache.log4j.helpers.OptionConverters.getSystemProperty(LogManager.DEFAULT_INIT_OVERRIDE_KEY, System.getSecurityManager(), System.getProperties(), null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		// if there is no default init override, then get the resource
 		// specified by the user or the default config file.
 		if (override == null || "false".equalsIgnoreCase(override))
 		{
-			final String configurationOptionStr = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty(LogManager.DEFAULT_CONFIGURATION_KEY, System.getSecurityManager(), System.getProperties(), null, LogLog.g_debugEnabled, LogLog.g_quietMode,
-					System.out);
+			final String configurationOptionStr = rasuni.org.apache.log4j.helpers.OptionConverters.getSystemProperty(LogManager.DEFAULT_CONFIGURATION_KEY, System.getSecurityManager(), System.getProperties(), null, LogLog.g_debugEnabled,
+					LogLog.g_quietMode, System.out);
 			// final String configuratorClassName =
 			// getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY);
 			// if the user has not specified the log4j.configuration
@@ -149,7 +194,7 @@ public final class ListOld
 					try
 					{
 						OptionConverter.selectAndConfigure(url,
-								rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY, System.security, System.props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out),
+								rasuni.org.apache.log4j.helpers.OptionConverters.getSystemProperty(LogManager.CONFIGURATOR_CLASS_KEY, System.security, System.props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out),
 								LogManager.getLoggerRepository());
 					}
 					catch (NoClassDefFoundError e)

@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * contributor license agreements. See the NOTICE file distributed with this
+ * work for additional information regarding copyright ownership. The ASF
+ * licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.log4j.helpers;
 
@@ -23,11 +23,12 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Properties;
 import rasuni.java.lang.reflect.Fields;
+import rasuni.org.apache.log4j.helpers.OptionConverters;
 
 /**
-   Load resources (or images) from various sources.
-
-  @author Ceki G&uuml;lc&uuml;
+ * Load resources (or images) from various sources.
+ * 
+ * @author Ceki G&uuml;lc&uuml;
  */
 public class Loader
 {
@@ -53,7 +54,7 @@ public class Loader
 		{
 			throw new RuntimeException(e);
 		}
-		String prop = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("java.version", System.getSecurityManager(), props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+		String prop = rasuni.org.apache.log4j.helpers.OptionConverters.getSystemProperty("java.version", System.getSecurityManager(), props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		if (prop != null)
 		{
 			int i = prop.indexOf('.');
@@ -65,19 +66,22 @@ public class Loader
 				}
 			}
 		}
-		String ignoreTCLProp = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty("log4j.ignoreTCL", System.getSecurityManager(), props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+		String ignoreTCLProp = rasuni.org.apache.log4j.helpers.OptionConverters.getSystemProperty("log4j.ignoreTCL", System.getSecurityManager(), props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 		if (ignoreTCLProp != null)
 		{
-			ignoreTCL = OptionConverter.toBoolean(ignoreTCLProp, true);
+			ignoreTCL = OptionConverters.toBoolean(ignoreTCLProp, true);
 		}
 	}
 
 	/**
-	 *  Get a resource by delegating to getResource(String).
-	 *  @param resource resource name
-	 *  @param clazz class, ignored.
-	 *  @return URL to resource or null.
-	 *  @deprecated as of 1.2.
+	 * Get a resource by delegating to getResource(String).
+	 * 
+	 * @param resource
+	 *            resource name
+	 * @param clazz
+	 *            class, ignored.
+	 * @return URL to resource or null.
+	 * @deprecated as of 1.2.
 	 */
 	@Deprecated
 	public static URL getResource(String resource, @SuppressWarnings({ "unused", "rawtypes" }) Class clazz)
@@ -86,23 +90,25 @@ public class Loader
 	}
 
 	/**
-	   This method will search for <code>resource</code> in different
-	   places. The search order is as follows:
-
-	   <ol>
-
-	   <p><li>Search for <code>resource</code> using the thread context
-	   class loader under Java2. If that fails, search for
-	   <code>resource</code> using the class loader that loaded this
-	   class (<code>Loader</code>). Under JDK 1.1, only the the class
-	   loader that loaded this class (<code>Loader</code>) is used.
-
-	   <p><li>Try one last time with
-	   <code>ClassLoader.getSystemResource(resource)</code>, that is is
-	   using the system class loader in JDK 1.2 and virtual machine's
-	   built-in class loader in JDK 1.1.
-
-	   </ol>
+	 * This method will search for <code>resource</code> in different places.
+	 * The search order is as follows:
+	 * 
+	 * <ol>
+	 * 
+	 * <p>
+	 * <li>Search for <code>resource</code> using the thread context class
+	 * loader under Java2. If that fails, search for <code>resource</code> using
+	 * the class loader that loaded this class (<code>Loader</code>). Under JDK
+	 * 1.1, only the the class loader that loaded this class (
+	 * <code>Loader</code>) is used.
+	 * 
+	 * <p>
+	 * <li>Try one last time with
+	 * <code>ClassLoader.getSystemResource(resource)</code>, that is is using
+	 * the system class loader in JDK 1.2 and virtual machine's built-in class
+	 * loader in JDK 1.1.
+	 * 
+	 * </ol>
 	 */
 	@SuppressWarnings("javadoc")
 	static public URL getResource(String resource)
@@ -165,7 +171,7 @@ public class Loader
 	}
 
 	/**
-	   Are we running under JDK 1.x?
+	 * Are we running under JDK 1.x?
 	 */
 	@SuppressWarnings("javadoc")
 	public static boolean isJava1()
@@ -174,11 +180,11 @@ public class Loader
 	}
 
 	/**
-	 * Get the Thread Context Loader which is a JDK 1.2 feature. If we
-	 * are running under JDK 1.1 or anything else goes wrong the method
-	 * returns <code>null<code>.
+	 * Get the Thread Context Loader which is a JDK 1.2 feature. If we are
+	 * running under JDK 1.1 or anything else goes wrong the method returns
+	 * <code>null<code>.
 	 *
-	 *  */
+	 * */
 	@SuppressWarnings("javadoc")
 	public static ClassLoader getTCL() throws IllegalAccessException, InvocationTargetException
 	{
@@ -198,9 +204,8 @@ public class Loader
 
 	/**
 	 * If running under JDK 1.2 load the specified class using the
-	 *  <code>Thread</code> <code>contextClassLoader</code> if that
-	 *  fails try Class.forname. Under JDK 1.1 only Class.forName is
-	 *  used.
+	 * <code>Thread</code> <code>contextClassLoader</code> if that fails try
+	 * Class.forname. Under JDK 1.1 only Class.forName is used.
 	 *
 	 */
 	@SuppressWarnings("javadoc")

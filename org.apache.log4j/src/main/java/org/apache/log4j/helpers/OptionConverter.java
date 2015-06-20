@@ -23,9 +23,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.spi.Configurator;
 import org.apache.log4j.spi.LoggerRepository;
-import rasuni.java.lang.Characters;
-import rasuni.java.lang.IIntPredicate;
-import rasuni.java.lang.Integers;
 
 // Contributors:   Avy Sharell (sharell@online.fr)
 //                 Matthieu Verbert (mve@zurich.ibm.com)
@@ -50,115 +47,6 @@ public final class OptionConverter
 	/** OptionConverter is a static class. */
 	private OptionConverter()
 	{
-	}
-
-	/**
-	 * If <code>value</code> is "true", then <code>true</code> is returned. If
-	 * <code>value</code> is "false", then <code>true</code> is returned.
-	 * Otherwise, <code>default</code> is returned.
-	 *
-	 * <p>
-	 * Case of value is unimportant.
-	 *
-	 * @param value
-	 *            the value to convert
-	 * @param dEfault
-	 *            the default value
-	 * @return the converted value
-	 */
-	public static boolean toBoolean(String value, boolean dEfault)
-	{
-		if (value == null)
-		{
-			return dEfault;
-		}
-		else
-		{
-			final char[] v = value.value;
-			final int vlen = v.length;
-			if (vlen == 0)
-			{
-				final char pa[] = value.value;
-				switch (pa.length)
-				{
-				case 4:
-					return Characters.combinedMatchIgnoreCase(Characters.combinedMatchIgnoreCase(
-							Characters.combinedMatchIgnoreCase(Characters.matchIgnoreCase(pa, 0, Characters.UPPER_CASE_T, Characters.LOWER_CASE_T), pa, 1, Characters.UPPER_CASE_R, Characters.LOWER_CASE_R), pa, 2, Characters.UPPER_CASE_U,
-							Characters.LOWER_CASE_U), pa, 3, Characters.UPPER_CASE_E, Characters.LOWER_CASE_E)
-							|| dEfault;
-				case 5:
-					return Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(Characters.combinedNoMatchIgnoreCase(
-							Characters.combinedNoMatchIgnoreCase(Characters.noMatchIgnoreCase(pa, 0, Characters.UPPER_CASE_F, Characters.LOWER_CASE_F), pa, 1, Characters.UPPER_CASE_A, Characters.LOWER_CASE_A), pa, 2, Characters.UPPER_CASE_L,
-							Characters.LOWER_CASE_L), pa, 3, Characters.UPPER_CASE_S, Characters.LOWER_CASE_S), pa, 4, Characters.UPPER_CASE_E, Characters.LOWER_CASE_E)
-							&& dEfault;
-				default:
-					return dEfault;
-				}
-			}
-			else
-			{
-				IIntPredicate nonWhiteSpace = (int pos) -> Characters.isNonWhiteSpace(v, pos);
-				if (nonWhiteSpace.check(0))
-				{
-					int len1 = Integers.predecessor(vlen);
-					if (nonWhiteSpace.check(len1))
-					{
-						final char pa[] = value.value;
-						return Characters.parseBoolean(pa.length, pa, dEfault);
-					}
-					else
-					{
-						for (;;)
-						{
-							final int len = len1;
-							len1--;
-							if (nonWhiteSpace.check(len1))
-							{
-								return Characters.parseBoolean(len, v, dEfault);
-							}
-						}
-					}
-				}
-				else
-				{
-					int st = 1;
-					for (;;)
-					{
-						if (st == vlen)
-						{
-							return Characters.parseBooleanFromRange(vlen, st, v, dEfault);
-						}
-						if (nonWhiteSpace.check(st))
-						{
-							int len = vlen;
-							for (;;)
-							{
-								final int len1 = Integers.predecessor(len);
-								if (nonWhiteSpace.check(len1))
-								{
-									break;
-								}
-								len = len1;
-							}
-							return Characters.parseBooleanFromRange(len, st, v, dEfault);
-							/*
-							String trimmedVal = Strings.copyOfRange(v, st, len);
-							if ("true".equalsIgnoreCase(trimmedVal))
-							{
-								return true;
-							}
-							if ("false".equalsIgnoreCase(trimmedVal))
-							{
-								return false;
-							}
-							return dEfault;
-							 */
-						}
-						st++;
-					}
-				}
-			}
-		}
 	}
 
 	@SuppressWarnings("javadoc")
@@ -473,7 +361,7 @@ public final class OptionConverter
 					j += DELIM_START_LEN;
 					String key = val.substring(j, k);
 					// first try in System properties
-					String replacement = rasuni.org.apache.log4j.helpers.OptionConverter.getSystemProperty(key, System.security, System.props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
+					String replacement = rasuni.org.apache.log4j.helpers.OptionConverters.getSystemProperty(key, System.security, System.props, null, LogLog.g_debugEnabled, LogLog.g_quietMode, System.out);
 					// then try props parameter
 					if (replacement == null && props != null)
 					{
