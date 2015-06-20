@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * contributor license agreements. See the NOTICE file distributed with this
+ * work for additional information regarding copyright ownership. The ASF
+ * licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 // Contributors:  Kitching Simon <Simon.Kitching@orange.ch>
 //                Nicholas Wolff
@@ -24,66 +24,69 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
-   Defines the minimum set of levels recognized by the system, that is
-   <code>OFF</code>, <code>FATAL</code>, <code>ERROR</code>,
-   <code>WARN</code>, <code>INFO</code, <code>DEBUG</code> and
-   <code>ALL</code>.
-
-   <p>The <code>Level</code> class may be subclassed to define a larger
-   level set.
-
-   @author Ceki G&uuml;lc&uuml;
-
+ * Defines the minimum set of levels recognized by the system, that is
+ * <code>OFF</code>, <code>FATAL</code>, <code>ERROR</code>, <code>WARN</code>,
+ * <code>INFO</code, <code>DEBUG</code> and <code>ALL</code>.
+ *
+ * <p>
+ * The <code>Level</code> class may be subclassed to define a larger level set.
+ *
+ * @author Ceki G&uuml;lc&uuml;
  */
 public class Level extends Priority implements Serializable
 {
 	/**
 	 * TRACE level integer value.
+	 *
 	 * @since 1.2.12
 	 */
 	private static final int TRACE_INT = 5000;
 
 	/**
-	   The <code>OFF</code> has the highest possible rank and is
-	   intended to turn off logging.  */
+	 * The <code>OFF</code> has the highest possible rank and is intended to
+	 * turn off logging.
+	 */
 	final static public Level OFF = new Level(Priority.OFF_INT, "OFF", 0);
 
 	/**
-	   The <code>FATAL</code> level designates very severe error
-	   events that will presumably lead the application to abort.
+	 * The <code>FATAL</code> level designates very severe error events that
+	 * will presumably lead the application to abort.
 	 */
 	@SuppressWarnings("hiding")
-	final static public Level FATAL = new Level(Priority.FATAL_INT, "FATAL", 0);
+	final static private Level FATAL = new Level(Priority.FATAL_INT, "FATAL", 0);
 
 	/**
-	   The <code>ERROR</code> level designates error events that
-	   might still allow the application to continue running.  */
+	 * The <code>ERROR</code> level designates error events that might still
+	 * allow the application to continue running.
+	 */
 	@SuppressWarnings("hiding")
-	final static public Level ERROR = new Level(Priority.ERROR_INT, "ERROR", 3);
+	final static private Level ERROR = new Level(Priority.ERROR_INT, "ERROR", 3);
 
 	/**
-	   The <code>WARN</code> level designates potentially harmful situations.
+	 * The <code>WARN</code> level designates potentially harmful situations.
 	 */
 	@SuppressWarnings("hiding")
 	final static public Level WARN = new Level(Priority.WARN_INT, "WARN", 4);
 
 	/**
-	   The <code>INFO</code> level designates informational messages
-	   that highlight the progress of the application at coarse-grained
-	   level.  */
+	 * The <code>INFO</code> level designates informational messages that
+	 * highlight the progress of the application at coarse-grained level.
+	 */
 	@SuppressWarnings("hiding")
 	final static public Level INFO = new Level(Priority.INFO_INT, "INFO", 6);
 
 	/**
-	 * The <code>TRACE</code> Level designates finer-grained
-	 * informational events than the <code>DEBUG</code level.
-	 *  @since 1.2.12
+	 * The <code>TRACE</code> Level designates finer-grained informational
+	 * events than the <code>DEBUG</code level.
+	 *
+	 * @since 1.2.12
 	 */
 	public static final Level TRACE = new Level(TRACE_INT, "TRACE", 7);
 
 	/**
-	   The <code>ALL</code> has the lowest possible rank and is intended to
-	   turn on all logging.  */
+	 * The <code>ALL</code> has the lowest possible rank and is intended to turn
+	 * on all logging.
+	 */
 	public final static Level ALL = new Level(Priority.ALL_INT, "ALL", 7);
 
 	/**
@@ -92,10 +95,14 @@ public class Level extends Priority implements Serializable
 	static final long serialVersionUID = 3491141966387921974L;
 
 	/**
-	   Instantiate a Level object.
-	 * @param level the level value
-	 * @param levelStr the level name
-	 * @param syslogEquivalent  the sys log equievalent
+	 * Instantiate a Level object.
+	 *
+	 * @param level
+	 *            the level value
+	 * @param levelStr
+	 *            the level name
+	 * @param syslogEquivalent
+	 *            the sys log equievalent
 	 */
 	public Level(int level, String levelStr, int syslogEquivalent)
 	{
@@ -103,8 +110,8 @@ public class Level extends Priority implements Serializable
 	}
 
 	/**
-	   Convert the string passed as argument to a level. If the
-	   conversion fails, then this method returns {@link TitanCollector#DEBUG}.
+	 * Convert the string passed as argument to a level. If the conversion
+	 * fails, then this method returns {@link TitanCollector#DEBUG}.
 	 */
 	@SuppressWarnings("javadoc")
 	public static Level toLevel(String sArg)
@@ -113,9 +120,8 @@ public class Level extends Priority implements Serializable
 	}
 
 	/**
-	  Convert an integer passed as argument to a level. If the
-	  conversion fails, then this method returns {@link TitanCollector#DEBUG}.
-
+	 * Convert an integer passed as argument to a level. If the conversion
+	 * fails, then this method returns {@link TitanCollector#DEBUG}.
 	 */
 	@SuppressWarnings("javadoc")
 	public static Level toLevel(int val)
@@ -124,8 +130,8 @@ public class Level extends Priority implements Serializable
 	}
 
 	/**
-	  Convert an integer passed as argument to a level. If the
-	  conversion fails, then this method returns the specified default.
+	 * Convert an integer passed as argument to a level. If the conversion
+	 * fails, then this method returns the specified default.
 	 */
 	@SuppressWarnings("javadoc")
 	public static Level toLevel(int val, Level defaultLevel)
@@ -154,9 +160,8 @@ public class Level extends Priority implements Serializable
 	}
 
 	/**
-	   Convert the string passed as argument to a level. If the
-	   conversion fails, then this method returns the value of
-	   <code>defaultLevel</code>.
+	 * Convert the string passed as argument to a level. If the conversion
+	 * fails, then this method returns the value of <code>defaultLevel</code>.
 	 */
 	@SuppressWarnings("javadoc")
 	public static Level toLevel(String sArg, Level defaultLevel)
@@ -210,9 +215,13 @@ public class Level extends Priority implements Serializable
 
 	/**
 	 * Custom deserialization of Level.
-	 * @param s serialization stream.
-	 * @throws IOException if IO exception.
-	 * @throws ClassNotFoundException if class not found.
+	 *
+	 * @param s
+	 *            serialization stream.
+	 * @throws IOException
+	 *             if IO exception.
+	 * @throws ClassNotFoundException
+	 *             if class not found.
 	 */
 	private void readObject(final ObjectInputStream s) throws IOException, ClassNotFoundException
 	{
@@ -228,8 +237,11 @@ public class Level extends Priority implements Serializable
 
 	/**
 	 * Serialize level.
-	 * @param s serialization stream.
-	 * @throws IOException if exception during serialization.
+	 *
+	 * @param s
+	 *            serialization stream.
+	 * @throws IOException
+	 *             if exception during serialization.
 	 */
 	private void writeObject(final ObjectOutputStream s) throws IOException
 	{
@@ -240,8 +252,9 @@ public class Level extends Priority implements Serializable
 	}
 
 	/**
-	 * Resolved deserialized level to one of the stock instances.
-	 * May be overriden in classes derived from Level.
+	 * Resolved deserialized level to one of the stock instances. May be
+	 * overriden in classes derived from Level.
+	 *
 	 * @return resolved object.
 	 */
 	private Object readResolve()
@@ -260,9 +273,9 @@ public class Level extends Priority implements Serializable
 	}
 
 	/**
-	   The <code>DEBUG</code> Level designates fine-grained
-	   informational events that are most useful to debug an
-	   application.  */
+	 * The <code>DEBUG</code> Level designates fine-grained informational events
+	 * that are most useful to debug an application.
+	 */
 	@SuppressWarnings("hiding")
 	static public Level DEBUG; // = new Level(Priority.DEBUG_INT, "DEBUG", 7);
 }

@@ -1,27 +1,28 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * contributor license agreements. See the NOTICE file distributed with this
+ * work for additional information regarding copyright ownership. The ASF
+ * licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 // Contributors:  Kitching Simon <Simon.Kitching@orange.ch>
 package org.apache.log4j;
 
 /**
-   <font color="#AA4444">Refrain from using this class directly, use
-   the {@link Level} class instead</font>.
-
-   @author Ceki G&uuml;lc&uuml; */
+ * <font color="#AA4444">Refrain from using this class directly, use the
+ * {@link Level} class instead</font>.
+ *
+ * @author Ceki G&uuml;lc&uuml;
+ */
 public class Priority
 {
 	int level;
@@ -53,13 +54,13 @@ public class Priority
 	public final static int ALL_INT = Integer.MIN_VALUE;
 
 	/**
-	 * @deprecated Use {@link Level#FATAL} instead.
+	 * @deprecated Use FATAL instead.
 	 */
 	@Deprecated
 	final static public Priority FATAL = new Level(FATAL_INT, "FATAL", 0);
 
 	/**
-	 * @deprecated Use {@link Level#ERROR} instead.
+	 * @deprecated Use ERROR instead.
 	 */
 	@Deprecated
 	final static public Priority ERROR = new Level(ERROR_INT, "ERROR", 3);
@@ -93,10 +94,14 @@ public class Priority
 	}
 
 	/**
-	   Instantiate a level object.
-	 * @param plevel the level
-	 * @param levelStr the level string
-	 * @param syslogEquivalent  the system log equivalent
+	 * Instantiate a level object.
+	 *
+	 * @param plevel
+	 *            the level
+	 * @param levelStr
+	 *            the level string
+	 * @param syslogEquivalent
+	 *            the system log equivalent
 	 */
 	public Priority(int plevel, String levelStr, int syslogEquivalent)
 	{
@@ -106,8 +111,9 @@ public class Priority
 	}
 
 	/**
-	   Two priorities are equal if their level fields are equal.
-	   @since 1.2
+	 * Two priorities are equal if their level fields are equal.
+	 *
+	 * @since 1.2
 	 */
 	@Override
 	public final boolean equals(Object o)
@@ -124,7 +130,7 @@ public class Priority
 	}
 
 	/**
-	   Return the syslog equivalent of this priority as an integer.
+	 * Return the syslog equivalent of this priority as an integer.
 	 */
 	@SuppressWarnings("javadoc")
 	public final int getSyslogEquivalent()
@@ -133,13 +139,12 @@ public class Priority
 	}
 
 	/**
-	   Returns <code>true</code> if this level has a higher or equal
-	   level than the level passed as argument, <code>false</code>
-	   otherwise.
-
-	   <p>You should think twice before overriding the default
-	   implementation of <code>isGreaterOrEqual</code> method.
-
+	 * Returns <code>true</code> if this level has a higher or equal level than
+	 * the level passed as argument, <code>false</code> otherwise.
+	 *
+	 * <p>
+	 * You should think twice before overriding the default implementation of
+	 * <code>isGreaterOrEqual</code> method.
 	 */
 	@SuppressWarnings("javadoc")
 	public final boolean isGreaterOrEqual(Priority r)
@@ -148,10 +153,10 @@ public class Priority
 	}
 
 	/**
-	   Return all possible priorities as an array of Level objects in
-	   descending order.
-
-	   @deprecated This method will be removed with no replacement.
+	 * Return all possible priorities as an array of Level objects in descending
+	 * order.
+	 *
+	 * @deprecated This method will be removed with no replacement.
 	 */
 	@SuppressWarnings("javadoc")
 	@Deprecated
@@ -161,7 +166,7 @@ public class Priority
 	}
 
 	/**
-	   Returns the string representation of this priority.
+	 * Returns the string representation of this priority.
 	 */
 	@Override
 	public final String toString()
@@ -170,7 +175,7 @@ public class Priority
 	}
 
 	/**
-	   Returns the integer representation of this level.
+	 * Returns the integer representation of this level.
 	 */
 	@SuppressWarnings("javadoc")
 	public final int toInt()
@@ -205,7 +210,8 @@ public class Priority
 	}
 
 	/**
-	 * @deprecated Please use the {@link Level#toLevel(int, Level)} method instead.
+	 * @deprecated Please use the {@link Level#toLevel(int, Level)} method
+	 *             instead.
 	 */
 	@SuppressWarnings("javadoc")
 	@Deprecated
@@ -215,7 +221,8 @@ public class Priority
 	}
 
 	/**
-	 * @deprecated Please use the {@link Level#toLevel(String, Level)} method instead.
+	 * @deprecated Please use the {@link Level#toLevel(String, Level)} method
+	 *             instead.
 	 */
 	@SuppressWarnings("javadoc")
 	@Deprecated

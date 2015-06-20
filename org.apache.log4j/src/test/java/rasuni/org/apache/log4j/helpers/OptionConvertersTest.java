@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.Properties;
 import org.junit.Assert;
 import org.junit.Test;
+import rasuni.java.util.NotFound;
 import rasuni.mock.MockTestCase;
 import rasuni.test.Classes;
 
@@ -19,6 +20,8 @@ public final class OptionConvertersTest extends MockTestCase
 	}
 
 	private final IPrintStream _printStream = createStrictMock(IPrintStream.class);
+
+	private final Properties _properties = new Properties();
 
 	/**
 	 * Test the method
@@ -125,5 +128,18 @@ public final class OptionConvertersTest extends MockTestCase
 	public void toBooleanWhitespaceAtEnd()
 	{
 		Assert.assertFalse(OptionConverters.toBoolean("! ", false));
+	}
+
+	/**
+	 * Test parse property value
+	 *
+	 * @throws NotFound
+	 *             not expected
+	 */
+	@Test
+	public void toBooleanProps() throws NotFound
+	{
+		_properties.put("", "");
+		Assert.assertTrue(OptionConverters.toBoolean(_properties, 0, 0, ""));
 	}
 }
