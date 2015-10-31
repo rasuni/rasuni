@@ -1,9 +1,12 @@
 package rasuni.webservice;
 
+import fj.data.List;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -19,7 +22,6 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import rasuni.titan.TitanCollector;
 
 /**
  * @author Ralph Sigrist
@@ -33,11 +35,11 @@ public final class WebService<T>
 
 	private Long _lastQueryTime = null;
 
-	private final String _address;
-
 	private final int _waitTime;
 
 	private final DefaultHttpClient httpclient = new DefaultHttpClient();
+
+	private final String _address;
 
 	private final HashMap<String, T> _map = new HashMap<>();
 
@@ -53,6 +55,7 @@ public final class WebService<T>
 	 */
 	public WebService(Class<T> cls, int waitTime, String address)
 	{
+		_address = address;
 		httpclient.setCredentialsProvider(new CredentialsProvider()
 		{
 			/**
@@ -110,7 +113,6 @@ public final class WebService<T>
 			throw new RuntimeException(e);
 		}
 		_waitTime = waitTime;
-		_address = address;
 	}
 
 	private static void sleep(long l)
@@ -128,17 +130,19 @@ public final class WebService<T>
 	/**
 	 * Get resource
 	 *
-	 * @param param
-	 *            parameter
+	 * @param resource
+	 *            the resource
+	 *
 	 * @return the result
 	 */
-	@SuppressWarnings({ "unchecked", "null" })
-	public T get(String param)
+	@SuppressWarnings({ "unchecked" })
+	public T get(String resource)
 	{
-		T res = _map.get(param);
+		T res = _map.get(resource);
 		if (res == null)
 		{
 			int retryCount = 0;
+			String uri = _address + "/" + resource;
 			for (;;)
 			{
 				try
@@ -147,20 +151,19 @@ public final class WebService<T>
 					if (_lastQueryTime != null)
 					{
 						long diff = currentTime - _lastQueryTime.longValue();
-						if (diff < 1000)
+						long sleepTime = _waitTime - diff;
+						if (sleepTime > 0)
 						{
-							long l = _waitTime - diff;
-							sleep(l < 0 ? 0 : l);
+							sleep(sleepTime);
+							currentTime += sleepTime;
 						}
 					}
 					_lastQueryTime = new Long(currentTime);
-					String url = _address + "/" + param;
-					// System.out.println(url);
 					try
 					{
 						try
 						{
-							final HttpResponse response = httpclient.execute(new HttpGet(url));
+							final HttpResponse response = httpclient.execute(new HttpGet(uri));
 							final HttpEntity entity = response.getEntity();
 							try
 							{
@@ -171,7 +174,7 @@ public final class WebService<T>
 								else
 								{
 									res = (T) _unmarshaller.unmarshal(entity.getContent());
-									_map.put(param, res);
+									_map.put(resource, res);
 									return res;
 								}
 							}
@@ -202,7 +205,7 @@ public final class WebService<T>
 						}
 						retryCount++;
 						sleep(retryCount * 1000);
-						System.out.println("retrying " + url);
+						System.out.println("retrying " + uri);
 					}
 				}
 				catch (JAXBException e)
@@ -228,7 +231,19 @@ public final class WebService<T>
 	 */
 	public T query(String resource, Parameter... parameters)
 	{
-		String params = TitanCollector.join(TitanCollector.sequence(parameters, 0), parameter -> parameter._name + '=' + parameter._value, '&');
-		return get(params.isEmpty() ? resource : resource + '?' + params);
+		List<String> pn = List.list(parameters).map(parameter -> parameter._name + '=' + encode(parameter._value));
+		return get(pn.isEmpty() ? resource : resource + '?' + pn.tail().foldLeft((params, param) -> params + '&' + param, pn.head()));
+	}
+
+	private static String encode(String value)
+	{
+		try
+		{
+			return URLEncoder.encode(value, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 }

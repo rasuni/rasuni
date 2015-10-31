@@ -1,5 +1,6 @@
 package rasuni.musicbrainz;
 
+import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
@@ -8,23 +9,13 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Ralph Sigrist
  *
  */
-public class ReleaseGroup extends Entity
+public class ReleaseGroup extends Entity implements IEntity
 {
 	/**
 	 * the title
 	 */
 	@XmlElement(name = "title")
-	private String _title; // NO_UCD (use final)
-
-	/**
-	 * Return the title
-	 * 
-	 * @return the title
-	 */
-	public String getTitle()
-	{
-		return _title;
-	}
+	public String _title; // NO_UCD (use final)
 
 	// empty
 	@Override
@@ -32,11 +23,16 @@ public class ReleaseGroup extends Entity
 	{
 		return _title;
 	}
-	// @Override
-	// public void process(IEntityProcessor processor)
-	// {
-	// processor.write("title", _title);
-	// processRelations (processor);
-	//
-	// }
+
+	@Override
+	public String getName()
+	{
+		return _title;
+	}
+
+	@Override
+	public LinkedList<RelationList> getRelationLists()
+	{
+		return _relationLists;
+	}
 }

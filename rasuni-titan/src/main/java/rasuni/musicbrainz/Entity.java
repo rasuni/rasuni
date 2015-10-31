@@ -19,14 +19,14 @@ public abstract class Entity
 	 * The relation list
 	 */
 	@XmlElement(name = "relation-list")
-	public final LinkedList<RelationList> _relationLists = new LinkedList<>();
+	final LinkedList<RelationList> _relationLists = new LinkedList<>();
 
 	/**
 	 * Return the id
 	 *
 	 * @return the id
 	 */
-	public String getId()
+	public final String getId()
 	{
 		return _id;
 	}

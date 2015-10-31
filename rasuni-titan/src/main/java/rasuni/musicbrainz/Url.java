@@ -1,11 +1,12 @@
 package rasuni.musicbrainz;
 
+import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
  * @author Ralph Sigrist The URL entity
  */
-public class Url extends Entity
+public class Url extends Entity implements IEntity
 {
 	/**
 	 * the resource
@@ -17,5 +18,17 @@ public class Url extends Entity
 	public String toString()
 	{
 		return _resource;
+	}
+
+	@Override
+	public String getName()
+	{
+		return _resource;
+	}
+
+	@Override
+	public LinkedList<RelationList> getRelationLists()
+	{
+		return _relationLists;
 	}
 }

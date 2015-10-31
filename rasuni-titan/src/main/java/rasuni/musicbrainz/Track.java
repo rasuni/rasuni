@@ -1,12 +1,13 @@
 package rasuni.musicbrainz;
 
 import javax.xml.bind.annotation.XmlElement;
+import rasuni.lang.Value;
 
 /**
  * A track within a release
  *
  */
-public class Track
+public class Track extends Value
 {
 	/**
 	 * The recording
@@ -18,5 +19,5 @@ public class Track
 	 * the artist credits
 	 */
 	@XmlElement(name = "artist-credit")
-	public ArtistCredit _artistCredit; // NO_UCD (unused code)
+	public Object _artistCredit; // NO_UCD (unused code)
 }

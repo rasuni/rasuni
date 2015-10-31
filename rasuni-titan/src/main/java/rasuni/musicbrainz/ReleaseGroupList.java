@@ -9,13 +9,25 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Ralph Sigrist
  *
  */
-public class ReleaseGroupList extends EntityList
+public class ReleaseGroupList extends EntityList implements IEntityList<ReleaseGroup>
 {
 	/**
 	 * The artist list
 	 */
 	@XmlElement(name = "release-group")
 	public LinkedList<ReleaseGroup> _releaseGroups = new LinkedList<>(); // NO_UCD
-																			// (use
-																			// final)
+
+	// (use
+	// final)
+	@Override
+	public LinkedList<ReleaseGroup> list()
+	{
+		return _releaseGroups;
+	}
+
+	@Override
+	public int count()
+	{
+		return _count;
+	}
 }

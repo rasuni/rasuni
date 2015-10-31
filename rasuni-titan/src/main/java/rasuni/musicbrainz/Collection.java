@@ -12,6 +12,7 @@ public final class Collection extends Entity
 	 */
 	@XmlElement(name = "name")
 	public String _name; // NO_UCD (use final)
+
 	/**
 	 * The release list
 	 */

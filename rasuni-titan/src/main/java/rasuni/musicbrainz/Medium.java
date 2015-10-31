@@ -1,12 +1,11 @@
 package rasuni.musicbrainz;
 
+import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
+import rasuni.lang.Value;
 
-/**
- * The medium
- *
- */
-public class Medium
+@SuppressWarnings("javadoc")
+public class Medium extends Value
 {
 	/**
 	 * The disc list
@@ -19,4 +18,9 @@ public class Medium
 	 */
 	@XmlElement(name = "track-list")
 	public TrackList _trackList; // NO_UCD (use final)
+
+	Collection<String> getRecordingIds()
+	{
+		return _trackList.getRecordingIds();
+	}
 }

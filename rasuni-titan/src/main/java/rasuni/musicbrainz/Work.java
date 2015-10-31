@@ -1,5 +1,6 @@
 package rasuni.musicbrainz;
 
+import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
@@ -8,13 +9,13 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Ralph Sigrist
  *
  */
-public class Work extends Entity
+public class Work extends Entity implements IEntity
 {
 	/**
 	 * The work title
 	 */
 	@XmlElement(name = "title")
-	private String _title; // NO_UCD (use final)
+	public String _title; // NO_UCD (use final)
 
 	/**
 	 * The ISWC list
@@ -24,7 +25,7 @@ public class Work extends Entity
 
 	/**
 	 * Return the title
-	 * 
+	 *
 	 * @return the title
 	 */
 	public String getTitle()
@@ -36,5 +37,17 @@ public class Work extends Entity
 	public String toString()
 	{
 		return _title;
+	}
+
+	@Override
+	public String getName()
+	{
+		return _title;
+	}
+
+	@Override
+	public LinkedList<RelationList> getRelationLists()
+	{
+		return _relationLists;
 	}
 }

@@ -1,6 +1,5 @@
 package rasuni.musicbrainz;
 
-import rasuni.functional.IExpression;
 import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -10,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Ralph Sigrist
  *
  */
-public class RecordingList extends EntityList
+public class RecordingList extends EntityList implements IEntityList<Recording>
 {
 	/**
 	 * A recording list
@@ -18,8 +17,15 @@ public class RecordingList extends EntityList
 	@XmlElement(name = "recording")
 	public final LinkedList<Recording> _recordings = new LinkedList<>();
 
-	/**
-	 * the accessor
-	 */
-	public static final IExpression<LinkedList<Recording>, RecordingList> LIST = recordingList -> recordingList._recordings;
+	@Override
+	public LinkedList<Recording> list()
+	{
+		return _recordings;
+	}
+
+	@Override
+	public int count()
+	{
+		return _count;
+	}
 }

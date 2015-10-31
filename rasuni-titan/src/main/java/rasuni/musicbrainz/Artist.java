@@ -1,55 +1,44 @@
 package rasuni.musicbrainz;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import rasuni.lang.Value;
 
-/**
- * The artist
- *
- * @author Ralph Sigrist
- */
-public class Artist // extends Entity
+@SuppressWarnings("javadoc")
+public class Artist extends Value implements IEntity
 {
-	/**
-	 * The id
-	 */
 	@XmlAttribute(name = "id")
 	public String _id; // NO_UCD (use final)
+
+	@XmlAttribute(name = "type")
+	public String _type; // NO_UCD (use final)
+
+	@XmlAnyAttribute
+	public HashMap<String, String> _extensionAttributes = new HashMap<>(); // NO_UCD (use final)
+
+	@XmlElement(name = "name")
+	public String _name; // NO_UCD (use final)
+
+	@XmlElement(name = "sort-name")
+	public String _sortName; // NO_UCD (use final)
+
+	@XmlElement(name = "gender")
+	public String _gender; // NO_UCD (use final)
+
+	@XmlElement(name = "country")
+	public String _country; // NO_UCD (use final)
+
+	@XmlElement(name = "area")
+	public Area _area; // NO_UCD (use final)
 
 	/**
 	 * The relation list
 	 */
 	@XmlElement(name = "relation-list")
-	public final LinkedList<RelationList> _relationLists = new LinkedList<>();
-
-	/**
-	 * Return the id
-	 *
-	 * @return the id
-	 */
-	public String getId()
-	{
-		return _id;
-	}
-
-	/**
-	 * The name
-	 */
-	@XmlElement(name = "name")
-	private String _name; // NO_UCD (use final)
-
-	/**
-	 * The sort name
-	 */
-	@XmlElement(name = "sort-name")
-	private String _sortName; // NO_UCD (use final)
-
-	/**
-	 * Country
-	 */
-	@XmlElement(name = "area")
-	public Area _area; // NO_UCD (use final)
+	private final LinkedList<RelationList> _relationLists = new LinkedList<>();
 
 	/**
 	 * Life Span
@@ -74,6 +63,7 @@ public class Artist // extends Entity
 	 *
 	 * @return the name
 	 */
+	@Override
 	public String getName()
 	{
 		return _name;
@@ -83,5 +73,17 @@ public class Artist // extends Entity
 	public String toString()
 	{
 		return _name;
+	}
+
+	@Override
+	public String getId()
+	{
+		return _id;
+	}
+
+	@Override
+	public LinkedList<RelationList> getRelationLists()
+	{
+		return _relationLists;
 	}
 }

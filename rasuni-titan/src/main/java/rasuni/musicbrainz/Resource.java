@@ -1,121 +1,97 @@
 package rasuni.musicbrainz;
 
-import com.thinkaurelius.titan.core.TitanGraph;
 import javax.xml.bind.annotation.XmlEnumValue;
-import rasuni.titan.TitanCollector;
 
-/**
- * Entity kind
- *
- * @author Ralph Sigrist
- *
- */
+@SuppressWarnings("javadoc")
 public enum Resource
 {
 	/**
 	 * A recording
 	 */
 	@XmlEnumValue("recording")
-	RECORDING("recording", "recording.mbid"),
+	RECORDING("recording"),
 	/**
 	 * Artist
 	 */
 	@XmlEnumValue("artist")
-	ARTIST("artist", "artist.mbid"),
+	ARTIST("artist"),
 	/**
 	 * Release
 	 */
 	@XmlEnumValue("release")
-	RELEASE("release", "release.mbid"),
+	RELEASE("release"),
 	/**
 	 * Work
 	 */
 	@XmlEnumValue("work")
-	WORK("work", "work.mbid"),
+	WORK("work"),
 	/**
 	 * Release Group
 	 */
 	@XmlEnumValue("release_group")
-	RELEASE_GROUP("release-group", "release-group.mbid"),
+	RELEASE_GROUP("release-group"),
 	/**
 	 * URL
 	 */
 	@XmlEnumValue("url")
-	URL("url", "url.mbid"),
+	URL("url"),
 	/**
 	 * label
 	 */
 	@XmlEnumValue("label")
-	LABEL("label", "label.mbid"),
+	LABEL("label"),
 	/**
 	 * areas
 	 */
 	@XmlEnumValue("area")
-	AREA("area", "area.mbid"),
+	AREA("area"),
 	/**
 	 * place
 	 */
 	@XmlEnumValue("place")
-	PLACE("place", "place.mbid"),
+	PLACE("place"),
 	/**
 	 * the collection
 	 */
 	@XmlEnumValue("collection")
-	COLLECTION("collection", "collection.mbid"),
+	COLLECTION(null),
 	/**
 	 * the isrc resource
 	 */
-	ISRC("isrc", "isrc.mbid"),
+	ISRC("isrc"),
 	/**
 	 * the disc resource
 	 */
-	DISC_ID("discid", "discid.mbid"),
+	DISC_ID("discid"),
 	/**
 	 * series
 	 */
 	@XmlEnumValue("series")
-	SERIES("series", "series.mbid"),
+	SERIES("series"),
 	/**
 	 * series
 	 */
 	@XmlEnumValue("event")
-	EVENT("event", "event.mbid");
-	private String _name;
+	EVENT("event");
+	private final String _name;
 
-	private String _mbid;
-
-	private Resource(String name, String mbid)
+	private Resource(String name)
 	{
 		_name = name;
-		_mbid = mbid;
 	}
 
-	/**
-	 * Return the resource name
-	 * @return the resource name
-	 */
+	public static String mbid(String resourceName)
+	{
+		return resourceName + ".mbid";
+	}
+
 	public String getName()
 	{
 		return _name;
 	}
 
-	/**
-	 * return the id key name
-	 * @return the id key name
-	 */
-	public String getMBID()
+	public static String getMBID(Resource plResource)
 	{
-		return _mbid;
-	}
-
-	/**
-	 * Register a key to the provided titan graph
-	 *
-	 * @param tg
-	 *            the graph
-	 */
-	public void makeKey(TitanGraph tg)
-	{
-		TitanCollector.primaryKey(TitanCollector.string(getMBID()), tg);
+		return mbid(plResource.getName());
 	}
 }

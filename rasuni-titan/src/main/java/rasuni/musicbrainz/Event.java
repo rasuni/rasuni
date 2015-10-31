@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
  * The event entity
  *
  */
-public class Event
+public class Event implements IEntity
 {
 	/**
 	 * The id
@@ -27,6 +27,7 @@ public class Event
 	 *
 	 * @return the event id
 	 */
+	@Override
 	public String getId()
 	{
 		return _id;
@@ -37,6 +38,7 @@ public class Event
 	 *
 	 * @return the name
 	 */
+	@Override
 	public String getName()
 	{
 		return _name;
@@ -46,5 +48,11 @@ public class Event
 	 * The relation list
 	 */
 	@XmlElement(name = "relation-list")
-	public final LinkedList<RelationList> _relationLists = new LinkedList<>();
+	private final LinkedList<RelationList> _relationLists = new LinkedList<>();
+
+	@Override
+	public LinkedList<RelationList> getRelationLists()
+	{
+		return _relationLists;
+	}
 }

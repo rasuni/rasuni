@@ -2,12 +2,10 @@ package rasuni.musicbrainz;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
-/**
- * Direction
- *
- */
-public enum Direction
+@SuppressWarnings("javadoc")
+public enum RelationDirection
 {
+	FORWARD,
 	/**
 	 * backward
 	 */

@@ -9,12 +9,24 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Ralph Sigrist
  *
  */
-public class ArtistList extends EntityList
+public class ArtistList extends EntityList implements IEntityList<Artist>
 {
 	/**
 	 * The artist list
 	 */
 	@XmlElement(name = "artist")
 	public LinkedList<Artist> _artists = new LinkedList<>(); // NO_UCD (use
-																// final)
+
+	// final)
+	@Override
+	public LinkedList<Artist> list()
+	{
+		return _artists;
+	}
+
+	@Override
+	public int count()
+	{
+		return _count;
+	}
 }

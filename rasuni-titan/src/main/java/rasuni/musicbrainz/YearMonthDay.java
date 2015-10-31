@@ -1,12 +1,13 @@
 package rasuni.musicbrainz;
 
-/**
- * A year with optional month day
- *
- */
+import java.util.Objects;
+import rasuni.titan.Check;
+
+@SuppressWarnings("javadoc")
 public final class YearMonthDay
 {
 	private final MonthDay _monthDay;
+
 	private final int _year;
 
 	private YearMonthDay(int year, MonthDay monthDay)
@@ -30,7 +31,7 @@ public final class YearMonthDay
 		return isSmaller(result, parsed) ? result : parsed;
 	}
 
-	private static YearMonthDay parse(String date)
+	public static YearMonthDay parse(String date)
 	{
 		if (date == null)
 		{
@@ -140,5 +141,34 @@ public final class YearMonthDay
 				}
 			}
 		}
+	}
+
+	public static String toString(YearMonthDay ymd)
+	{
+		if (Objects.isNull(ymd))
+		{
+			Check.fail();
+			return null;
+			//? null : ymd.toString ();
+		}
+		else
+		{
+			return ymd.toString();
+		}
+	}
+
+	@Override
+	public String toString()
+	{
+		String year = String.format("%04d", _year);
+		if (Objects.isNull(_monthDay))
+		{
+			return year;
+		}
+		else
+		{
+			return _year + '-' + _monthDay.toString(); //Check.fail();
+		}
+		//return Objects.isNull(_monthDay) ? year : year + "-" + _monthDate.to
 	}
 }

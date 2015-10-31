@@ -3,12 +3,13 @@ package rasuni.musicbrainz;
 import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import rasuni.lang.Value;
 
 /**
  * The recording entity
  *
  */
-public final class Recording
+public final class Recording extends Value implements IEntity
 {
 	/**
 	 * The id
@@ -20,14 +21,14 @@ public final class Recording
 	 * The relation list
 	 */
 	@XmlElement(name = "relation-list")
-	public final LinkedList<RelationList> _relationLists = new LinkedList<>();
+	private final LinkedList<RelationList> _relationLists = new LinkedList<>();
 
 	/**
 	 *
 	 * The recording title
 	 */
 	@XmlElement(name = "title")
-	private String _title; // NO_UCD (use final)
+	public String _title; // NO_UCD (use final)
 
 	/**
 	 * The length
@@ -45,31 +46,28 @@ public final class Recording
 	 * the isrc list
 	 */
 	@XmlElement(name = "artist-credit")
-	public ArtistCredit _artistCredit; // NO_UCD (unused code)
+	public Object _artistCredit; // NO_UCD (unused code)
 
 	/**
-	 * Return the title
+	 * Return the id
 	 *
-	 * @return the title
+	 * @return the id
 	 */
-	public String getTitle()
+	@Override
+	public String getId()
+	{
+		return _id;
+	}
+
+	@Override
+	public String getName()
 	{
 		return _title;
 	}
 
 	@Override
-	public String toString()
+	public LinkedList<RelationList> getRelationLists()
 	{
-		return _title;
-	}
-
-	/**
-	 * Return the id
-	 * 
-	 * @return the id
-	 */
-	public String getId()
-	{
-		return _id;
+		return _relationLists;
 	}
 }

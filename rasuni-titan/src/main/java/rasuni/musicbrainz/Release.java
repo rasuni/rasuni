@@ -3,14 +3,10 @@ package rasuni.musicbrainz;
 import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import rasuni.lang.Value;
 
-/**
- * A release
- *
- * @author Ralph Sigrist
- *
- */
-public class Release
+@SuppressWarnings("javadoc")
+public class Release extends Value implements IEntity
 {
 	/**
 	 * The id
@@ -22,13 +18,13 @@ public class Release
 	 * The relation list
 	 */
 	@XmlElement(name = "relation-list")
-	public final LinkedList<RelationList> _relationLists = new LinkedList<>();
+	private final LinkedList<RelationList> _relationLists = new LinkedList<>();
 
 	/**
 	 * The title
 	 */
 	@XmlElement(name = "title")
-	private String _title; // NO_UCD (use final)
+	public String _title; // NO_UCD (use final)
 
 	@XmlElement(name = "barcode")
 	private String _barcode; // NO_UCD (use final)
@@ -48,12 +44,6 @@ public class Release
 	 * @return the title
 	 */
 	public String getTitle()
-	{
-		return _title;
-	}
-
-	@Override
-	public String toString()
 	{
 		return _title;
 	}
@@ -81,11 +71,34 @@ public class Release
 
 	/**
 	 * Return the id
-	 * 
+	 *
 	 * @return the id
 	 */
+	@Override
 	public String getId()
 	{
 		return _id;
+	}
+
+	@Override
+	public String getName()
+	{
+		return _title;
+	}
+
+	@Override
+	public LinkedList<RelationList> getRelationLists()
+	{
+		return _relationLists;
+	}
+
+	public LinkedList<String> getRecordings()
+	{
+		LinkedList<String> recordings = new LinkedList<>();
+		for (Medium m : _mediumList._mediums)
+		{
+			recordings.addAll(m.getRecordingIds());
+		}
+		return recordings;
 	}
 }

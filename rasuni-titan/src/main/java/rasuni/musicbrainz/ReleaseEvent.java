@@ -1,12 +1,13 @@
 package rasuni.musicbrainz;
 
 import javax.xml.bind.annotation.XmlElement;
+import rasuni.lang.Value;
 
 /**
  * Release event
  *
  */
-public final class ReleaseEvent
+public final class ReleaseEvent extends Value
 {
 	/**
 	 * The date

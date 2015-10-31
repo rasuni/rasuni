@@ -1,18 +1,27 @@
 package rasuni.musicbrainz;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import rasuni.functional.IExpression;
+import rasuni.lang.Value;
 
-/**
- * MetaData root element
- *
- * @author Ralph Sigrist
- *
- */
+@SuppressWarnings("javadoc")
 @XmlRootElement(name = "metadata")
-public class MetaData
+public class MetaData extends Value
 {
+	@XmlAttribute(name = "generator")
+	public String _generator; // NO_UCD (use final)
+
+	@XmlAttribute(name = "created")
+	public String _created; // NO_UCD (use final)
+
+	@XmlElement(name = "artist")
+	public Artist _artist; // NO_UCD (use final)
+
+	@XmlElement(name = "release")
+	public Release _release; // NO_UCD (use final)
+
+	/*******/
 	/**
 	 * The collection
 	 */
@@ -26,18 +35,6 @@ public class MetaData
 	public Recording _recording; // NO_UCD (use final)
 
 	/**
-	 * The artist
-	 */
-	@XmlElement(name = "artist")
-	public Artist _artist; // NO_UCD (use final)
-
-	/**
-	 * The release
-	 */
-	@XmlElement(name = "release")
-	public Release _release; // NO_UCD (use final)
-
-	/**
 	 * Artist list (optional)
 	 */
 	@XmlElement(name = "artist-list")
@@ -47,7 +44,7 @@ public class MetaData
 	 * Release list (optional)
 	 */
 	@XmlElement(name = "release-list")
-	private ReleaseList _releaseList; // NO_UCD (use final)
+	public ReleaseList _releaseList; // NO_UCD (use final)
 
 	/**
 	 * Release Group List (optional)
@@ -59,7 +56,7 @@ public class MetaData
 	 * recording list
 	 */
 	@XmlElement(name = "recording-list")
-	private RecordingList _recordingList; // NO_UCD (use final)
+	public RecordingList _recordingList; // NO_UCD (use final)
 
 	/**
 	 * the label list
@@ -77,7 +74,7 @@ public class MetaData
 	 * the work list
 	 */
 	@XmlElement(name = "work-list")
-	private WorkList _workList; // NO_UCD (use final)
+	public WorkList _workList; // NO_UCD (use final)
 
 	/**
 	 * the work
@@ -143,12 +140,8 @@ public class MetaData
 	public Event _event; // NO_UCD (use final)
 
 	/**
-	 * the release list getter
+	 * the event
 	 */
-	public static final IExpression<ReleaseList, MetaData> RELEASE_LIST = metaData -> metaData._releaseList;
-
-	/**
-	 * the recording list
-	 */
-	public static final IExpression<RecordingList, MetaData> RECORDING_LIST = metaData -> metaData._recordingList;
+	@XmlElement(name = "event-list")
+	public EventList _eventList; // NO_UCD (use final)
 }

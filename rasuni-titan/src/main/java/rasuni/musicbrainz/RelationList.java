@@ -3,11 +3,12 @@ package rasuni.musicbrainz;
 import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import rasuni.lang.Value;
 
 /**
  * @author Ralph Sigrist The relation list
  */
-public class RelationList
+public class RelationList extends Value
 {
 	/**
 	 * Target Type

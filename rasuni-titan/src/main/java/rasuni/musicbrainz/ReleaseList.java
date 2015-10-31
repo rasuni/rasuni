@@ -1,6 +1,5 @@
 package rasuni.musicbrainz;
 
-import rasuni.functional.IExpression;
 import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -10,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Ralph Sigrist
  *
  */
-public class ReleaseList extends EntityList
+public class ReleaseList extends EntityList implements IEntityList<Release>
 {
 	/**
 	 * The release list
@@ -18,8 +17,15 @@ public class ReleaseList extends EntityList
 	@XmlElement(name = "release")
 	public final LinkedList<Release> _releases = new LinkedList<>();
 
-	/**
-	 * the entries getter
-	 */
-	public static final IExpression<LinkedList<Release>, ReleaseList> ENTRIES = releaseList -> releaseList._releases;
+	@Override
+	public LinkedList<Release> list()
+	{
+		return _releases;
+	}
+
+	@Override
+	public int count()
+	{
+		return _count;
+	}
 }

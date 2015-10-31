@@ -31,7 +31,7 @@ public final class Edges
 	 *            the label
 	 * @return the first outgoing edge
 	 */
-	public static Edge getReference(Vertex vertex, String label)
+	static Edge getReference(Vertex vertex, String label)
 	{
 		return TitanCollector.getReferenced(Vertex::getEdges, vertex, label);
 	}
@@ -43,7 +43,7 @@ public final class Edges
 	 *            the edge to remove
 	 * @return the head vertex
 	 */
-	public static Vertex remove(Edge edge)
+	static Vertex remove(Edge edge)
 	{
 		// retrieve head vertex
 		Vertex head = getHead(edge);
@@ -61,7 +61,7 @@ public final class Edges
 	 *            the reference label
 	 * @return the previously referenced vertex
 	 */
-	public static Vertex removeReference(Vertex vertex, String label)
+	static Vertex removeReference(Vertex vertex, String label)
 	{
 		Edge edge = getReference(vertex, label);
 		return edge == null ? null : remove(edge);

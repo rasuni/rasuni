@@ -11,7 +11,8 @@ package rasuni.titan;
 final class Pair<T1, T2>
 {
 	final T1 _first;
-	private final T2 _second;
+
+	final T2 _second;
 
 	/**
 	 * Constructor
@@ -25,15 +26,5 @@ final class Pair<T1, T2>
 	{
 		_first = first;
 		_second = second;
-	}
-
-	/**
-	 * Return the second value
-	 *
-	 * @return the second value
-	 */
-	public T2 second()
-	{
-		return _second;
 	}
 }

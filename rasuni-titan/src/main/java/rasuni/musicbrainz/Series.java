@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Ralph Sigrist
  *
  */
-public class Series
+public class Series implements IEntity
 {
 	/**
 	 * The id
@@ -30,6 +30,7 @@ public class Series
 	 *
 	 * @return the area od
 	 */
+	@Override
 	public String getId()
 	{
 		return _id;
@@ -40,6 +41,7 @@ public class Series
 	 *
 	 * @return the name
 	 */
+	@Override
 	public String getName()
 	{
 		return _name;
@@ -49,5 +51,11 @@ public class Series
 	 * The relation list
 	 */
 	@XmlElement(name = "relation-list")
-	public final LinkedList<RelationList> _relationLists = new LinkedList<>();
+	private final LinkedList<RelationList> _relationLists = new LinkedList<>();
+
+	@Override
+	public LinkedList<RelationList> getRelationLists()
+	{
+		return _relationLists;
+	}
 }

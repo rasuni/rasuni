@@ -1,11 +1,10 @@
 package rasuni.musicbrainz;
 
+import javax.xml.bind.annotation.XmlElement;
 
-/**
- * A disc
- *
- */
+@SuppressWarnings("javadoc")
 public class Disc extends Entity
 {
-	// empty for now
+	@XmlElement(name = "release-list")
+	public ReleaseList _releaseList; // NO_UCD (use final)
 }

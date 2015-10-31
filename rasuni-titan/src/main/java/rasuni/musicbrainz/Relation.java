@@ -2,6 +2,7 @@ package rasuni.musicbrainz;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import rasuni.lang.Value;
 
 /**
  * A relation
@@ -9,7 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Ralph Sigrist
  *
  */
-public class Relation
+public class Relation extends Value
 {
 	/**
 	 * Type id
@@ -51,7 +52,7 @@ public class Relation
 	 * The direction
 	 */
 	@XmlElement(name = "direction")
-	public Direction _direction; // NO_UCD (use final)
+	public RelationDirection _direction = RelationDirection.FORWARD; // NO_UCD (use final)
 
 	/**
 	 * The artist
