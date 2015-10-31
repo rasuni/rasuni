@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlElement;
 import rasuni.lang.Value;
 
-@SuppressWarnings("javadoc")
 public class TrackList extends Value
 {
 	/**

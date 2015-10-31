@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import rasuni.lang.Value;
 
-@SuppressWarnings("javadoc")
 @XmlRootElement(name = "metadata")
 public class MetaData extends Value
 {

@@ -4,7 +4,6 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import rasuni.lang.Value;
 
-@SuppressWarnings("javadoc")
 public class Medium extends Value
 {
 	/**

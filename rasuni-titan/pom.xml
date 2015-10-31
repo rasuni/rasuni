@@ -57,6 +57,11 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
 		</dependency>
+		<dependency>
+			<groupId>rasuni</groupId>
+			<artifactId>test</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

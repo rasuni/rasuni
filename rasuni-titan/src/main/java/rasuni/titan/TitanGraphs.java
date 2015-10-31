@@ -3,7 +3,6 @@ package rasuni.titan;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
 import java.util.function.Consumer;
 
-@SuppressWarnings("javadoc")
 public class TitanGraphs
 {
 	static void managementSystem(IGraph tg, Consumer<TitanManagement> consumer)

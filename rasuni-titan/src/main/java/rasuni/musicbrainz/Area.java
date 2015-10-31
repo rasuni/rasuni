@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import rasuni.lang.Value;
 
-@SuppressWarnings("javadoc")
 public final class Area extends Value implements IEntity
 {
 	@XmlAttribute(name = "id")
@@ -42,7 +41,7 @@ public final class Area extends Value implements IEntity
 	public LinkedList<String> _iso3166_3_CodeList = new LinkedList<>(); // NO_UCD (use final)
 
 	@XmlElement(name = "annotation")
-	public String _annotation; // NO_UCD (use final)
+	public Annotation _annotation; // NO_UCD (use final)
 
 	/**
 	 * The relation list

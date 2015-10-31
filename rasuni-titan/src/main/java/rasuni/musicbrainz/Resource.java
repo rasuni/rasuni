@@ -1,8 +1,8 @@
 package rasuni.musicbrainz;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlEnumValue;
 
-@SuppressWarnings("javadoc")
 public enum Resource
 {
 	/**
@@ -75,6 +75,8 @@ public enum Resource
 	EVENT("event");
 	private final String _name;
 
+	private String _mbid = null;
+
 	private Resource(String name)
 	{
 		_name = name;
@@ -90,8 +92,12 @@ public enum Resource
 		return _name;
 	}
 
-	public static String getMBID(Resource plResource)
+	public String getMBID()
 	{
-		return mbid(plResource.getName());
+		if (Objects.isNull(_mbid))
+		{
+			_mbid = mbid(_name);
+		}
+		return _mbid;
 	}
 }

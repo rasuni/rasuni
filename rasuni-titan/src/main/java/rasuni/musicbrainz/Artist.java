@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import rasuni.lang.Value;
 
-@SuppressWarnings("javadoc")
 public class Artist extends Value implements IEntity
 {
 	@XmlAttribute(name = "id")

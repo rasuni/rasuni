@@ -3,7 +3,6 @@ package rasuni.musicbrainz;
 import java.util.Objects;
 import rasuni.titan.Check;
 
-@SuppressWarnings("javadoc")
 public final class YearMonthDay
 {
 	private final MonthDay _monthDay;

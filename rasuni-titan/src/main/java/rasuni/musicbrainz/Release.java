@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import rasuni.lang.Value;
 
-@SuppressWarnings("javadoc")
 public class Release extends Value implements IEntity
 {
 	/**
