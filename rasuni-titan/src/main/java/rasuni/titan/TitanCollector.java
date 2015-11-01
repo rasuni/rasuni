@@ -271,7 +271,7 @@ public final class TitanCollector
 		return ifNull(sequence, null, (IProvider<ISequence<String>>) () ->
 		{
 			return new ISequence<String>()
-					{
+			{
 				@Override
 				public String getHead()
 				{
@@ -283,7 +283,7 @@ public final class TitanCollector
 				{
 					return map(sequence.getTail(), toString);
 				}
-					};
+			};
 		});
 	}
 
@@ -324,7 +324,7 @@ public final class TitanCollector
 	private static <T> ISequence<T> sequence(T[] array, int pos)
 	{
 		return array.length == pos ? null : new ISequence<T>()
-				{
+		{
 			@Override
 			public T getHead()
 			{
@@ -336,7 +336,7 @@ public final class TitanCollector
 			{
 				return sequence(array, pos + 1);
 			}
-				};
+		};
 	}
 
 	/**
@@ -486,9 +486,9 @@ public final class TitanCollector
 	{
 		return includeEntity(entity, Entity::getId, resource, tg, out, Object::toString, mbid ->
 		{ // empty
-		}, vertex ->
-		{ // empty
-		});
+				}, vertex ->
+				{ // empty
+				});
 	}
 
 	private static void printSpace(PrintStream out, String s)
@@ -899,7 +899,7 @@ public final class TitanCollector
 					{
 						return includeEntity11(target1 -> target1._id, target, Resource.URL, tg1, System.out, target1 -> target1._target, v ->
 						{ // empty
-						}, v -> false, v -> true);
+								}, v -> false, v -> true);
 					}, tg, relation -> relation._target))
 					{
 						return false;
@@ -981,11 +981,6 @@ public final class TitanCollector
 		});
 	}
 
-	private static <T> Vertex lookup(final TitanGraph tg, final Resource resource, final T entity, IExpression<String, T> id)
-	{
-		return TitanCollector.getFirst(tg.getVertices(getName(resource) + ".mbid", id.apply(entity)));
-	}
-
 	private static Parameter recordingParam(final String recordingMBID)
 	{
 		return new Parameter("recording", recordingMBID);
@@ -1065,7 +1060,7 @@ public final class TitanCollector
 			{
 				includeEntity(idl, entity, resource, tg, System.out, name, mbid ->
 				{ // empty
-				}, v -> null, v -> null);
+						}, v -> null, v -> null);
 				removeCurrent(tg, "merged", foreignId, entityId);
 				return false;
 			}
@@ -1100,33 +1095,28 @@ public final class TitanCollector
 	{
 		return browse(ResourceDefinition.ARTIST, musicBrainz, Resource.ARTIST, parameter, v ->
 		{ // empty
-		}, tg, mbid ->
-		{ // empty
-		});
+				}, tg, mbid ->
+				{ // empty
+				});
 	}
 
 	public static boolean browseReleaseGroups(final WebService<MetaData> musicBrainz, final Parameter param, IConsumer<Vertex> checkVertex, final TitanGraph tg)
 	{
 		return browse(ResourceDefinition.RELEASE_GROUP, musicBrainz, Resource.RELEASE_GROUP, param, checkVertex, tg, mbid ->
 		{ // empty
-		});
+				});
 	}
 
 	public static boolean browseRecordings(final WebService<MetaData> musicBrainz, final Parameter param, final TitanGraph tg, IConsumer<String> inspect)
 	{
 		return browse(ResourceDefinition.RECORDING, musicBrainz, Resource.RECORDING, param, v ->
 		{ // empty
-		}, tg, inspect);
+				}, tg, inspect);
 	}
 
 	public static boolean browseReleases(final WebService<MetaData> musicBrainz, final Parameter parameter, IConsumer<Vertex> checkVertex, final TitanGraph tg, IConsumer<String> inspect)
 	{
 		return browse(ResourceDefinition.RELEASE, musicBrainz, Resource.RELEASE, parameter, checkVertex, tg, inspect);
-	}
-
-	public static <T> void assertNotComplete(final TitanGraph tg, final Resource resource, final T rel, IExpression<String, T> getId)
-	{
-		expect(!Boolean.TRUE.equals(Key.IS_COMPLETE.get(lookup(tg, resource, rel, getId))));
 	}
 
 	public static boolean hasMultipleRecordings(final WebService<Response> acoustId, final String id)
@@ -1230,19 +1220,4 @@ public final class TitanCollector
 	 * The name key
 	 */
 	private final static Key<String> NAME = TitanCollector.string("name");
-
-	/**
-	 * Add a directory entry to a directory vertex
-	 *
-	 * @param directory
-	 *            the directory vertex
-	 * @param entry
-	 *            the directory entry vertex
-	 * @param name
-	 *            the entry name
-	 */
-	public static void addDirectoryEntry(Vertex directory, Vertex entry, String name)
-	{
-		set(directory.addEdge("directoryEntry", entry), NAME, name);
-	}
 }

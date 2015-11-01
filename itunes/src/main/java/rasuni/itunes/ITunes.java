@@ -1,15 +1,13 @@
 package rasuni.itunes;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import org.apache.log4j.helpers.LogLog;
-import rasuni.titan.TitanCollector;
+import fj.data.Array;
+import rasuni.titan.MusicCollector;
 
 /**
  * ITunes library
  *
  */
-public final class ITunes // NO_UCD (unused code)
+public final class ITunes
 {
 	/**
 	 * @param args
@@ -17,9 +15,6 @@ public final class ITunes // NO_UCD (unused code)
 	 */
 	public static void main(String[] args)
 	{
-		LinkedList<Iterable<String>> paths = new LinkedList<>();
-		paths.add(Arrays.asList("D:", "ITunes", "Music"));
-		paths.add(Arrays.asList("D:", "playlists"));
-		TitanCollector.run(System.getSecurityManager(), System.getProperties(), LogLog.g_debugEnabled, LogLog.g_quietMode, System.out, "itunes", paths, false, Arrays.asList("D:"));
+		MusicCollector.run(Array.array("D:\\ITunes\\Music"), "itunes", System.out, null, false);
 	}
 }

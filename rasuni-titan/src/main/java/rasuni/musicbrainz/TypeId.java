@@ -132,4 +132,19 @@ public enum TypeId
 	 */
 	@XmlEnumValue("59054b12-01ac-43ee-a618-285fd397e461")
 	ARTIST_RECORDING_INSTRUMENT,
+	/**
+	 *
+	 */
+	@XmlEnumValue("a4d2a7cb-365b-4b90-b52f-29469edf8ac0")
+	PLACE_WORK_PREMIERE_HOSTED,
+	/**
+	 *
+	 */
+	@XmlEnumValue("e8571dcc-35d4-4e91-a577-a3382fd84460")
+	ARTIST_URL_VIAF_ID,
+	/**
+	 *
+	 */
+	@XmlEnumValue("da6c5d8a-ce13-474d-9375-61feb29039a5")
+	ARTIST_WORK_TRANSLATED
 }
