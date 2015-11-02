@@ -7,7 +7,7 @@ package rasuni.functional;
  * @param <P1> the first parameter type
  * @param <P2> the second parameter type
  */
-public interface IExpression2<R, P1, P2>
+public interface IFunction2<R, P1, P2>
 {
 	/**
 	 * Apply the expression to the parameters

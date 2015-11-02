@@ -22,8 +22,8 @@ import rasuni.acoustid.AcoustId;
 import rasuni.acoustid.Response;
 import rasuni.acoustid.Result;
 import rasuni.functional.IConsumer;
-import rasuni.functional.IExpression;
-import rasuni.functional.IExpression2;
+import rasuni.functional.IFunction;
+import rasuni.functional.IFunction2;
 import rasuni.functional.IExpression3;
 import rasuni.functional.IExpression4;
 import rasuni.functional.IProvider;
@@ -95,7 +95,7 @@ public final class TitanCollector
 	 *            collection empty result
 	 * @return the first member or null
 	 */
-	private static <R, T> R getFirst(Iterable<T> iterable, IExpression<R, T> first, IProvider<R> empty)
+	private static <R, T> R getFirst(Iterable<T> iterable, IFunction<R, T> first, IProvider<R> empty)
 	{
 		Iterator<T> iterator = iterable.iterator();
 		return iterator.hasNext() ? first.apply(iterator.next()) : empty.provide();
@@ -266,7 +266,7 @@ public final class TitanCollector
 		});
 	}
 
-	private static <T> ISequence<String> map(ISequence<T> sequence, IExpression<String, T> toString)
+	private static <T> ISequence<String> map(ISequence<T> sequence, IFunction<String, T> toString)
 	{
 		return ifNull(sequence, null, (IProvider<ISequence<String>>) () ->
 		{
@@ -300,7 +300,7 @@ public final class TitanCollector
 	 *            the separator
 	 * @return the joined string
 	 */
-	private static <T> String join(ISequence<T> members, IExpression<String, T> toString, char separator)
+	private static <T> String join(ISequence<T> members, IFunction<String, T> toString, char separator)
 	{
 		return join(map(members, toString), separator);
 	}
@@ -361,7 +361,7 @@ public final class TitanCollector
 		out.println(text);
 	}
 
-	private static <R, I> R include(PrintStream out, String addLog, final String[] logs, IExpression<R, I> expr, I i)
+	private static <R, I> R include(PrintStream out, String addLog, final String[] logs, IFunction<R, I> expr, I i)
 	{
 		out.print(addLog);
 		log(logs, out);
@@ -423,7 +423,7 @@ public final class TitanCollector
 		return v;
 	}
 
-	private static <R, I> R include(final Iterable<I> iterable, PrintStream out, final String[] logs, IExpression<R, I> found, IExpression<R, Vertex> added, final TitanGraph tg, final TaskType taskType)
+	private static <R, I> R include(final Iterable<I> iterable, PrintStream out, final String[] logs, IFunction<R, I> found, IFunction<R, Vertex> added, final TitanGraph tg, final TaskType taskType)
 	{
 		return getFirst(iterable, (I first) ->
 		{
@@ -444,7 +444,7 @@ public final class TitanCollector
 		}
 	}
 
-	private static <R> R includeMBEntity(Resource resource, final TitanGraph tg, final String mbid, PrintStream out, final IExpression<String[], String> description, IExpression<R, Vertex> found, IExpression<R, Vertex> added)
+	private static <R> R includeMBEntity(Resource resource, final TitanGraph tg, final String mbid, PrintStream out, final IFunction<String[], String> description, IFunction<R, Vertex> found, IFunction<R, Vertex> added)
 	{
 		final String resourceName = getName(resource);
 		final String idProperty = resourceName + ".mbid";
@@ -456,8 +456,8 @@ public final class TitanCollector
 		}, tg, TaskType.MB_RESOURCE);
 	}
 
-	private static <R, E> R includeEntity11(final IExpression<String, E> id, final E entity, final Resource resource, final TitanGraph tg, PrintStream out, final IExpression<String, E> description, IConsumer<String> inspect, IExpression<R, Vertex> found,
-			IExpression<R, Vertex> added)
+	private static <R, E> R includeEntity11(final IFunction<String, E> id, final E entity, final Resource resource, final TitanGraph tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IFunction<R, Vertex> found,
+			IFunction<R, Vertex> added)
 	{
 		final String mbid = id.apply(entity);
 		return includeMBEntity(resource, tg, mbid, out, (String resourceName) -> new String[] { resourceName, mbid, description.apply(entity) }, (Vertex v) ->
@@ -467,13 +467,13 @@ public final class TitanCollector
 		}, added);
 	}
 
-	private static <R, E> R includeEntity(IExpression<String, E> id, final E entity, final Resource resource, final TitanGraph tg, PrintStream out, final IExpression<String, E> description, IConsumer<String> inspect, IExpression<R, Vertex> found,
-			IExpression<R, Vertex> added)
+	private static <R, E> R includeEntity(IFunction<String, E> id, final E entity, final Resource resource, final TitanGraph tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IFunction<R, Vertex> found,
+			IFunction<R, Vertex> added)
 	{
 		return includeEntity11(id, entity, resource, tg, out, description, inspect, found, added);
 	}
 
-	private static <E> boolean includeEntity(final E entity, IExpression<String, E> id, Resource resource, final TitanGraph tg, PrintStream out, final IExpression<String, E> description, IConsumer<String> inspect, IConsumer<Vertex> checkVertex)
+	private static <E> boolean includeEntity(final E entity, IFunction<String, E> id, Resource resource, final TitanGraph tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IConsumer<Vertex> checkVertex)
 	{
 		return entity != null && includeEntity(id, entity, resource, tg, out, description, inspect, (Vertex v) ->
 		{
@@ -497,7 +497,7 @@ public final class TitanCollector
 		space(out);
 	}
 
-	private static <T> boolean addResource(T entity, IExpression<String, T> getId, PrintStream out, String resourceName, IExpression<String, T> getName, TitanGraph tg, String key, Resource resource)
+	private static <T> boolean addResource(T entity, IFunction<String, T> getId, PrintStream out, String resourceName, IFunction<String, T> getName, TitanGraph tg, String key, Resource resource)
 	{
 		return ifNull(entity, Boolean.FALSE, (IProvider<Boolean>) () ->
 		{
@@ -559,7 +559,7 @@ public final class TitanCollector
 	 *
 	 * @return the key if created, null else
 	 */
-	private static <R> R definePropertyKey(Key<?> k, SchemaManager graph, IProvider<R> existing, IExpression<R, PropertyKey> created)
+	private static <R> R definePropertyKey(Key<?> k, SchemaManager graph, IProvider<R> existing, IFunction<R, PropertyKey> created)
 	{
 		final String name = k.getName();
 		return graph.containsPropertyKey(name) ? existing.provide() : created.apply(graph.makePropertyKey(name).cardinality(Cardinality.SINGLE).dataType(k._type).make());
@@ -755,7 +755,7 @@ public final class TitanCollector
 		return toFile(entry).toString();
 	}
 
-	private static <T> boolean includeRelations(final RelationList rl, final IExpression2<Boolean, TitanGraph, T> include, final TitanGraph tg, final IExpression<T, Relation> entityFromRelation)
+	private static <T> boolean includeRelations(final RelationList rl, final IFunction2<Boolean, TitanGraph, T> include, final TitanGraph tg, final IFunction<T, Relation> entityFromRelation)
 	{
 		final Iterator<Relation> r = rl._relations.iterator();
 		for (;;)
@@ -802,7 +802,7 @@ public final class TitanCollector
 		}
 	}
 
-	private static boolean addArea(final IExpression<Area, Artist> area, final Artist entity, final TitanGraph tg)
+	private static boolean addArea(final IFunction<Area, Artist> area, final Artist entity, final TitanGraph tg)
 	{
 		final Area e = area.apply(entity);
 		return e == null || !TitanCollector.addArea(e, System.out, tg);
@@ -835,7 +835,7 @@ public final class TitanCollector
 		}
 	}
 
-	public static <T> boolean processRelations(final T entity, IExpression<LinkedList<RelationList>, T> rle, final TitanGraph tg)
+	public static <T> boolean processRelations(final T entity, IFunction<LinkedList<RelationList>, T> rle, final TitanGraph tg)
 	{
 		final LinkedList<RelationList> relationLists = rle.apply(entity);
 		return ifNull(relationLists, true, () ->
@@ -1032,8 +1032,8 @@ public final class TitanCollector
 		TitanCollector.logi(System.out, join(TitanCollector.sequence(logs, 0), t -> t, ' '));
 	}
 
-	public static <E> boolean processResource(final Resource resource, final IExpression<E, MetaData> entityExpr, final WebService<MetaData> musicBrainz, final Parameter inc, final IExpression2<Boolean, String, E> processEntity, final TitanGraph tg,
-			final IExpression<String, E> name, final IExpression<String, E> idl)
+	public static <E> boolean processResource(final Resource resource, final IFunction<E, MetaData> entityExpr, final WebService<MetaData> musicBrainz, final Parameter inc, final IFunction2<Boolean, String, E> processEntity, final TitanGraph tg,
+			final IFunction<String, E> name, final IFunction<String, E> idl)
 	{
 		final String resName = getName(resource);
 		final String foreignId = TitanCollector.string(resName + ".mbid").get(getCurrent(tg));
@@ -1157,7 +1157,7 @@ public final class TitanCollector
 	 * @param tg
 	 *            the titan graph
 	 */
-	public static void defineAssociation(String name, IExpression<EdgeLabelMaker, EdgeLabelMaker> uniqueDirection, TitanManagement tg)
+	public static void defineAssociation(String name, IFunction<EdgeLabelMaker, EdgeLabelMaker> uniqueDirection, TitanManagement tg)
 	{
 		makeEdgeLabel(name, uniqueDirection, null, tg);
 	}
@@ -1174,7 +1174,7 @@ public final class TitanCollector
 	 * @param tg
 	 *            the titan graph
 	 */
-	private static void makeEdgeLabel(String name, IExpression<EdgeLabelMaker, EdgeLabelMaker> uniqueDirection, PropertyKey primaryKey, TitanManagement managementSystem)
+	private static void makeEdgeLabel(String name, IFunction<EdgeLabelMaker, EdgeLabelMaker> uniqueDirection, PropertyKey primaryKey, TitanManagement managementSystem)
 	{
 		EdgeLabelMaker tm = uniqueDirection.apply(managementSystem.makeEdgeLabel(name));
 		EdgeLabel em = tm.make();
