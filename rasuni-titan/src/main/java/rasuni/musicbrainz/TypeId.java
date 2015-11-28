@@ -146,5 +146,35 @@ public enum TypeId
 	 *
 	 */
 	@XmlEnumValue("da6c5d8a-ce13-474d-9375-61feb29039a5")
-	ARTIST_WORK_TRANSLATED
+	ARTIST_WORK_TRANSLATED,
+	/**
+	 *
+	 */
+	@XmlEnumValue("01018437-91d8-36b9-bf89-3f885d53b5bd")
+	RELEASE_GROUP_SERIES_PART_OF,
+	/**
+	 *
+	 */
+	@XmlEnumValue("e38e65aa-75e0-42ba-ace0-072aeb91a538")
+	URL_WORK_LYRICS_PAGE_FOR,
+	/**
+	 *
+	 */
+	@XmlEnumValue("fff4640a-0819-49e9-92c5-1e3b5134fd95")
+	ARTIST_PLACE_PRIMARY_CONCERT_VENUE,
+	/**
+	 *
+	 */
+	@XmlEnumValue("b988d08c-5d86-4a57-9557-c83b399e3580")
+	RELEASE_GROUP_URL_WIKIDATA,
+	/**
+	 *
+	 */
+	@XmlEnumValue("6578f0e9-1ace-4095-9de8-6e517ddb1ceb")
+	RELEASE_GROUP_URL_WIKIPEDIA,
+	/**
+	 *
+	 */
+	@XmlEnumValue("fcf680a9-6871-4519-8c4b-8c6549575b35")
+	RELEASE_GROUP_RELEASE_GROUP_SINGLE_FROM
 }

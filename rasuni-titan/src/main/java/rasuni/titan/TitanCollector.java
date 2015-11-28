@@ -22,16 +22,16 @@ import rasuni.acoustid.AcoustId;
 import rasuni.acoustid.Response;
 import rasuni.acoustid.Result;
 import rasuni.functional.IConsumer;
-import rasuni.functional.IFunction;
-import rasuni.functional.IFunction2;
 import rasuni.functional.IExpression3;
 import rasuni.functional.IExpression4;
+import rasuni.functional.IFunction;
+import rasuni.functional.IFunction2;
 import rasuni.functional.IProvider;
 import rasuni.graph.Key;
+import rasuni.graph.api.IGraphDatabase;
 import rasuni.musicbrainz.Area;
 import rasuni.musicbrainz.Artist;
 import rasuni.musicbrainz.Entity;
-import rasuni.musicbrainz.EntityList;
 import rasuni.musicbrainz.Event;
 import rasuni.musicbrainz.ISRCList;
 import rasuni.musicbrainz.MetaData;
@@ -43,7 +43,6 @@ import rasuni.musicbrainz.ReleaseEvent;
 import rasuni.musicbrainz.ReleaseEventList;
 import rasuni.musicbrainz.Resource;
 import rasuni.musicbrainz.Series;
-import rasuni.musicbrainz.YearMonthDay;
 import rasuni.webservice.Parameter;
 import rasuni.webservice.WebService;
 
@@ -115,7 +114,7 @@ public final class TitanCollector
 		return getFirst(iterable, f -> f, () -> null);
 	}
 
-	private static Vertex getRoot(final TitanGraph tg)
+	private static Vertex getRoot(final IGraphDatabase tg)
 	{
 		return getFirst(tg.getVertices("systemId", 0));
 	}
@@ -160,12 +159,12 @@ public final class TitanCollector
 		return getSingle(expression, vertex, Direction.OUT, label);
 	}
 
-	private static <T> T getCurrentTask(final IExpression3<Iterable<T>, Vertex, Direction, String> expression, final TitanGraph tg)
+	private static <T> T getCurrentTask(final IExpression3<Iterable<T>, Vertex, Direction, String> expression, final IGraphDatabase tg)
 	{
 		return getReferenced(expression, getRoot(tg), "system.currentTask");
 	}
 
-	private static Vertex getCurrent(final TitanGraph tg)
+	private static Vertex getCurrent(final IGraphDatabase tg)
 	{
 		return getCurrentTask(Vertex::getVertices, tg);
 	}
@@ -225,7 +224,7 @@ public final class TitanCollector
 		setNextTask(last, newNext);
 	}
 
-	private static void enqueue(final TitanGraph tg, final Vertex vEntry)
+	private static void enqueue(final IGraphDatabase tg, final Vertex vEntry)
 	{
 		final Vertex current = getCurrent(tg);
 		replacePrevious(current, vEntry);
@@ -271,7 +270,7 @@ public final class TitanCollector
 		return ifNull(sequence, null, (IProvider<ISequence<String>>) () ->
 		{
 			return new ISequence<String>()
-					{
+			{
 				@Override
 				public String getHead()
 				{
@@ -283,7 +282,7 @@ public final class TitanCollector
 				{
 					return map(sequence.getTail(), toString);
 				}
-					};
+			};
 		});
 	}
 
@@ -324,7 +323,7 @@ public final class TitanCollector
 	private static <T> ISequence<T> sequence(T[] array, int pos)
 	{
 		return array.length == pos ? null : new ISequence<T>()
-				{
+		{
 			@Override
 			public T getHead()
 			{
@@ -336,7 +335,7 @@ public final class TitanCollector
 			{
 				return sequence(array, pos + 1);
 			}
-				};
+		};
 	}
 
 	/**
@@ -409,21 +408,21 @@ public final class TitanCollector
 	 *            the task type
 	 * @return the task vertex
 	 */
-	public static Vertex newTask(TitanGraph tg, TaskType tt)
+	public static Vertex newTask(IGraphDatabase tg, TaskType tt)
 	{
-		Vertex v = tg.addVertex(null);
+		Vertex v = tg.addVertex();
 		setProperty(v, "task.type", tt);
 		return v;
 	}
 
-	private static Vertex enqueueNewTask(TitanGraph tg, TaskType taskType)
+	private static Vertex enqueueNewTask(IGraphDatabase tg, TaskType taskType)
 	{
 		Vertex v = newTask(tg, taskType);
 		enqueue(tg, v);
 		return v;
 	}
 
-	private static <R, I> R include(final Iterable<I> iterable, PrintStream out, final String[] logs, IFunction<R, I> found, IFunction<R, Vertex> added, final TitanGraph tg, final TaskType taskType)
+	private static <R, I> R include(final Iterable<I> iterable, PrintStream out, final String[] logs, IFunction<R, I> found, IFunction<R, Vertex> added, final IGraphDatabase tg, final TaskType taskType)
 	{
 		return getFirst(iterable, (I first) ->
 		{
@@ -444,7 +443,7 @@ public final class TitanCollector
 		}
 	}
 
-	private static <R> R includeMBEntity(Resource resource, final TitanGraph tg, final String mbid, PrintStream out, final IFunction<String[], String> description, IFunction<R, Vertex> found, IFunction<R, Vertex> added)
+	private static <R> R includeMBEntity(Resource resource, final IGraphDatabase tg, final String mbid, PrintStream out, final IFunction<String[], String> description, IFunction<R, Vertex> found, IFunction<R, Vertex> added)
 	{
 		final String resourceName = getName(resource);
 		final String idProperty = resourceName + ".mbid";
@@ -456,7 +455,7 @@ public final class TitanCollector
 		}, tg, TaskType.MB_RESOURCE);
 	}
 
-	private static <R, E> R includeEntity11(final IFunction<String, E> id, final E entity, final Resource resource, final TitanGraph tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IFunction<R, Vertex> found,
+	private static <R, E> R includeEntity11(final IFunction<String, E> id, final E entity, final Resource resource, final IGraphDatabase tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IFunction<R, Vertex> found,
 			IFunction<R, Vertex> added)
 	{
 		final String mbid = id.apply(entity);
@@ -467,13 +466,13 @@ public final class TitanCollector
 		}, added);
 	}
 
-	private static <R, E> R includeEntity(IFunction<String, E> id, final E entity, final Resource resource, final TitanGraph tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IFunction<R, Vertex> found,
+	private static <R, E> R includeEntity(IFunction<String, E> id, final E entity, final Resource resource, final IGraphDatabase tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IFunction<R, Vertex> found,
 			IFunction<R, Vertex> added)
 	{
 		return includeEntity11(id, entity, resource, tg, out, description, inspect, found, added);
 	}
 
-	private static <E> boolean includeEntity(final E entity, IFunction<String, E> id, Resource resource, final TitanGraph tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IConsumer<Vertex> checkVertex)
+	private static <E> boolean includeEntity(final E entity, IFunction<String, E> id, Resource resource, final IGraphDatabase tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IConsumer<Vertex> checkVertex)
 	{
 		return entity != null && includeEntity(id, entity, resource, tg, out, description, inspect, (Vertex v) ->
 		{
@@ -482,13 +481,13 @@ public final class TitanCollector
 		}, (Vertex v) -> true);
 	}
 
-	private static <E extends Entity> boolean addEntity(final E entity, final Resource resource, final TitanGraph tg, PrintStream out)
+	private static <E extends Entity> boolean addEntity(final E entity, final Resource resource, final IGraphDatabase tg, PrintStream out)
 	{
 		return includeEntity(entity, Entity::getId, resource, tg, out, Object::toString, mbid ->
 		{ // empty
-		}, vertex ->
-		{ // empty
-		});
+				}, vertex ->
+				{ // empty
+				});
 	}
 
 	private static void printSpace(PrintStream out, String s)
@@ -497,7 +496,7 @@ public final class TitanCollector
 		space(out);
 	}
 
-	private static <T> boolean addResource(T entity, IFunction<String, T> getId, PrintStream out, String resourceName, IFunction<String, T> getName, TitanGraph tg, String key, Resource resource)
+	private static <T> boolean addResource(T entity, IFunction<String, T> getId, PrintStream out, String resourceName, IFunction<String, T> getName, IGraphDatabase tg, String key, Resource resource)
 	{
 		return ifNull(entity, Boolean.FALSE, (IProvider<Boolean>) () ->
 		{
@@ -525,17 +524,17 @@ public final class TitanCollector
 		});
 	}
 
-	private static boolean addRecording(final Recording recording, PrintStream out, final TitanGraph tg)
+	private static boolean addRecording(final Recording recording, PrintStream out, final IGraphDatabase tg)
 	{
 		return addResource(recording, Recording::getId, out, "recording", r -> r._title, tg, "recording.mbid", Resource.RECORDING);
 	}
 
-	private static boolean addRelease(final Release release, PrintStream out, final TitanGraph tg)
+	private static boolean addRelease(final Release release, PrintStream out, final IGraphDatabase tg)
 	{
 		return addResource(release, Release::getId, out, "release", Release::getTitle, tg, "release.mbid", Resource.RELEASE);
 	}
 
-	private static boolean addArea(final Area area, PrintStream out, final TitanGraph tg)
+	private static boolean addArea(final Area area, PrintStream out, final IGraphDatabase tg)
 	{
 		return addResource(area, Area::getId, out, "area", Area::getName, tg, "area.mbid", Resource.AREA);
 	}
@@ -681,7 +680,7 @@ public final class TitanCollector
 		return file;
 	}
 
-	private static <T> Boolean include1(final Iterable<T> iterable, final IConsumer<Vertex> initializer, final TaskType taskType, final TitanGraph tg, final String entryType, final String name)
+	private static <T> Boolean include1(final Iterable<T> iterable, final IConsumer<Vertex> initializer, final TaskType taskType, final IGraphDatabase tg, final String entryType, final String name)
 	{
 		return include(iterable, System.out, new String[] { entryType, name }, v ->
 		{
@@ -698,12 +697,12 @@ public final class TitanCollector
 		System.out.println(prefix + " http://musicbrainz.org/recording/" + string("recording.mbid").get(current));
 	}
 
-	private static Pair<Vertex, Boolean> includeMBEntity(final Resource resource, final String mbid, final TitanGraph tg)
+	private static Pair<Vertex, Boolean> includeMBEntity(final Resource resource, final String mbid, final IGraphDatabase tg)
 	{
 		return TitanCollector.includeMBEntity(resource, tg, mbid, System.out, t -> new String[] { t, mbid }, v -> new Pair<>(v, false), v -> new Pair<>(v, true));
 	}
 
-	private static boolean processRecordingFile(final boolean checkAccuracy, final TitanGraph tg, final Recording recording)
+	private static boolean processRecordingFile(final boolean checkAccuracy, final IGraphDatabase tg, final Recording recording)
 	{
 		final Vertex current = TitanCollector.getCurrent(tg);
 		final Iterator<Vertex> ifile = current.getVertices(Direction.IN, FILE_RECORDING).iterator();
@@ -755,7 +754,7 @@ public final class TitanCollector
 		return toFile(entry).toString();
 	}
 
-	private static <T> boolean includeRelations(final RelationList rl, final IFunction2<Boolean, TitanGraph, T> include, final TitanGraph tg, final IFunction<T, Relation> entityFromRelation)
+	private static <T> boolean includeRelations(final RelationList rl, final IFunction2<Boolean, IGraphDatabase, T> include, final IGraphDatabase tg, final IFunction<T, Relation> entityFromRelation)
 	{
 		final Iterator<Relation> r = rl._relations.iterator();
 		for (;;)
@@ -776,7 +775,7 @@ public final class TitanCollector
 		return acoustId.get("track/list_by_mbid?format=xml&mbid=" + recordingId)._tracks._tracks;
 	}
 
-	public static boolean processAcoustIds(final WebService<Response> acoustId, final boolean checkAccuracy, final TitanGraph tg, final Recording entity)
+	public static boolean processAcoustIds(final WebService<Response> acoustId, final boolean checkAccuracy, final IGraphDatabase tg, final Recording entity)
 	{
 		final LinkedList<AcoustId> tracks = getAcoustIds(acoustId, entity._id);
 		if (tracks != null)
@@ -802,40 +801,18 @@ public final class TitanCollector
 		}
 	}
 
-	private static boolean addArea(final IFunction<Area, Artist> area, final Artist entity, final TitanGraph tg)
+	private static boolean addArea(final IFunction<Area, Artist> area, final Artist entity, final IGraphDatabase tg)
 	{
 		final Area e = area.apply(entity);
 		return e == null || !TitanCollector.addArea(e, System.out, tg);
 	}
 
-	public static boolean processAreas(final Artist entity, final TitanGraph tg)
+	public static boolean processAreas(final Artist entity, final IGraphDatabase tg)
 	{
 		return addArea(artist -> artist._area, entity, tg) && addArea(artist -> artist._beginArea, entity, tg) && addArea(artist -> artist._endArea, entity, tg);
 	}
 
-	private static <EL extends EntityList, T> Iterator<T> iterator(ResourceDefinition<T, EL> rd, final WebService<MetaData> musicBrainz, final Parameter parameter)
-	{
-		return new BrowseIterator1<>(musicBrainz, parameter._name, parameter._value, md -> rd._count.apply(rd._entityList.apply(md)), md -> rd._listExtractor.apply(rd._entityList.apply(md)), rd._name);
-	}
-
-	private static <EL extends EntityList, T> boolean browse(ResourceDefinition<T, EL> resourceDefinition, final WebService<MetaData> musicBrainz, final Resource resource, final Parameter parameter, IConsumer<Vertex> checkVertex, final TitanGraph tg,
-			IConsumer<String> inspect)
-	{
-		final Iterator<T> ie = iterator(resourceDefinition, musicBrainz, parameter);
-		for (;;)
-		{
-			if (!ie.hasNext())
-			{
-				return true;
-			}
-			if (includeEntity(ie.next(), resourceDefinition._idExtractor, resource, tg, System.out, resourceDefinition._nameExtractor, inspect, checkVertex))
-			{
-				return false;
-			}
-		}
-	}
-
-	public static <T> boolean processRelations(final T entity, IFunction<LinkedList<RelationList>, T> rle, final TitanGraph tg)
+	public static <T> boolean processRelations(final T entity, IFunction<LinkedList<RelationList>, T> rle, final IGraphDatabase tg)
 	{
 		final LinkedList<RelationList> relationLists = rle.apply(entity);
 		return ifNull(relationLists, true, () ->
@@ -883,13 +860,13 @@ public final class TitanCollector
 					}
 					break;
 				case RECORDING:
-					if (includeRelations(rl, (TitanGraph tg1, final Recording recording) -> addRecording(recording, System.out, tg1), tg, relation -> relation._recording))
+					if (includeRelations(rl, (IGraphDatabase tg1, final Recording recording) -> addRecording(recording, System.out, tg1), tg, relation -> relation._recording))
 					{
 						return false;
 					}
 					break;
 				case RELEASE:
-					if (includeRelations(rl, (TitanGraph tg1, final Release release) -> addRelease(release, System.out, tg1), tg, relation -> relation._release))
+					if (includeRelations(rl, (IGraphDatabase tg1, final Release release) -> addRelease(release, System.out, tg1), tg, relation -> relation._release))
 					{
 						return false;
 					}
@@ -899,7 +876,7 @@ public final class TitanCollector
 					{
 						return includeEntity11(target1 -> target1._id, target, Resource.URL, tg1, System.out, target1 -> target1._target, v ->
 						{ // empty
-						}, v -> false, v -> true);
+								}, v -> false, v -> true);
 					}, tg, relation -> relation._target))
 					{
 						return false;
@@ -981,42 +958,12 @@ public final class TitanCollector
 		});
 	}
 
-	private static Parameter recordingParam(final String recordingMBID)
-	{
-		return new Parameter("recording", recordingMBID);
-	}
-
-	public static String getEarliestRelease(final WebService<MetaData> musicBrainz, final String recordingMBID)
-	{
-		final Iterator<Release> ie = releases(musicBrainz, recordingParam(recordingMBID));
-		expect(ie.hasNext());
-		final Release release = ie.next();
-		YearMonthDay minDate = release.getReleaseDate();
-		String earliestRelease = release.getId();
-		while (ie.hasNext())
-		{
-			final Release e = ie.next();
-			final YearMonthDay releaseDate = e.getReleaseDate();
-			if (YearMonthDay.isSmaller(releaseDate, minDate))
-			{
-				minDate = releaseDate;
-				earliestRelease = e.getId();
-			}
-		}
-		return earliestRelease;
-	}
-
-	private static Iterator<Release> releases(final WebService<MetaData> musicBrainz, final Parameter param)
-	{
-		return iterator(ResourceDefinition.RELEASE, musicBrainz, param);
-	}
-
-	private static void requeue(final TitanGraph tg)
+	private static void requeue(final IGraphDatabase tg)
 	{
 		enqueue(tg, removeCurrent(tg));
 	}
 
-	private static Vertex removeCurrent(final TitanGraph tg)
+	private static Vertex removeCurrent(final IGraphDatabase tg)
 	{
 		final Vertex current = Edges.remove(TitanCollector.getCurrentTask(Vertex::getEdges, tg));
 		final Vertex nextTask = Edges.removeReference(current, "nextTask");
@@ -1026,13 +973,13 @@ public final class TitanCollector
 		return current;
 	}
 
-	private static void removeCurrent(final TitanGraph tg, final String... logs)
+	private static void removeCurrent(final IGraphDatabase tg, final String... logs)
 	{
 		removeCurrent(tg).remove();
 		TitanCollector.logi(System.out, join(TitanCollector.sequence(logs, 0), t -> t, ' '));
 	}
 
-	public static <E> boolean processResource(final Resource resource, final IFunction<E, MetaData> entityExpr, final WebService<MetaData> musicBrainz, final Parameter inc, final IFunction2<Boolean, String, E> processEntity, final TitanGraph tg,
+	public static <E> boolean processResource(final Resource resource, final IFunction<E, MetaData> entityExpr, final WebService<MetaData> musicBrainz, final Parameter inc, final IFunction2<Boolean, String, E> processEntity, final IGraphDatabase tg,
 			final IFunction<String, E> name, final IFunction<String, E> idl)
 	{
 		final String resName = getName(resource);
@@ -1060,14 +1007,14 @@ public final class TitanCollector
 			{
 				includeEntity(idl, entity, resource, tg, System.out, name, mbid ->
 				{ // empty
-				}, v -> null, v -> null);
+						}, v -> null, v -> null);
 				removeCurrent(tg, "merged", foreignId, entityId);
 				return false;
 			}
 		}
 	}
 
-	public static boolean processReleaseEvents(final Release entity, final TitanGraph tg)
+	public static boolean processReleaseEvents(final Release entity, final IGraphDatabase tg)
 	{
 		final ReleaseEventList _releaseEventList = entity._releaseEventList;
 		return ifNull(_releaseEventList, Boolean.TRUE, () ->
@@ -1089,25 +1036,6 @@ public final class TitanCollector
 				}
 			}
 		});
-	}
-
-	public static boolean browseReleaseGroups(final WebService<MetaData> musicBrainz, final Parameter param, IConsumer<Vertex> checkVertex, final TitanGraph tg)
-	{
-		return browse(ResourceDefinition.RELEASE_GROUP, musicBrainz, Resource.RELEASE_GROUP, param, checkVertex, tg, mbid ->
-		{ // empty
-		});
-	}
-
-	public static boolean browseRecordings(final WebService<MetaData> musicBrainz, final Parameter param, final TitanGraph tg, IConsumer<String> inspect)
-	{
-		return browse(ResourceDefinition.RECORDING, musicBrainz, Resource.RECORDING, param, v ->
-		{ // empty
-		}, tg, inspect);
-	}
-
-	public static boolean browseReleases(final WebService<MetaData> musicBrainz, final Parameter parameter, IConsumer<Vertex> checkVertex, final TitanGraph tg, IConsumer<String> inspect)
-	{
-		return browse(ResourceDefinition.RELEASE, musicBrainz, Resource.RELEASE, parameter, checkVertex, tg, inspect);
 	}
 
 	public static boolean hasMultipleRecordings(final WebService<Response> acoustId, final String id)

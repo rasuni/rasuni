@@ -19,7 +19,7 @@ public final class Strings
 	/**
 	 * The value getter
 	 */
-	static final IField<char[], String> VALUE = Fields.field(String.class, "value");
+	public static final IField<char[], String> VALUE = Fields.field(String.class, "value");
 
 	private static final Constructor<String> CONSTRUCTOR;
 	static

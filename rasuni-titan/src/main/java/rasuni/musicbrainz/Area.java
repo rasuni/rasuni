@@ -43,6 +43,12 @@ public final class Area extends Value implements IEntity
 	@XmlElement(name = "annotation")
 	public Annotation _annotation; // NO_UCD (use final)
 
+	@XmlElement(name = "life-span")
+	public LifeSpan _lifeSpan; // NO_UCD (use final)
+
+	@XmlElement(name = "alias-list")
+	public AliasList _aliasList; // NO_UCD (use final)
+
 	/**
 	 * The relation list
 	 */
@@ -52,7 +58,7 @@ public final class Area extends Value implements IEntity
 	/**
 	 * The area id
 	 *
-	 * @return the area od
+	 * @return the area id
 	 */
 	@Override
 	public String getId()
