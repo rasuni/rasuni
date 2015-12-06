@@ -1,6 +1,5 @@
 package rasuni.listold;
 
-import com.thinkaurelius.titan.core.TitanFactory;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -13,9 +12,10 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
+import rasuni.filesystemscanner.api.IFileSystemScanner;
+import rasuni.filesystemscanner.impl.FileSystemScanner;
 import rasuni.graph.api.IGraphDatabase;
 import rasuni.graph.api.IVertex;
-import rasuni.graph.impl.GraphDatabase;
 import rasuni.titan.Edges;
 import rasuni.titan.TaskType;
 import rasuni.titan.TitanCollector;
@@ -33,38 +33,30 @@ public final class ListOld // NO_UCD (unused code)
 	 */
 	public static void main(String[] args)
 	{
-		final IGraphDatabase tg = new GraphDatabase(TitanFactory.open("berkeleyje:" + "listold"));
+		final IFileSystemScanner tg = FileSystemScanner.create("listold");
 		try
 		{
-			tg.makeVertexLabel("system");
-			tg.makeIntPropertyKey("task.type");
-			tg.makeStringPropertyKey("name");
-			tg.makeAssocOneToMany("directory.entry");
-			tg.makeEdgeIndex("directory.entry", "byName", "name");
-			tg.makeAssocOneToOne("next.task");
-			tg.makeLongPropertyKey("fso.lastAccess");
-			tg.makeAssocOneToOne("system");
-			tg.makeAssocOneToOne("system.currentTask");
-			final IVertex vertexLabel = tg.getVertexLabel("system");
-			if (vertexLabel.hasOutVertices("system"))
+			tg.getDatabase().makeLongPropertyKey("fso.lastAccess");
+			if (tg.getDatabase().hasOutVertices("system", "system"))
 			{
-				process(tg);
+				process(tg.getDatabase());
 			}
 			else
 			{
-				final Vertex system = tg.addVertex();
+				final Vertex system = tg.getDatabase().addVertex();
+				final IVertex vertexLabel = tg.getDatabase().getVertexLabel("system");
 				vertexLabel.getVertex().addEdge("system", system);
 				system.addEdge("system.currentTask", system);
 				system.setProperty("task.type", TaskType.ROOT.ordinal());
 				system.addEdge("next.task", system);
-				process(tg);
+				process(tg.getDatabase());
 			}
-			tg.commit();
+			tg.getDatabase().commit();
 		}
 		finally
 		{
-			tg.rollback();
-			tg.shutdown();
+			tg.getDatabase().rollback();
+			tg.getDatabase().shutdown();
 		}
 	}
 
