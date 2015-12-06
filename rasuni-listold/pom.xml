@@ -16,7 +16,7 @@
 		</dependency>
 		<dependency>
 			<groupId>rasuni</groupId>
-			<artifactId>titan</artifactId>
+			<artifactId>filesystemscanner</artifactId>
 			<version>0.0.7</version>
 		</dependency>
 		<dependency>
@@ -24,8 +24,5 @@
 			<artifactId>music</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-		
-
 	</dependencies>
-
 </project>
