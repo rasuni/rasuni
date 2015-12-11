@@ -36,7 +36,7 @@ public final class ListOld // NO_UCD (unused code)
 		final IFileSystemScanner tg = FileSystemScanner.create("listold");
 		try
 		{
-			tg.getDatabase().makeLongPropertyKey("fso.lastAccess");
+			tg.makeLongPropertyKey("fso.lastAccess");
 			if (tg.getDatabase().hasOutVertices("system", "system"))
 			{
 				process(tg.getDatabase());
