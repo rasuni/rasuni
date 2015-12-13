@@ -176,5 +176,35 @@ public enum TypeId
 	 *
 	 */
 	@XmlEnumValue("fcf680a9-6871-4519-8c4b-8c6549575b35")
-	RELEASE_GROUP_RELEASE_GROUP_SINGLE_FROM
+	RELEASE_GROUP_RELEASE_GROUP_SINGLE_FROM,
+	/**
+	 *
+	 */
+	@XmlEnumValue("eb10f8a0-0f4c-4dce-aa47-87bcb2bc42f3")
+	ARTIST_RELEASE_VOCAL,
+	/**
+	 *
+	 */
+	@XmlEnumValue("38fa7405-f9a5-48cb-827a-8ac601933ba0")
+	ARTIST_RECORDING_ORCHESTRATOR,
+	/**
+	 *
+	 */
+	@XmlEnumValue("307e95dd-88b5-419b-8223-b146d4a0d439")
+	ARTIST_RELEASE_DESIGN_ILLUSTRATION,
+	/**
+	 *
+	 */
+	@XmlEnumValue("11d74801-1493-4a5d-bc0f-4ddc537acddb")
+	PLACE_RECORDING_MIXED_AT,
+	/**
+	 *
+	 */
+	@XmlEnumValue("ad462279-14b0-4180-9b58-571d0eef7c51")
+	PLACE_RECORDING_RECORDED_AT,
+	/**
+	 *
+	 */
+	@XmlEnumValue("1c140ac8-8dc2-449e-92cb-52c90d525640")
+	PLACE_URL_DISCOGS
 }
