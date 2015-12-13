@@ -15,7 +15,7 @@ public class ReleaseList extends EntityList implements IEntityList<Release>
 	 * The release list
 	 */
 	@XmlElement(name = "release")
-	public final LinkedList<Release> _releases = new LinkedList<>();
+	private final LinkedList<Release> _releases = new LinkedList<>();
 
 	@Override
 	public LinkedList<Release> list()
