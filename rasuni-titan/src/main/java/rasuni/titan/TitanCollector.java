@@ -2,7 +2,6 @@ package rasuni.titan;
 
 import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.EdgeLabel;
-import com.thinkaurelius.titan.core.Multiplicity;
 import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.schema.EdgeLabelMaker;
@@ -565,37 +564,6 @@ public final class TitanCollector
 	}
 
 	/**
-	 * Register a primary key
-	 *
-	 * @param key
-	 *            the key
-	 *
-	 * @param tg
-	 *            the titan graph
-	 * @return the titan key
-	 */
-	public static boolean primaryKey(Key<?> key, TitanGraph tg)
-	{
-		final TitanManagement managementSystem = tg.getManagementSystem();
-		try
-		{
-			return definePropertyKey(key, managementSystem, () -> false, pk ->
-			{
-				managementSystem.buildIndex(key.getName() + ".index", Vertex.class).addKey(pk).unique().buildCompositeIndex();
-				managementSystem.commit();
-				return true;
-			});
-		}
-		finally
-		{
-			if (managementSystem.isOpen())
-			{
-				managementSystem.rollback();
-			}
-		}
-	}
-
-	/**
 	 * Fail if given condition is true
 	 *
 	 * @param condition
@@ -607,11 +575,6 @@ public final class TitanCollector
 		{
 			fail();
 		}
-	}
-
-	public static EdgeLabel makeLink(TitanManagement tm, String name, Multiplicity multiplicity)
-	{
-		return tm.makeEdgeLabel(name).multiplicity(multiplicity).make();
 	}
 
 	private final static HashSet<String> NAMES_TO_DELETE = new HashSet<>();
