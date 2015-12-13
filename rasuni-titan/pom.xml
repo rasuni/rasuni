@@ -59,8 +59,8 @@
 		</dependency>
 		<dependency>
 			<groupId>rasuni</groupId>
-			<artifactId>titan</artifactId>
-			<version>0.0.5</version>
+			<artifactId>filesystemscanner</artifactId>
+			<version>0.0.7</version>
 		</dependency>
 		
 		<dependency>
