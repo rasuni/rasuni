@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import rasuni.filesystemscanner.api.IFileSystemScanner;
 import rasuni.filesystemscanner.impl.FileSystemScanner;
 import rasuni.graph.api.IGraphDatabase;
-import rasuni.graph.api.IVertex;
 import rasuni.titan.Edges;
 import rasuni.titan.TaskType;
 import rasuni.titan.TitanCollector;
@@ -37,20 +36,7 @@ public final class ListOld // NO_UCD (unused code)
 		try
 		{
 			tg.makeLongPropertyKey("fso.lastAccess");
-			if (tg.getDatabase().hasOutVertices("system", "system"))
-			{
-				process(tg.getDatabase());
-			}
-			else
-			{
-				final Vertex system = tg.getDatabase().addVertex();
-				final IVertex vertexLabel = tg.getDatabase().getVertexLabel("system");
-				vertexLabel.getVertex().addEdge("system", system);
-				system.addEdge("system.currentTask", system);
-				system.setProperty("task.type", TaskType.ROOT.ordinal());
-				system.addEdge("next.task", system);
-				process(tg.getDatabase());
-			}
+			process(tg);
 			tg.getDatabase().commit();
 		}
 		finally
@@ -152,9 +138,9 @@ public final class ListOld // NO_UCD (unused code)
 		context.delete(FILE);
 		}
 	 */
-	private static void process(IGraphDatabase tg)
+	private static void process(IFileSystemScanner tg)
 	{
-		final Vertex system = tg.getOutVertices("system", "system").iterator().next();
+		final Vertex system = tg.getSystem();
 		// LinkedList<String> lines = new LinkedList<>();
 		l1: for (;;)
 		{
@@ -164,17 +150,17 @@ public final class ListOld // NO_UCD (unused code)
 			{
 			case ROOT:
 				System.out.println("root");
-				if (registerRoot(tg, "C:\\", () ->
+				if (registerRoot(tg.getDatabase(), "C:\\", () ->
 				{
-					return registerRoot(tg, "D:\\", () ->
+					return registerRoot(tg.getDatabase(), "D:\\", () ->
 					{
-						return registerRoot(tg, "\\\\qnap\\backup", () ->
+						return registerRoot(tg.getDatabase(), "\\\\qnap\\backup", () ->
 						{
-							return registerRoot(tg, "\\\\qnap\\Public", () ->
+							return registerRoot(tg.getDatabase(), "\\\\qnap\\Public", () ->
 							{
-								return registerRoot(tg, "\\\\qnap\\Qmultimedia", () ->
+								return registerRoot(tg.getDatabase(), "\\\\qnap\\Qmultimedia", () ->
 								{
-									return registerRoot(tg, "\\\\qnap\\Qrecordings", () ->
+									return registerRoot(tg.getDatabase(), "\\\\qnap\\Qrecordings", () ->
 									{
 										Check.fail();
 										return false;
@@ -248,7 +234,7 @@ public final class ListOld // NO_UCD (unused code)
 							{
 								throw new RuntimeException(e);
 							}
-							complete(tg);
+							complete(tg.getDatabase());
 						}
 						else
 						{
@@ -259,7 +245,7 @@ public final class ListOld // NO_UCD (unused code)
 								if (!current.query().direction(Direction.OUT).labels("directory.entry").has("name", name).edges().iterator().hasNext())
 								{
 									System.out.println("  adding " + name);
-									Vertex newEntry = TitanCollector.newTask(tg, TaskType.FILESYSTEMOBJECT);
+									Vertex newEntry = TitanCollector.newTask(tg.getDatabase(), TaskType.FILESYSTEMOBJECT);
 									current.addEdge("directory.entry", newEntry).setProperty("name", name);
 									Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
 									Vertex last = eLastTask.getVertex(Direction.OUT);
@@ -275,7 +261,7 @@ public final class ListOld // NO_UCD (unused code)
 									break;
 								}
 							}
-							if (completeDirectory(tg))
+							if (completeDirectory(tg.getDatabase()))
 							{
 								break l1;
 							}
@@ -327,7 +313,7 @@ public final class ListOld // NO_UCD (unused code)
 						{
 							throw new RuntimeException(e);
 						}
-						complete(tg);
+						complete(tg.getDatabase());
 					}
 				}
 				else
@@ -342,7 +328,7 @@ public final class ListOld // NO_UCD (unused code)
 					previous.addEdge("next.task", next);
 					current.remove();
 					system.addEdge("system.currentTask", next);
-					tg.commit();
+					tg.getDatabase().commit();
 				}
 				break;
 			default:
