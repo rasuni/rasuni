@@ -31,20 +31,12 @@ public class Classes
 			{
 				throw new RuntimeException(e);
 			}
-			catch (IllegalArgumentException e)
-			{
-				throw new RuntimeException(e);
-			}
 			catch (InvocationTargetException e)
 			{
 				throw new RuntimeException(e);
 			}
 		}
 		catch (NoSuchMethodException e)
-		{
-			throw new RuntimeException(e);
-		}
-		catch (SecurityException e)
 		{
 			throw new RuntimeException(e);
 		}
