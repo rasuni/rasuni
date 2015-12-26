@@ -14,7 +14,7 @@ public class RelationList extends Value
 	 * Target Type
 	 */
 	@XmlAttribute(name = "target-type")
-	public Resource _targetType; // NO_UCD (use final)
+	public String _targetType; // NO_UCD (use final)
 
 	/**
 	 * The relation
