@@ -49,11 +49,8 @@ public final class Area extends Value implements IEntity
 	@XmlElement(name = "alias-list")
 	public AliasList _aliasList; // NO_UCD (use final)
 
-	/**
-	 * The relation list
-	 */
 	@XmlElement(name = "relation-list")
-	private final LinkedList<RelationList> _relationLists = new LinkedList<>();
+	public final LinkedList<RelationList> _relationLists = new LinkedList<>();
 
 	/**
 	 * The area id
