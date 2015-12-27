@@ -10,11 +10,14 @@ import rasuni.lang.Value;
  */
 public class RelationList extends Value
 {
-	/**
-	 * Target Type
-	 */
 	@XmlAttribute(name = "target-type")
 	public String _targetType; // NO_UCD (use final)
+
+	@XmlAttribute(name = "count")
+	public int _count; // NO_UCD (use final)
+
+	@XmlAttribute(name = "offset")
+	public int _offset; // NO_UCD (use final)
 
 	/**
 	 * The relation
