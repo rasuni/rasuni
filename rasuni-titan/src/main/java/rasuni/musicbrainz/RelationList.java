@@ -19,9 +19,6 @@ public class RelationList extends Value
 	@XmlAttribute(name = "offset")
 	public int _offset; // NO_UCD (use final)
 
-	/**
-	 * The relation
-	 */
 	@XmlElement(name = "relation")
 	public final LinkedList<Relation> _relations = new LinkedList<>();
 }
