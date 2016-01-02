@@ -37,7 +37,7 @@ public final class ListOld // NO_UCD (unused code)
 		{
 			tg.makeLongPropertyKey("fso.lastAccess");
 			process(tg);
-			tg.getDatabase().commit();
+			tg.commit();
 		}
 		finally
 		{
@@ -46,106 +46,12 @@ public final class ListOld // NO_UCD (unused code)
 		}
 	}
 
-	/*
-		@Override
-		public boolean execute(IFileSystemScanner scanner)
-		{
-		Long lastAccessTime = scanner.getMin(COLUMN_LAST_ACCESS_TIME, FILE);
-		if (lastAccessTime != null && (_requirements == null || _requirements.fulfilled(lastAccessTime, _scanCount)))
-		{
-			LinkedList<String> commands = new LinkedList<>();
-			IColumnValue criteria = new ColumnValue<>(COLUMN_LAST_ACCESS_TIME, lastAccessTime);
-			int count = 0;
-			for (File file : scanner.select(FILE, criteria))
-			{
-				if (file != null)
-				{
-					if (file.isHidden())
-					{
-						commands.add("ATTRIB -S -H \"" + file + '"');
-					}
-					commands.add("DEL \"" + file + '"');
-				}
-				count++;
-			}
-			int requiredCount = Math.max(count * 3 / 2, 2);
-			if (requiredCount <= _scanCount)
-			{
-				System.out.println("Scan-count: " + _scanCount);
-				for (String cmd : commands)
-				{
-					System.out.println(cmd);
-				}
-				scanner.delete(FILE, criteria);
-				return false;
-			}
-			else
-			{
-				System.out.println("Required-count: " + requiredCount);
-				_requirements = new Requirements(lastAccessTime, requiredCount);
-				return true;
-			}
-		}
-		else
-		{
-			return true;
-		}
-		}
-
-		@Override
-		public void visit(File file, IFileProcessingContext context)
-		{
-		try
-		{
-			BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-			context.createOrUpdate(FILE, new ColumnValue<>(COLUMN_LAST_ACCESS_TIME, Math.max(Math.max(toDays(attrs.lastAccessTime()), toDays(attrs.creationTime())), toDays(attrs.lastModifiedTime()))));
-			_scanCount++;
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-		}
-
-		private static long toDays(FileTime time)
-		{
-		return time.to(TimeUnit.DAYS);
-		}
-
-		@Override
-		public void provideRootEntries(IRootRegistry registry)
-		{
-		registry.register(Arrays.asList("C:\\"));
-		registry.register(Arrays.asList("D:\\"));
-		registry.register(Arrays.asList("\\\\qnap\\backup"));
-		registry.register(Arrays.asList("\\\\qnap\\Network Recycle Bin 1"));
-		registry.register(Arrays.asList("\\\\qnap\\Public"));
-		registry.register(Arrays.asList("\\\\qnap\\Qdownload"));
-		registry.register(Arrays.asList("\\\\qnap\\Qmultimedia"));
-		registry.register(Arrays.asList("\\\\qnap\\Qrecordings"));
-		registry.register(Arrays.asList("\\\\qnap\\Qusb"));
-		registry.register(Arrays.asList("\\\\qnap\\Qweb"));
-		registry.register(Arrays.asList("\\\\qnap\\music"));
-		registry.register(Arrays.asList("\\\\qnap\\itunes"));
-		registry.register(Arrays.asList("\\\\MUSIKSERVER\\Kunde"));
-		registry.register(Arrays.asList("\\\\MUSIKSERVER\\Lights-Out"));
-		registry.register(Arrays.asList("\\\\MUSIKSERVER\\Musik"));
-		}
-
-		@Override
-		public void fileDeleted(IDeleteProcessingContext context)
-		{
-		context.delete(FILE);
-		}
-	 */
 	private static void process(IFileSystemScanner tg)
 	{
 		final Vertex system = tg.getSystem();
-		// LinkedList<String> lines = new LinkedList<>();
 		l1: for (;;)
 		{
-			Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
-			Vertex current = Edges.getHead(currentEdge);
+			Vertex current = Edges.getHead(system.getEdges(Direction.OUT, "system.currentTask").iterator().next());
 			switch (TaskType.values()[(Integer) current.getProperty("task.type")])
 			{
 			case ROOT:
