@@ -48,7 +48,7 @@ public final class ListOld // NO_UCD (unused code)
 
 	private static void process(IFileSystemScanner tg)
 	{
-		final Vertex system = tg.getSystem();
+		final Vertex system = tg.getSystem().getVertex();
 		l1: for (;;)
 		{
 			Vertex current = Edges.getHead(system.getEdges(Direction.OUT, "system.currentTask").iterator().next());
