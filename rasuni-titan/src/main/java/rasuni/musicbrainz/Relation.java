@@ -4,23 +4,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import rasuni.lang.Value;
 
-/**
- * A relation
- *
- * @author Ralph Sigrist
- *
- */
 public class Relation extends Value
 {
-	/**
-	 * Type id
-	 */
-	@XmlAttribute(name = "type-id")
-	public TypeId _typeId; // NO_UCD (use final)
+	@XmlAttribute(name = "type")
+	public String _type; // NO_UCD (use final)
 
-	/**
-	 * The target
-	 */
+	@XmlAttribute(name = "type-id")
+	public String _typeId; // NO_UCD (use final)
+
 	@XmlElement(name = "target")
 	public Target _target; // NO_UCD (use final)
 
