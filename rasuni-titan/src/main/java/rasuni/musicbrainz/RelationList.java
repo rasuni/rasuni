@@ -5,9 +5,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import rasuni.lang.Value;
 
-/**
- * @author Ralph Sigrist The relation list
- */
 public class RelationList extends Value
 {
 	@XmlAttribute(name = "target-type")
