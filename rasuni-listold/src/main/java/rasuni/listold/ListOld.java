@@ -32,7 +32,30 @@ public final class ListOld // NO_UCD (unused code)
 	 */
 	public static void main(String[] args)
 	{
-		final IFileSystemScanner tg = FileSystemScanner.create("listold");
+		final IFileSystemScanner tg = FileSystemScanner.create("listold", (IFileSystemScanner scanner) ->
+		{
+			System.out.println("root");
+			return registerRoot(scanner.getDatabase(), "C:\\", () ->
+			{
+				return registerRoot(scanner.getDatabase(), "D:\\", () ->
+				{
+					return registerRoot(scanner.getDatabase(), "\\\\qnap\\backup", () ->
+					{
+						return registerRoot(scanner.getDatabase(), "\\\\qnap\\Public", () ->
+						{
+							return registerRoot(scanner.getDatabase(), "\\\\qnap\\Qmultimedia", () ->
+							{
+								return registerRoot(scanner.getDatabase(), "\\\\qnap\\Qrecordings", () ->
+								{
+									Check.fail();
+									return false;
+								});
+							});
+						});
+					});
+				});
+			});
+		}, null);
 		try
 		{
 			tg.makeLongPropertyKey("fso.lastAccess");
