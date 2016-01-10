@@ -18,6 +18,9 @@ public class Relation extends Value
 	@XmlElement(name = "ordering-key")
 	public Integer _orderingKey; // NO_UCD (use final)
 
+	@XmlElement(name = "direction")
+	public RelationDirection _direction = RelationDirection.FORWARD; // NO_UCD (use final)
+
 	/**
 	 * the work
 	 */
@@ -41,12 +44,6 @@ public class Relation extends Value
 	 */
 	@XmlElement(name = "recording")
 	public Recording _recording; // NO_UCD (use final)
-
-	/**
-	 * The direction
-	 */
-	@XmlElement(name = "direction")
-	public RelationDirection _direction = RelationDirection.FORWARD; // NO_UCD (use final)
 
 	/**
 	 * The artist
