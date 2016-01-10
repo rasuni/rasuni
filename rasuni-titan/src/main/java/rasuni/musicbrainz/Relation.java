@@ -15,6 +15,9 @@ public class Relation extends Value
 	@XmlElement(name = "target")
 	public Target _target; // NO_UCD (use final)
 
+	@XmlElement(name = "ordering-key")
+	public Integer _orderingKey; // NO_UCD (use final)
+
 	/**
 	 * the work
 	 */
