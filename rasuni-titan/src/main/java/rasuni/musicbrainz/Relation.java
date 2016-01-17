@@ -25,7 +25,7 @@ public class Relation extends Value
 
 	@XmlElementWrapper(name = "attribute-list")
 	@XmlElement(name = "attribute")
-	public final LinkedList<String> _attributeList = new LinkedList<>();
+	public final LinkedList<Attribute> _attributeList = new LinkedList<>();
 
 	/**
 	 * the work
