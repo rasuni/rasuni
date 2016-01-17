@@ -1,7 +1,9 @@
 package rasuni.musicbrainz;
 
+import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import rasuni.lang.Value;
 
 public class Relation extends Value
@@ -20,6 +22,10 @@ public class Relation extends Value
 
 	@XmlElement(name = "direction")
 	public RelationDirection _direction = RelationDirection.FORWARD; // NO_UCD (use final)
+
+	@XmlElementWrapper(name = "attribute-list")
+	@XmlElement(name = "attribute")
+	public final LinkedList<String> _attributeList = new LinkedList<>();
 
 	/**
 	 * the work
