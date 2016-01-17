@@ -34,8 +34,7 @@ public final class ListOld // NO_UCD (unused code)
 	{
 		final IFileSystemScanner tg = FileSystemScanner.create("listold", (IFileSystemScanner scanner) ->
 		{
-			System.out.println("root");
-			return registerRoot(scanner.getDatabase(), "C:\\", () ->
+			registerRoot(scanner.getDatabase(), "C:\\", () ->
 			{
 				return registerRoot(scanner.getDatabase(), "D:\\", () ->
 				{
