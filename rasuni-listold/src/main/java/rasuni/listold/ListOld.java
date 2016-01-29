@@ -34,17 +34,17 @@ public final class ListOld // NO_UCD (unused code)
 	{
 		final IFileSystemScanner tg = FileSystemScanner.create("listold", (IFileSystemScanner scanner) ->
 		{
-			registerRoot(scanner.getDatabase(), "C:\\", () ->
+			registerRoot(scanner, "C:\\", () ->
 			{
-				return registerRoot(scanner.getDatabase(), "D:\\", () ->
+				return registerRoot(scanner, "D:\\", () ->
 				{
-					return registerRoot(scanner.getDatabase(), "\\\\qnap\\backup", () ->
+					return registerRoot(scanner, "\\\\qnap\\backup", () ->
 					{
-						return registerRoot(scanner.getDatabase(), "\\\\qnap\\Public", () ->
+						return registerRoot(scanner, "\\\\qnap\\Public", () ->
 						{
-							return registerRoot(scanner.getDatabase(), "\\\\qnap\\Qmultimedia", () ->
+							return registerRoot(scanner, "\\\\qnap\\Qmultimedia", () ->
 							{
-								return registerRoot(scanner.getDatabase(), "\\\\qnap\\Qrecordings", () ->
+								return registerRoot(scanner, "\\\\qnap\\Qrecordings", () ->
 								{
 									Check.fail();
 									return false;
@@ -78,17 +78,17 @@ public final class ListOld // NO_UCD (unused code)
 			{
 			case ROOT:
 				System.out.println("root");
-				if (registerRoot(tg.getDatabase(), "C:\\", () ->
+				if (registerRoot(tg, "C:\\", () ->
 				{
-					return registerRoot(tg.getDatabase(), "D:\\", () ->
+					return registerRoot(tg, "D:\\", () ->
 					{
-						return registerRoot(tg.getDatabase(), "\\\\qnap\\backup", () ->
+						return registerRoot(tg, "\\\\qnap\\backup", () ->
 						{
-							return registerRoot(tg.getDatabase(), "\\\\qnap\\Public", () ->
+							return registerRoot(tg, "\\\\qnap\\Public", () ->
 							{
-								return registerRoot(tg.getDatabase(), "\\\\qnap\\Qmultimedia", () ->
+								return registerRoot(tg, "\\\\qnap\\Qmultimedia", () ->
 								{
-									return registerRoot(tg.getDatabase(), "\\\\qnap\\Qrecordings", () ->
+									return registerRoot(tg, "\\\\qnap\\Qrecordings", () ->
 									{
 										Check.fail();
 										return false;
@@ -436,12 +436,9 @@ public final class ListOld // NO_UCD (unused code)
 		}
 	}
 
-	private static boolean registerRoot(IGraphDatabase tg, String root, IRunnable next)
+	private static boolean registerRoot(IFileSystemScanner tg, String root, IRunnable next)
 	{
-		final Vertex system = tg.getVertexLabel("system").getVertex().getVertices(Direction.OUT, "system").iterator().next();
-		Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
-		Vertex current = Edges.getHead(currentEdge);
-		if (current.query().direction(Direction.OUT).labels("directory.entry").has("name", root).edges().iterator().hasNext())
+		if (tg.directoryEntryQuery(root).edges().iterator().hasNext())
 		{
 			System.out.println("  already added " + root);
 			return next.run();
@@ -449,14 +446,15 @@ public final class ListOld // NO_UCD (unused code)
 		else
 		{
 			System.out.println("  adding " + root);
-			Vertex newEntry = TitanCollector.newTask(tg, TaskType.FILESYSTEMOBJECT);
+			Vertex newEntry = TitanCollector.newTask(tg.getDatabase(), TaskType.FILESYSTEMOBJECT);
+			Vertex current = tg.getCurrentTask().getVertex();
 			current.addEdge("directory.entry", newEntry).setProperty("name", root);
 			Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
 			Vertex last = eLastTask.getVertex(Direction.OUT);
 			eLastTask.remove();
 			last.addEdge("next.task", newEntry);
 			newEntry.addEdge("next.task", current);
-			return completeDirectory(tg);
+			return completeDirectory(tg.getDatabase());
 		}
 	}
 
