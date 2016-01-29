@@ -27,6 +27,9 @@ public class Relation extends Value
 	@XmlElement(name = "attribute")
 	public final LinkedList<Attribute> _attributeList = new LinkedList<>();
 
+	@XmlElement(name = "begin")
+	public String _begin; // NO_UCD (use final)
+
 	/**
 	 * the work
 	 */
@@ -38,12 +41,6 @@ public class Relation extends Value
 	 */
 	@XmlElement(name = "release")
 	public Release _release; // NO_UCD (use final)
-
-	/**
-	 * begin
-	 */
-	@XmlElement(name = "begin")
-	private Integer _begin; // NO_UCD (use final)
 
 	/**
 	 * release
