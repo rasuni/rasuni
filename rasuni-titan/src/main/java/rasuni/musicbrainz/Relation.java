@@ -33,6 +33,12 @@ public class Relation extends Value
 	@XmlElement(name = "end")
 	public String _end; // NO_UCD (use final)
 
+	@XmlElement(name = "ended")
+	public boolean _ended; // NO_UCD (use final)
+
+	@XmlElement(name = "artist")
+	public Artist _artist; // NO_UCD (use final)
+
 	/**
 	 * the work
 	 */
@@ -52,13 +58,7 @@ public class Relation extends Value
 	public Recording _recording; // NO_UCD (use final)
 
 	/**
-	 * The artist
-	 */
-	@XmlElement(name = "artist")
-	public Artist _artist; // NO_UCD (use final)
-
-	/**
-	 * The release group
+	 * /** The release group
 	 */
 	@XmlElement(name = "release-group")
 	public ReleaseGroup _releaseGroup; // NO_UCD (use final)
