@@ -30,6 +30,9 @@ public class Relation extends Value
 	@XmlElement(name = "begin")
 	public String _begin; // NO_UCD (use final)
 
+	@XmlElement(name = "end")
+	public String _end; // NO_UCD (use final)
+
 	/**
 	 * the work
 	 */
