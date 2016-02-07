@@ -1,17 +1,19 @@
 package rasuni.musicbrainz;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import rasuni.lang.Value;
 
 public class Release extends Value implements IEntity
 {
-	/**
-	 * The id
-	 */
 	@XmlAttribute(name = "id")
 	public String _id; // NO_UCD (use final)
+
+	@XmlAnyAttribute
+	public HashMap<String, String> _extensionAttributes = new HashMap<>(); // NO_UCD (use final)
 
 	/**
 	 * The relation list
