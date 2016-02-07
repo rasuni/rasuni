@@ -3,7 +3,6 @@ package rasuni.titan;
 import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.EdgeLabel;
 import com.thinkaurelius.titan.core.PropertyKey;
-import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.schema.EdgeLabelMaker;
 import com.thinkaurelius.titan.core.schema.SchemaManager;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
@@ -17,12 +16,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.function.Consumer;
-import rasuni.acoustid.AcoustId;
 import rasuni.acoustid.Response;
 import rasuni.acoustid.Result;
 import rasuni.functional.IConsumer;
 import rasuni.functional.IExpression3;
-import rasuni.functional.IExpression4;
 import rasuni.functional.IFunction;
 import rasuni.functional.IFunction2;
 import rasuni.functional.IProvider;
@@ -32,7 +29,6 @@ import rasuni.musicbrainz.Area;
 import rasuni.musicbrainz.Artist;
 import rasuni.musicbrainz.Entity;
 import rasuni.musicbrainz.Event;
-import rasuni.musicbrainz.ISRCList;
 import rasuni.musicbrainz.MetaData;
 import rasuni.musicbrainz.Recording;
 import rasuni.musicbrainz.Relation;
@@ -367,18 +363,6 @@ public final class TitanCollector
 	}
 
 	/**
-	 * Create an integer key
-	 *
-	 * @param name
-	 *            the key name
-	 * @return the integer key
-	 */
-	private static Key<Integer> integer(String name)
-	{
-		return new Key<>(name, Integer.class);
-	}
-
-	/**
 	 * Set the value to the element
 	 *
 	 * @param element
@@ -616,107 +600,6 @@ public final class TitanCollector
 		extensionToDelete("st5");
 	}
 
-	private final static String FILE_RECORDING = "file.recording";
-
-	public static void setVersion(final Vertex system, final int version)
-	{
-		TitanCollector.set(system, integer("systemVersion"), version);
-	}
-
-	private static File toFile(final Edge startEntry)
-	{
-		Vertex currentEntry;
-		final LinkedList<String> path = new LinkedList<>();
-		Edge entry = startEntry;
-		do
-		{
-			path.addFirst(NAME.get(entry));
-			currentEntry = TitanCollector.getTail(entry);
-			entry = Files.getDirectoryEntryEdge(currentEntry);
-		} while (entry != null);
-		File file1 = null;
-		for (final String entry1 : path)
-		{
-			file1 = new File(file1, entry1);
-		}
-		final File file = file1;
-		return file;
-	}
-
-	private static <T> Boolean include1(final Iterable<T> iterable, final IConsumer<Vertex> initializer, final TaskType taskType, final IGraphDatabase tg, final String entryType, final String name)
-	{
-		return include(iterable, System.out, new String[] { entryType, name }, v ->
-		{
-			return false;
-		}, v ->
-		{
-			initializer.accept(v);
-			return true;
-		}, tg, taskType);
-	}
-
-	private static void recordingLog(final String prefix, final Vertex current)
-	{
-		System.out.println(prefix + " http://musicbrainz.org/recording/" + string("recording.mbid").get(current));
-	}
-
-	private static Pair<Vertex, Boolean> includeMBEntity(final Resource resource, final String mbid, final IGraphDatabase tg)
-	{
-		return TitanCollector.includeMBEntity(resource, tg, mbid, System.out, t -> new String[] { t, mbid }, v -> new Pair<>(v, false), v -> new Pair<>(v, true));
-	}
-
-	private static boolean processRecordingFile(final boolean checkAccuracy, final IGraphDatabase tg, final Recording recording)
-	{
-		final Vertex current = TitanCollector.getCurrent(tg);
-		final Iterator<Vertex> ifile = current.getVertices(Direction.IN, FILE_RECORDING).iterator();
-		if (ifile.hasNext())
-		{
-			final Vertex currentEntry2 = ifile.next();
-			final Edge entry = Files.getDirectoryEntryEdge(currentEntry2);
-			if (NAME.get(entry).endsWith(".flac") || !checkAccuracy)
-			{
-				if (ifile.hasNext())
-				{
-					System.out.println("Multiple files for recording:");
-					System.out.println("  " + toFilePath(entry));
-					System.out.println("  " + toFilePath(Files.getDirectoryEntryEdge(ifile.next())));
-					return true;
-				}
-				else
-				{
-					expect(Edges.getReference(currentEntry2, "nextTask") != null);
-					final ISRCList isrcList = recording._isrcList;
-					if (isrcList != null)
-					{
-						expect(isrcList.isCount(1));
-						TitanCollector.includeMBEntity(Resource.ISRC, isrcList._isrcs.getFirst()._id, tg);
-					}
-					return false;
-				}
-			}
-			else
-			{
-				recordingLog(" ", current);
-				System.out.println("File not accurate " + toFilePath(entry));
-				return true;
-			}
-		}
-		else
-		{
-			recordingLog("Recording not in collection", current);
-			return true;
-		}
-	}
-
-	/**
-	 * @param entry
-	 * @return
-	 */
-	private static String toFilePath(final Edge entry)
-	{
-		return toFile(entry).toString();
-	}
-
 	private static <T> boolean includeRelations(final RelationList rl, final IFunction2<Boolean, IGraphDatabase, T> include, final IGraphDatabase tg, final IFunction<T, Relation> entityFromRelation)
 	{
 		final Iterator<Relation> r = rl._relations.iterator();
@@ -730,37 +613,6 @@ public final class TitanCollector
 			{
 				return true;
 			}
-		}
-	}
-
-	private static LinkedList<AcoustId> getAcoustIds(final WebService<Response> acoustId, final String recordingId)
-	{
-		return acoustId.get("track/list_by_mbid?format=xml&mbid=" + recordingId)._tracks._tracks;
-	}
-
-	public static boolean processAcoustIds(final WebService<Response> acoustId, final boolean checkAccuracy, final IGraphDatabase tg, final Recording entity)
-	{
-		final LinkedList<AcoustId> tracks = getAcoustIds(acoustId, entity._id);
-		if (tracks != null)
-		{
-			final Iterator<AcoustId> it = tracks.iterator();
-			for (;;)
-			{
-				if (!it.hasNext())
-				{
-					return processRecordingFile(checkAccuracy, tg, entity);
-				}
-				final AcoustId track = it.next();
-				final String trackId = track._id;
-				if (include1(tg.getVertices("acoust.id", trackId), newAcoustId -> TitanCollector.set(newAcoustId, Key.ACOUST_ID, trackId), TaskType.ACOUST_ID, tg, "acoustid", trackId))
-				{
-					return false;
-				}
-			}
-		}
-		else
-		{
-			return processRecordingFile(checkAccuracy, tg, entity);
 		}
 	}
 
@@ -790,7 +642,7 @@ public final class TitanCollector
 				final RelationList rl = irl.next();
 				switch (rl._targetType)
 				{
-				case ARTIST:
+				case "artist":
 					if (includeRelations(rl, (tg1, artist) ->
 					{
 						return ifNull(artist, Boolean.FALSE, (IProvider<Boolean>) () ->
@@ -822,22 +674,22 @@ public final class TitanCollector
 						return false;
 					}
 					break;
-				case RECORDING:
+				case "recording":
 					if (includeRelations(rl, (IGraphDatabase tg1, final Recording recording) -> addRecording(recording, System.out, tg1), tg, relation -> relation._recording))
 					{
 						return false;
 					}
 					break;
-				case RELEASE:
+				case "release":
 					if (includeRelations(rl, (IGraphDatabase tg1, final Release release) -> addRelease(release, System.out, tg1), tg, relation -> relation._release))
 					{
 						return false;
 					}
 					break;
-				case URL:
+				case "url":
 					if (includeRelations(rl, (tg1, target) ->
 					{
-						return includeEntity11(target1 -> target1._id, target, Resource.URL, tg1, System.out, target1 -> target1._target, v ->
+						return includeEntity11(target1 -> target1._id, target, Resource.URL, tg1, System.out, target1 -> target1._value, v ->
 						{ // empty
 								}, v -> false, v -> true);
 					}, tg, relation -> relation._target))
@@ -845,7 +697,7 @@ public final class TitanCollector
 						return false;
 					}
 					break;
-				case WORK:
+				case "work":
 					if (includeRelations(rl, (tg1, work) ->
 					{
 						return ifNull(work, false, (IProvider<Boolean>) () ->
@@ -877,37 +729,37 @@ public final class TitanCollector
 						return false;
 					}
 					break;
-				case LABEL:
+				case "label":
 					if (includeRelations(rl, (tg1, label) -> addEntity(label, Resource.LABEL, tg1, System.out), tg, relation -> relation._label))
 					{
 						return false;
 					}
 					break;
-				case PLACE:
+				case "place":
 					if (includeRelations(rl, (tg1, p) -> addEntity(p, Resource.PLACE, tg1, System.out), tg, relation -> relation._place))
 					{
 						return false;
 					}
 					break;
-				case AREA:
+				case "area":
 					if (includeRelations(rl, (tg1, area) -> addArea(area, System.out, tg1), tg, relation -> relation._area))
 					{
 						return false;
 					}
 					break;
-				case RELEASE_GROUP:
+				case "release-group":
 					if (includeRelations(rl, (tg1, rg) -> addEntity(rg, Resource.RELEASE_GROUP, tg1, System.out), tg, relation -> relation._releaseGroup))
 					{
 						return false;
 					}
 					break;
-				case SERIES:
+				case "series":
 					if (includeRelations(rl, (tg1, series) -> addResource(series, Series::getId, System.out, "series", Series::getName, tg, "series.mbid", Resource.SERIES), tg, relation -> relation._series))
 					{
 						return false;
 					}
 					break;
-				case EVENT:
+				case "event":
 					if (includeRelations(rl, (tg1, event) -> addResource(event, Event::getId, System.out, "event", Event::getName, tg, "event.mbid", Resource.EVENT), tg, relation -> relation._event))
 					{
 						return false;
@@ -1015,14 +867,6 @@ public final class TitanCollector
 		log(new String[] { "  completed " + resourceName + " http://musicbrainz.org/" + resourceName + "/" + TitanCollector.string(resourceName + ".mbid").get(current) }, System.out);
 	}
 
-	public static boolean capturePlayLists(IExpression4<Boolean, WebService<MetaData>, Parameter, IConsumer<Vertex>, TitanGraph> browse, WebService<MetaData> musicBrainz, Parameter param, TitanGraph tg)
-	{
-		return browse.apply(musicBrainz, param, v ->
-		{
-			expect(!v.getVertices(Direction.OUT, "playlist").iterator().hasNext());
-		}, tg);
-	}
-
 	/**
 	 * Register a property key
 	 *
@@ -1097,9 +941,4 @@ public final class TitanCollector
 		log(new String[] { "  deleting" }, System.out);
 		expect(file.delete());
 	}
-
-	/**
-	 * The name key
-	 */
-	private final static Key<String> NAME = TitanCollector.string("name");
 }

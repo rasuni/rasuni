@@ -1,7 +1,6 @@
 package rasuni.graph;
 
 import com.tinkerpop.blueprints.Element;
-import rasuni.titan.TitanCollector;
 
 /**
  * Property key
@@ -24,11 +23,6 @@ public final class Key<T>
 	 * the is complete field
 	 */
 	public final static Key<Boolean> IS_COMPLETE = new Key<>("isComplete", Boolean.class);
-
-	/**
-	 * the acoust id key
-	 */
-	public final static Key<String> ACOUST_ID = TitanCollector.string("acoust.id");
 
 	/**
 	 * Constructor
