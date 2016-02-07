@@ -39,6 +39,9 @@ public class Relation extends Value
 	@XmlElement(name = "artist")
 	public Artist _artist; // NO_UCD (use final)
 
+	@XmlElement(name = "release")
+	public Release _release; // NO_UCD (use final)
+
 	/**
 	 * the work
 	 */
@@ -48,17 +51,11 @@ public class Relation extends Value
 	/**
 	 * release
 	 */
-	@XmlElement(name = "release")
-	public Release _release; // NO_UCD (use final)
-
-	/**
-	 * release
-	 */
 	@XmlElement(name = "recording")
 	public Recording _recording; // NO_UCD (use final)
 
 	/**
-	 * /** The release group
+	 * the release group
 	 */
 	@XmlElement(name = "release-group")
 	public ReleaseGroup _releaseGroup; // NO_UCD (use final)
