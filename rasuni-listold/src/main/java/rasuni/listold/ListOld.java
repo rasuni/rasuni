@@ -438,9 +438,9 @@ public final class ListOld // NO_UCD (unused code)
 
 	private static boolean registerRoot(IFileSystemScanner tg, String root, IRunnable next)
 	{
-		if (tg.directoryEntryQuery(root).edges().iterator().hasNext())
+		if (tg.hasDirectoryEntry(root))
 		{
-			System.out.println("  already added " + root);
+			tg.println("already added " + root);
 			return next.run();
 		}
 		else
