@@ -15,17 +15,14 @@ public class Release extends Value implements IEntity
 	@XmlAnyAttribute
 	public HashMap<String, String> _extensionAttributes = new HashMap<>(); // NO_UCD (use final)
 
+	@XmlElement(name = "title")
+	public String _title; // NO_UCD (use final)
+
 	/**
 	 * The relation list
 	 */
 	@XmlElement(name = "relation-list")
 	private final LinkedList<RelationList> _relationLists = new LinkedList<>();
-
-	/**
-	 * The title
-	 */
-	@XmlElement(name = "title")
-	public String _title; // NO_UCD (use final)
 
 	@XmlElement(name = "barcode")
 	private String _barcode; // NO_UCD (use final)

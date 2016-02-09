@@ -50,7 +50,7 @@ public final class TitanCollector
 	 *            the key name
 	 * @return the string key
 	 */
-	public static Key<String> string(String name)
+	private static Key<String> string(String name)
 	{
 		return new Key<>(name, String.class);
 	}
@@ -265,7 +265,7 @@ public final class TitanCollector
 		return ifNull(sequence, null, (IProvider<ISequence<String>>) () ->
 		{
 			return new ISequence<String>()
-			{
+					{
 				@Override
 				public String getHead()
 				{
@@ -277,7 +277,7 @@ public final class TitanCollector
 				{
 					return map(sequence.getTail(), toString);
 				}
-			};
+					};
 		});
 	}
 
@@ -318,7 +318,7 @@ public final class TitanCollector
 	private static <T> ISequence<T> sequence(T[] array, int pos)
 	{
 		return array.length == pos ? null : new ISequence<T>()
-		{
+				{
 			@Override
 			public T getHead()
 			{
@@ -330,7 +330,7 @@ public final class TitanCollector
 			{
 				return sequence(array, pos + 1);
 			}
-		};
+				};
 	}
 
 	/**
@@ -360,21 +360,6 @@ public final class TitanCollector
 		out.print(addLog);
 		log(logs, out);
 		return expr.apply(i);
-	}
-
-	/**
-	 * Set the value to the element
-	 *
-	 * @param element
-	 *            the element
-	 * @param key
-	 *            the key to set
-	 * @param value
-	 *            the new value
-	 */
-	private static void set(Element element, Key<?> key, Object value)
-	{
-		element.setProperty(key.getName(), value);
 	}
 
 	private static void setProperty(Element element, String name, Enum<?> value)
@@ -468,9 +453,9 @@ public final class TitanCollector
 	{
 		return includeEntity(entity, Entity::getId, resource, tg, out, Object::toString, mbid ->
 		{ // empty
-				}, vertex ->
-				{ // empty
-				});
+		}, vertex ->
+		{ // empty
+		});
 	}
 
 	private static void printSpace(PrintStream out, String s)
@@ -691,7 +676,7 @@ public final class TitanCollector
 					{
 						return includeEntity11(target1 -> target1._id, target, Resource.URL, tg1, System.out, target1 -> target1._value, v ->
 						{ // empty
-								}, v -> false, v -> true);
+						}, v -> false, v -> true);
 					}, tg, relation -> relation._target))
 					{
 						return false;
@@ -822,7 +807,7 @@ public final class TitanCollector
 			{
 				includeEntity(idl, entity, resource, tg, System.out, name, mbid ->
 				{ // empty
-						}, v -> null, v -> null);
+				}, v -> null, v -> null);
 				removeCurrent(tg, "merged", foreignId, entityId);
 				return false;
 			}
@@ -859,12 +844,6 @@ public final class TitanCollector
 		final LinkedList<Result> results = res._results._results;
 		expect(results.size() == 1);
 		return results.getFirst()._recordings._recordings.size() != 1;
-	}
-
-	public static void completed(final Vertex current, final String resourceName)
-	{
-		TitanCollector.set(current, Key.IS_COMPLETE, true);
-		log(new String[] { "  completed " + resourceName + " http://musicbrainz.org/" + resourceName + "/" + TitanCollector.string(resourceName + ".mbid").get(current) }, System.out);
 	}
 
 	/**
