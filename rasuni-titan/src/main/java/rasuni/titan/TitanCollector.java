@@ -26,7 +26,6 @@ import rasuni.functional.IProvider;
 import rasuni.graph.Key;
 import rasuni.graph.api.IGraphDatabase;
 import rasuni.musicbrainz.Area;
-import rasuni.musicbrainz.Artist;
 import rasuni.musicbrainz.Entity;
 import rasuni.musicbrainz.Event;
 import rasuni.musicbrainz.MetaData;
@@ -599,17 +598,6 @@ public final class TitanCollector
 				return true;
 			}
 		}
-	}
-
-	private static boolean addArea(final IFunction<Area, Artist> area, final Artist entity, final IGraphDatabase tg)
-	{
-		final Area e = area.apply(entity);
-		return e == null || !TitanCollector.addArea(e, System.out, tg);
-	}
-
-	public static boolean processAreas(final Artist entity, final IGraphDatabase tg)
-	{
-		return addArea(artist -> artist._area, entity, tg) && addArea(artist -> artist._beginArea, entity, tg) && addArea(artist -> artist._endArea, entity, tg);
 	}
 
 	public static <T> boolean processRelations(final T entity, IFunction<LinkedList<RelationList>, T> rle, final IGraphDatabase tg)

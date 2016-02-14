@@ -19,7 +19,10 @@ public class Release extends Value implements IEntity
 	public String _title; // NO_UCD (use final)
 
 	@XmlElement(name = "status")
-	public String _status;
+	public String _status; // NO_UCD (use final)
+
+	@XmlElement(name = "quality")
+	public String _quality; // NO_UCD (use final)
 
 	/**
 	 * The relation list
