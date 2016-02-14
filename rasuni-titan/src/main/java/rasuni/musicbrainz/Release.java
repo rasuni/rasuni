@@ -18,6 +18,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "title")
 	public String _title; // NO_UCD (use final)
 
+	@XmlElement(name = "status")
+	public String _status;
+
 	/**
 	 * The relation list
 	 */

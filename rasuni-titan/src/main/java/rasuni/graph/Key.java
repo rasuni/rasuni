@@ -20,11 +20,6 @@ public final class Key<T>
 	public final Class<T> _type;
 
 	/**
-	 * the is complete field
-	 */
-	public final static Key<Boolean> IS_COMPLETE = new Key<>("isComplete", Boolean.class);
-
-	/**
 	 * Constructor
 	 *
 	 * @param name
