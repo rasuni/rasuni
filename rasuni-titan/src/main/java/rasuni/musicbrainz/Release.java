@@ -27,6 +27,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "annotation")
 	public Annotation _annotation; // NO_UCD (use final)
 
+	@XmlElement(name = "disambiguation")
+	public String _disambiguation; // NO_UCD (use final)
+
 	/**
 	 * The relation list
 	 */
