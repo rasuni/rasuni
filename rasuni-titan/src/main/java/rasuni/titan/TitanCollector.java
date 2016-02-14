@@ -15,7 +15,6 @@ import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.function.Consumer;
 import rasuni.acoustid.Response;
 import rasuni.acoustid.Result;
 import rasuni.functional.IConsumer;
@@ -26,17 +25,11 @@ import rasuni.functional.IProvider;
 import rasuni.graph.Key;
 import rasuni.graph.api.IGraphDatabase;
 import rasuni.musicbrainz.Area;
-import rasuni.musicbrainz.Entity;
-import rasuni.musicbrainz.Event;
 import rasuni.musicbrainz.MetaData;
-import rasuni.musicbrainz.Recording;
-import rasuni.musicbrainz.Relation;
-import rasuni.musicbrainz.RelationList;
 import rasuni.musicbrainz.Release;
 import rasuni.musicbrainz.ReleaseEvent;
 import rasuni.musicbrainz.ReleaseEventList;
 import rasuni.musicbrainz.Resource;
-import rasuni.musicbrainz.Series;
 import rasuni.webservice.Parameter;
 import rasuni.webservice.WebService;
 
@@ -439,24 +432,6 @@ public final class TitanCollector
 		return includeEntity11(id, entity, resource, tg, out, description, inspect, found, added);
 	}
 
-	private static <E> boolean includeEntity(final E entity, IFunction<String, E> id, Resource resource, final IGraphDatabase tg, PrintStream out, final IFunction<String, E> description, IConsumer<String> inspect, IConsumer<Vertex> checkVertex)
-	{
-		return entity != null && includeEntity(id, entity, resource, tg, out, description, inspect, (Vertex v) ->
-		{
-			checkVertex.accept(v);
-			return false;
-		}, (Vertex v) -> true);
-	}
-
-	private static <E extends Entity> boolean addEntity(final E entity, final Resource resource, final IGraphDatabase tg, PrintStream out)
-	{
-		return includeEntity(entity, Entity::getId, resource, tg, out, Object::toString, mbid ->
-		{ // empty
-		}, vertex ->
-		{ // empty
-		});
-	}
-
 	private static void printSpace(PrintStream out, String s)
 	{
 		out.print(s);
@@ -489,16 +464,6 @@ public final class TitanCollector
 				return Boolean.TRUE;
 			});
 		});
-	}
-
-	private static boolean addRecording(final Recording recording, PrintStream out, final IGraphDatabase tg)
-	{
-		return addResource(recording, Recording::getId, out, "recording", r -> r._title, tg, "recording.mbid", Resource.RECORDING);
-	}
-
-	private static boolean addRelease(final Release release, PrintStream out, final IGraphDatabase tg)
-	{
-		return addResource(release, Release::getId, out, "release", Release::getTitle, tg, "release.mbid", Resource.RELEASE);
 	}
 
 	private static boolean addArea(final Area area, PrintStream out, final IGraphDatabase tg)
@@ -582,168 +547,6 @@ public final class TitanCollector
 		extensionToDelete("md5");
 		extensionToDelete("m4v");
 		extensionToDelete("st5");
-	}
-
-	private static <T> boolean includeRelations(final RelationList rl, final IFunction2<Boolean, IGraphDatabase, T> include, final IGraphDatabase tg, final IFunction<T, Relation> entityFromRelation)
-	{
-		final Iterator<Relation> r = rl._relations.iterator();
-		for (;;)
-		{
-			if (!r.hasNext())
-			{
-				return false;
-			}
-			if (include.apply(tg, entityFromRelation.apply(r.next())))
-			{
-				return true;
-			}
-		}
-	}
-
-	public static <T> boolean processRelations(final T entity, IFunction<LinkedList<RelationList>, T> rle, final IGraphDatabase tg)
-	{
-		final LinkedList<RelationList> relationLists = rle.apply(entity);
-		return ifNull(relationLists, true, () ->
-		{
-			final Iterator<RelationList> irl = relationLists.iterator();
-			for (;;)
-			{
-				if (!irl.hasNext())
-				{
-					return true;
-				}
-				final RelationList rl = irl.next();
-				switch (rl._targetType)
-				{
-				case "artist":
-					if (includeRelations(rl, (tg1, artist) ->
-					{
-						return ifNull(artist, Boolean.FALSE, (IProvider<Boolean>) () ->
-						{
-							final String mbid = artist._id;
-							final IConsumer<String> l = (String s) ->
-							{
-								indent(System.out);
-								printSpace(System.out, s);
-								printSpace(System.out, "artist");
-								printSpace(System.out, mbid);
-								System.out.println(artist.getName());
-							};
-							return getFirst(tg1.getVertices("artist.mbid", mbid), (Vertex first) ->
-							{
-								l.accept("already added");
-								return false;
-							}, () ->
-							{
-								Vertex v = enqueueNewTask(tg1, TaskType.MB_RESOURCE);
-								setProperty(v, "resource.kind", Resource.ARTIST);
-								v.setProperty("artist.mbid", mbid);
-								l.accept("adding");
-								return true;
-							});
-						});
-					}, tg, relation -> relation._artist))
-					{
-						return false;
-					}
-					break;
-				case "recording":
-					if (includeRelations(rl, (IGraphDatabase tg1, final Recording recording) -> addRecording(recording, System.out, tg1), tg, relation -> relation._recording))
-					{
-						return false;
-					}
-					break;
-				case "release":
-					if (includeRelations(rl, (IGraphDatabase tg1, final Release release) -> addRelease(release, System.out, tg1), tg, relation -> relation._release))
-					{
-						return false;
-					}
-					break;
-				case "url":
-					if (includeRelations(rl, (tg1, target) ->
-					{
-						return includeEntity11(target1 -> target1._id, target, Resource.URL, tg1, System.out, target1 -> target1._value, v ->
-						{ // empty
-						}, v -> false, v -> true);
-					}, tg, relation -> relation._target))
-					{
-						return false;
-					}
-					break;
-				case "work":
-					if (includeRelations(rl, (tg1, work) ->
-					{
-						return ifNull(work, false, (IProvider<Boolean>) () ->
-						{
-							final String mbid = work.getId();
-							final Consumer<String> l = (String s) ->
-							{
-								indent(System.out);
-								printSpace(System.out, s);
-								printSpace(System.out, "work");
-								printSpace(System.out, mbid);
-								System.out.println(work.getTitle());
-							};
-							return getFirst(tg1.getVertices("work.mbid", mbid), (Vertex first) ->
-							{
-								l.accept("already added");
-								return false;
-							}, () ->
-							{
-								Vertex v = enqueueNewTask(tg1, TaskType.MB_RESOURCE);
-								setProperty(v, "resource.kind", Resource.WORK);
-								v.setProperty("work.mbid", mbid);
-								l.accept("adding");
-								return true;
-							});
-						});
-					}, tg, relation -> relation._work))
-					{
-						return false;
-					}
-					break;
-				case "label":
-					if (includeRelations(rl, (tg1, label) -> addEntity(label, Resource.LABEL, tg1, System.out), tg, relation -> relation._label))
-					{
-						return false;
-					}
-					break;
-				case "place":
-					if (includeRelations(rl, (tg1, p) -> addEntity(p, Resource.PLACE, tg1, System.out), tg, relation -> relation._place))
-					{
-						return false;
-					}
-					break;
-				case "area":
-					if (includeRelations(rl, (tg1, area) -> addArea(area, System.out, tg1), tg, relation -> relation._area))
-					{
-						return false;
-					}
-					break;
-				case "release-group":
-					if (includeRelations(rl, (tg1, rg) -> addEntity(rg, Resource.RELEASE_GROUP, tg1, System.out), tg, relation -> relation._releaseGroup))
-					{
-						return false;
-					}
-					break;
-				case "series":
-					if (includeRelations(rl, (tg1, series) -> addResource(series, Series::getId, System.out, "series", Series::getName, tg, "series.mbid", Resource.SERIES), tg, relation -> relation._series))
-					{
-						return false;
-					}
-					break;
-				case "event":
-					if (includeRelations(rl, (tg1, event) -> addResource(event, Event::getId, System.out, "event", Event::getName, tg, "event.mbid", Resource.EVENT), tg, relation -> relation._event))
-					{
-						return false;
-					}
-					break;
-				default:
-					TitanCollector.fail();
-					break;
-				}
-			}
-		});
 	}
 
 	private static void requeue(final IGraphDatabase tg)
