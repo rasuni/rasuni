@@ -445,8 +445,8 @@ public final class ListOld // NO_UCD (unused code)
 		}
 		else
 		{
-			System.out.println("  adding " + root);
-			Vertex newEntry = TitanCollector.newTask(tg.getDatabase(), TaskType.FILESYSTEMOBJECT);
+			tg.println("adding " + root);
+			Vertex newEntry = tg.newFileSystemObject(/*TaskType.FILESYSTEMOBJECT.ordinal()*/);
 			Vertex current = tg.getCurrentVertex();
 			current.addEdge("directory.entry", newEntry).setProperty("name", root);
 			Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
