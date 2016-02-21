@@ -446,9 +446,9 @@ public final class ListOld // NO_UCD (unused code)
 		else
 		{
 			tg.println("adding " + root);
-			Vertex newEntry = tg.newFileSystemObject(/*TaskType.FILESYSTEMOBJECT.ordinal()*/);
+			Vertex newEntry = tg.newFileSystemObject();
 			Vertex current = tg.getCurrentVertex();
-			current.addEdge("directory.entry", newEntry).setProperty("name", root);
+			tg.addDirectoryEntryToCurrent(newEntry).setProperty("name", root);
 			Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
 			Vertex last = eLastTask.getVertex(Direction.OUT);
 			eLastTask.remove();
