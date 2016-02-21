@@ -30,6 +30,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "disambiguation")
 	public String _disambiguation; // NO_UCD (use final)
 
+	@XmlElement(name = "packaging")
+	public String _packaging; // NO_UCD (use final)
+
 	/**
 	 * The relation list
 	 */
@@ -47,16 +50,6 @@ public class Release extends Value implements IEntity
 
 	@XmlElement(name = "date")
 	private String _date; // NO_UCD (use final)
-
-	/**
-	 * Return the title
-	 *
-	 * @return the title
-	 */
-	public String getTitle()
-	{
-		return _title;
-	}
 
 	// @Override
 	// public Resource getKind()
