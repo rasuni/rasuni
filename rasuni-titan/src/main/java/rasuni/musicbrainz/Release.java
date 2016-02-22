@@ -33,6 +33,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "packaging")
 	public String _packaging; // NO_UCD (use final)
 
+	@XmlElement(name = "text-representation")
+	public String _textRepresentation; // NO_UCD (use final)
+
 	/**
 	 * The relation list
 	 */
