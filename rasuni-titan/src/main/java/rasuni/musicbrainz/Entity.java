@@ -21,16 +21,6 @@ public abstract class Entity
 	@XmlElement(name = "relation-list")
 	final LinkedList<RelationList> _relationLists = new LinkedList<>();
 
-	/**
-	 * Return the id
-	 *
-	 * @return the id
-	 */
-	public final String getId()
-	{
-		return _id;
-	}
-
 	@Override
 	public String toString()
 	{
