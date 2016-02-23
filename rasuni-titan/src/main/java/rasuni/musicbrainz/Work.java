@@ -23,16 +23,6 @@ public class Work extends Entity implements IEntity
 	@XmlElement(name = "iswc-list")
 	public IswcList _iswcList; // NO_UCD (use final)
 
-	/**
-	 * Return the title
-	 *
-	 * @return the title
-	 */
-	public String getTitle()
-	{
-		return _title;
-	}
-
 	@Override
 	public String toString()
 	{
