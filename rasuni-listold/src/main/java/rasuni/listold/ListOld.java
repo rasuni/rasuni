@@ -440,7 +440,8 @@ public final class ListOld // NO_UCD (unused code)
 	{
 		if (tg.hasDirectoryEntry(root))
 		{
-			tg.println("already added " + root);
+			tg.alreadyAdded(root);
+			//tg.println("already added " + root);
 			return next.run();
 		}
 		else

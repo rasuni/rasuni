@@ -33,4 +33,10 @@ public class Place extends Entity implements IEntity
 	{
 		return _relationLists;
 	}
+
+	@Override
+	public String getId()
+	{
+		return _id;
+	}
 }
