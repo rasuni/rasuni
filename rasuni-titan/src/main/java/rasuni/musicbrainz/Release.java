@@ -36,6 +36,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "text-representation")
 	public TextRepresentation _textRepresentation; // NO_UCD (use final)
 
+	@XmlElement(name = "artist-credit")
+	public String _artistCredit; // NO_UCD (use final)
+
 	/**
 	 * The relation list
 	 */
