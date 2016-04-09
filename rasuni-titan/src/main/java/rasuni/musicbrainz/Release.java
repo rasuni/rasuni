@@ -39,7 +39,7 @@ public class Release extends Value implements IEntity
 
 	@XmlElementWrapper(name = "artist-credit")
 	@XmlElement(name = "name-credit")
-	public LinkedList<String> _artistCredits; // NO_UCD (use final)
+	public final LinkedList<NameCredit> _artistCredits = new LinkedList<>(); // NO_UCD (use final)
 
 	/**
 	 * The relation list
