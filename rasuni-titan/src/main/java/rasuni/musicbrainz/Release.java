@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import rasuni.lang.Value;
 
 public class Release extends Value implements IEntity
@@ -36,8 +37,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "text-representation")
 	public TextRepresentation _textRepresentation; // NO_UCD (use final)
 
-	@XmlElement(name = "artist-credit")
-	public String _artistCredit; // NO_UCD (use final)
+	@XmlElementWrapper(name = "artist-credit")
+	@XmlElement(name = "name-credit")
+	public LinkedList<String> _artistCredits; // NO_UCD (use final)
 
 	/**
 	 * The relation list
