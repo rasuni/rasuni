@@ -370,7 +370,7 @@ public final class TitanCollector
 	 */
 	public static Vertex newTask(IGraphDatabase tg, TaskType tt)
 	{
-		Vertex v = tg.addVertex();
+		Vertex v = tg.getVertexForId(tg.addVertex());
 		setProperty(v, "task.type", tt);
 		return v;
 	}
