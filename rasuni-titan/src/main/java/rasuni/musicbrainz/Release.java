@@ -41,6 +41,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "name-credit")
 	public final LinkedList<NameCredit> _artistCredits = new LinkedList<>(); // NO_UCD (use final)
 
+	@XmlElement(name = "alias-list")
+	public AliasList _aliasList; // NO_UCD (use final)
+
 	/**
 	 * The relation list
 	 */
