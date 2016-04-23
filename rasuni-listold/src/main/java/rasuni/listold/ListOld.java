@@ -441,12 +441,11 @@ public final class ListOld // NO_UCD (unused code)
 		if (tg.hasDirectoryEntry(root))
 		{
 			tg.alreadyAdded(root);
-			//tg.println("already added " + root);
 			return next.run();
 		}
 		else
 		{
-			tg.println("adding " + root);
+			tg.adding(root);
 			Vertex newEntry = tg.newFileSystemObject();
 			Vertex current = tg.getCurrentVertex();
 			tg.addDirectoryEntryToCurrent(newEntry).setProperty("name", root);
