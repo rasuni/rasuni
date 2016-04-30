@@ -1,6 +1,7 @@
 package ms1.music;
 
-import fj.data.Array;
+import java.util.Arrays;
+import org.pcollections.ConsPStack;
 import rasuni.titan.MusicCollector;
 
 /**
@@ -16,6 +17,6 @@ public class Ms1Music // NO_UCD (unused code)
 	 */
 	public static void main(String[] args)
 	{
-		MusicCollector.run(Array.array("\\\\MusikServer\\Musik", "\\\\qnap\\music"), "ms1music", System.out, "\\\\MusikServer\\Musik", true);
+		MusicCollector.run(ConsPStack.from(Arrays.asList("\\\\MusikServer\\Musik", "\\\\qnap\\music")), "ms1music", System.out, "\\\\MusikServer\\Musik", true);
 	}
 }
