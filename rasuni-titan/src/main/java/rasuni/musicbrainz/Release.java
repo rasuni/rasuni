@@ -44,6 +44,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "alias-list")
 	public AliasList _aliasList; // NO_UCD (use final)
 
+	@XmlElement(name = "release-group")
+	public ReleaseGroup _releaseGroup; // NO_UCD (use final)
+
 	/**
 	 * The relation list
 	 */

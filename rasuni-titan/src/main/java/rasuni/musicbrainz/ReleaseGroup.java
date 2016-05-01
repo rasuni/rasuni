@@ -1,7 +1,11 @@
 package rasuni.musicbrainz;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import javax.xml.bind.annotation.XmlAnyAttribute;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import rasuni.lang.Value;
 
 /**
  * Release Group List
@@ -9,8 +13,17 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Ralph Sigrist
  *
  */
-public class ReleaseGroup extends Entity implements IEntity
+public class ReleaseGroup extends Value implements IEntity
 {
+	@XmlAttribute(name = "id")
+	public String _id; // NO_UCD (use final)
+
+	@XmlAttribute(name = "type")
+	public String _type; // NO_UCD (use final)
+
+	@XmlAnyAttribute
+	public HashMap<String, String> _extensionAttributes = new HashMap<>(); // NO_UCD (use final)
+
 	/**
 	 * the title
 	 */
@@ -41,4 +54,10 @@ public class ReleaseGroup extends Entity implements IEntity
 	{
 		return _id;
 	}
+
+	/**
+	 * The relation list
+	 */
+	@XmlElement(name = "relation-list")
+	final LinkedList<RelationList> _relationLists = new LinkedList<>();
 }
