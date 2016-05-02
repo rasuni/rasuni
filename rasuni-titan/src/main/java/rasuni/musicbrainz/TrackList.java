@@ -11,7 +11,7 @@ public class TrackList extends Value
 	 * the tracks
 	 */
 	@XmlElement(name = "track")
-	private final LinkedList<Track> _tracks = new LinkedList<>();
+	public final LinkedList<Track> _tracks = new LinkedList<>();
 
 	Collection<String> getRecordingIds()
 	{
