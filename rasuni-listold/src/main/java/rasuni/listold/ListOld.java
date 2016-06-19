@@ -54,7 +54,7 @@ public final class ListOld // NO_UCD (unused code)
 					});
 				});
 			});
-		}, null);
+		});
 		try
 		{
 			tg.makeLongPropertyKey("fso.lastAccess");
@@ -445,11 +445,15 @@ public final class ListOld // NO_UCD (unused code)
 		}
 		else
 		{
+			/*
 			tg.adding(root);
 			Vertex newEntry = tg.newFileSystemObject();
 			tg.addDirectoryEntryToCurrent(newEntry, root);
+			 */
+			Vertex newEntry = tg.addNewDirectoryEntryToCurrent(root);
 			Vertex current = tg.getCurrentVertex();
 			Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
+			//Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
 			Vertex last = eLastTask.getVertex(Direction.OUT);
 			eLastTask.remove();
 			last.addEdge("next.task", newEntry);
