@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.namespace.QName;
 import rasuni.lang.Value;
 
 /**
@@ -22,7 +23,7 @@ public class ReleaseGroup extends Value implements IEntity
 	public String _type; // NO_UCD (use final)
 
 	@XmlAnyAttribute
-	public HashMap<String, String> _extensionAttributes = new HashMap<>(); // NO_UCD (use final)
+	public HashMap<QName, String> _extensionAttributes = new HashMap<>(); // NO_UCD (use final)
 
 	@XmlElement(name = "title")
 	public String _title; // NO_UCD (use final)
@@ -32,6 +33,12 @@ public class ReleaseGroup extends Value implements IEntity
 
 	@XmlElement(name = "disambiguation")
 	public String _disambiguation;
+
+	@XmlElement(name = "first-release-date")
+	public String _firstReleaseDate;
+
+	@XmlElement(name = "primary-type")
+	public String _primaryType;
 
 	// empty
 	@Override

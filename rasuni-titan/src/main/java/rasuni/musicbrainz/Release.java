@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.namespace.QName;
 import rasuni.lang.Value;
 
 public class Release extends Value implements IEntity
@@ -14,7 +15,7 @@ public class Release extends Value implements IEntity
 	public String _id; // NO_UCD (use final)
 
 	@XmlAnyAttribute
-	public HashMap<String, String> _extensionAttributes = new HashMap<>(); // NO_UCD (use final)
+	public HashMap<QName, String> _extensionAttributes = new HashMap<>(); // NO_UCD (use final)
 
 	@XmlElement(name = "title")
 	public String _title; // NO_UCD (use final)
