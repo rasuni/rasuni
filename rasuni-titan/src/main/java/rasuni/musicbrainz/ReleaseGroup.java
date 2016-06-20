@@ -40,6 +40,9 @@ public class ReleaseGroup extends Value implements IEntity
 	@XmlElement(name = "primary-type")
 	public String _primaryType;
 
+	@XmlElement(name = "secondary-type-list")
+	public String _secondaryTypeList;
+
 	// empty
 	@Override
 	public String toString()

@@ -1,7 +1,6 @@
 package rasuni.musicbrainz;
 
 import java.util.Objects;
-import rasuni.titan.Check;
 
 public final class YearMonthDay
 {
@@ -146,8 +145,7 @@ public final class YearMonthDay
 	{
 		if (Objects.isNull(ymd))
 		{
-			Check.fail();
-			return null;
+			return "";
 			//? null : ymd.toString ();
 		}
 		else
