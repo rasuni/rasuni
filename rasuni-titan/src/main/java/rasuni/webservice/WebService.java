@@ -22,6 +22,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.xml.sax.SAXParseException;
 
 /**
  * @author Ralph Sigrist
@@ -195,7 +196,7 @@ public final class WebService<T>
 						{
 							return null;
 						}
-						if (cause != null)
+						if (cause != null && !(cause instanceof SAXParseException))
 						{
 							throw ue;
 						}

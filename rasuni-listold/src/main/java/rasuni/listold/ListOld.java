@@ -1,5 +1,6 @@
 package rasuni.listold;
 
+import rasuni.graph.impl.Vertices;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -445,15 +446,9 @@ public final class ListOld // NO_UCD (unused code)
 		}
 		else
 		{
-			/*
-			tg.adding(root);
-			Vertex newEntry = tg.newFileSystemObject();
-			tg.addDirectoryEntryToCurrent(newEntry, root);
-			 */
 			Vertex newEntry = tg.addNewDirectoryEntryToCurrent(root);
 			Vertex current = tg.getCurrentVertex();
-			Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
-			//Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
+			Edge eLastTask = Vertices.getInEdges(current, "next.task").iterator().next();
 			Vertex last = eLastTask.getVertex(Direction.OUT);
 			eLastTask.remove();
 			last.addEdge("next.task", newEntry);
