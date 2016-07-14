@@ -24,6 +24,7 @@ import rasuni.functional.IFunction2;
 import rasuni.functional.IProvider;
 import rasuni.graph.Key;
 import rasuni.graph.api.IGraphDatabase;
+import rasuni.graph.impl.Edges;
 import rasuni.musicbrainz.Area;
 import rasuni.musicbrainz.MetaData;
 import rasuni.musicbrainz.Release;
@@ -184,18 +185,6 @@ public final class TitanCollector
 	}
 
 	/**
-	 * Get the tail of an edge
-	 *
-	 * @param edge
-	 *            the edge
-	 * @return the tail vertex
-	 */
-	public static Vertex getTail(Edge edge)
-	{
-		return edge.getVertex(Direction.OUT);
-	}
-
-	/**
 	 * Re-Assign the previous task to the provided task
 	 *
 	 * @param current
@@ -206,7 +195,7 @@ public final class TitanCollector
 	private static void replacePrevious(Vertex current, Vertex newNext)
 	{
 		Edge eLastTask = getSingleIncoming(current, "nextTask");
-		Vertex last = getTail(eLastTask);
+		Vertex last = Edges.getTail(eLastTask);
 		eLastTask.remove();
 		setNextTask(last, newNext);
 	}
@@ -554,10 +543,39 @@ public final class TitanCollector
 		enqueue(tg, removeCurrent(tg));
 	}
 
+	/**
+	 * Get first outgoing edge for specified label
+	 *
+	 * @param vertex
+	 *            the source vertex
+	 * @param label
+	 *            the label
+	 * @return the first outgoing edge
+	 */
+	static Edge getReference(Vertex vertex, String label)
+	{
+		return getReferenced(Vertex::getEdges, vertex, label);
+	}
+
+	/**
+	 * Remove a reference from a vertex
+	 *
+	 * @param vertex
+	 *            the vertex
+	 * @param label
+	 *            the reference label
+	 * @return the previously referenced vertex
+	 */
+	public static Vertex removeReference(Vertex vertex, String label)
+	{
+		Edge edge = getReference(vertex, label);
+		return edge == null ? null : Edges.remove(edge);
+	}
+
 	private static Vertex removeCurrent(final IGraphDatabase tg)
 	{
 		final Vertex current = Edges.remove(TitanCollector.getCurrentTask(Vertex::getEdges, tg));
-		final Vertex nextTask = Edges.removeReference(current, "nextTask");
+		final Vertex nextTask = removeReference(current, "nextTask");
 		// reassign system.lastTask
 		TitanCollector.replacePrevious(current, nextTask);
 		getRoot(tg).addEdge("system.currentTask", nextTask);

@@ -49,6 +49,9 @@ public class ReleaseGroup extends Value implements IEntity
 	@XmlElement(name = "name-credit")
 	public final LinkedList<NameCredit> _artistCredits = new LinkedList<>(); // NO_UCD (use final)
 
+	@XmlElement(name = "release-list")
+	public String _releaseList;
+
 	// empty
 	@Override
 	public String toString()
