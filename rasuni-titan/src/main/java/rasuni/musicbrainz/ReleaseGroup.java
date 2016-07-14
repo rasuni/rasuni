@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.namespace.QName;
 import rasuni.lang.Value;
 
@@ -40,8 +41,13 @@ public class ReleaseGroup extends Value implements IEntity
 	@XmlElement(name = "primary-type")
 	public String _primaryType;
 
-	@XmlElement(name = "secondary-type-list")
-	public String _secondaryTypeList;
+	@XmlElementWrapper(name = "secondary-type-list")
+	@XmlElement(name = "secondary-type")
+	public LinkedList<String> _secondaryTypes = new LinkedList<>();
+
+	@XmlElementWrapper(name = "artist-credit")
+	@XmlElement(name = "name-credit")
+	public final LinkedList<NameCredit> _artistCredits = new LinkedList<>(); // NO_UCD (use final)
 
 	// empty
 	@Override

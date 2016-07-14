@@ -1,6 +1,6 @@
 package rasuni.listold;
 
-import rasuni.graph.impl.Vertices;
+import rasuni.graph.impl.Edges;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import rasuni.filesystemscanner.api.IFileSystemScanner;
 import rasuni.filesystemscanner.impl.FileSystemScanner;
 import rasuni.graph.api.IGraphDatabase;
-import rasuni.titan.Edges;
+import rasuni.graph.impl.Vertices;
 import rasuni.titan.TaskType;
 import rasuni.titan.TitanCollector;
 
@@ -177,7 +177,8 @@ public final class ListOld // NO_UCD (unused code)
 									Vertex newEntry = TitanCollector.newTask(tg.getDatabase(), TaskType.FILESYSTEMOBJECT);
 									current.addEdge("directory.entry", newEntry).setProperty("name", name);
 									Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
-									Vertex last = eLastTask.getVertex(Direction.OUT);
+									Vertex last = Edges.getTail(eLastTask);
+									//Vertex last = eLastTask.getVertex(Direction.OUT);
 									eLastTask.remove();
 									last.addEdge("next.task", newEntry);
 									newEntry.addEdge("next.task", current);
@@ -249,7 +250,7 @@ public final class ListOld // NO_UCD (unused code)
 				{
 					System.out.println("  removing");
 					final Edge ePrevious = current.getEdges(Direction.IN, "next.task").iterator().next();
-					Vertex previous = ePrevious.getVertex(Direction.OUT);
+					Vertex previous = Edges.getTail(ePrevious);
 					ePrevious.remove();
 					final Edge eNext = current.getEdges(Direction.OUT, "next.task").iterator().next();
 					Vertex next = eNext.getVertex(Direction.IN);
@@ -343,7 +344,7 @@ public final class ListOld // NO_UCD (unused code)
 		do
 		{
 			path.addFirst(entry.getProperty("name"));
-			currentEntry = TitanCollector.getTail(entry);
+			currentEntry = Edges.getTail(entry);
 			entry = TitanCollector.getSingleIncoming(currentEntry, "directory.entry");
 		} while (entry != null);
 		File file1 = null;
@@ -449,7 +450,7 @@ public final class ListOld // NO_UCD (unused code)
 			Vertex newEntry = tg.addNewDirectoryEntryToCurrent(root);
 			Vertex current = tg.getCurrentVertex();
 			Edge eLastTask = Vertices.getInEdges(current, "next.task").iterator().next();
-			Vertex last = eLastTask.getVertex(Direction.OUT);
+			Vertex last = Edges.getTail(eLastTask);
 			eLastTask.remove();
 			last.addEdge("next.task", newEntry);
 			newEntry.addEdge("next.task", current);
