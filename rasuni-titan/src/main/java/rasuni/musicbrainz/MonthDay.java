@@ -1,7 +1,7 @@
 package rasuni.musicbrainz;
 
+import rasuni.filesystemscanner.impl.Check;
 import java.util.Objects;
-import rasuni.titan.Check;
 
 /**
  * A moth with an optional day

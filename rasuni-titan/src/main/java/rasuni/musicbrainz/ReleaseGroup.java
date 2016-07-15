@@ -50,7 +50,7 @@ public class ReleaseGroup extends Value implements IEntity
 	public final LinkedList<NameCredit> _artistCredits = new LinkedList<>(); // NO_UCD (use final)
 
 	@XmlElement(name = "release-list")
-	public String _releaseList;
+	public ReleaseList _releaseList;
 
 	// empty
 	@Override
