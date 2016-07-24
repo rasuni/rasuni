@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 import rasuni.filesystemscanner.api.IFileSystemScanner;
 import rasuni.filesystemscanner.impl.FileSystemScanner;
 import rasuni.graph.api.IGraphDatabase;
-import rasuni.graph.impl.Vertices;
 import rasuni.titan.TaskType;
 import rasuni.titan.TitanCollector;
 
@@ -449,7 +448,7 @@ public final class ListOld // NO_UCD (unused code)
 		{
 			Vertex newEntry = tg.addNewDirectoryEntryToCurrent(root);
 			Vertex current = tg.getCurrentVertex();
-			Edge eLastTask = Vertices.getInEdges(current, "next.task").iterator().next();
+			Edge eLastTask = FileSystemScanner.getPreviousTaskEdges(current).iterator().next();
 			Vertex last = Edges.getTail(eLastTask);
 			eLastTask.remove();
 			last.addEdge("next.task", newEntry);
