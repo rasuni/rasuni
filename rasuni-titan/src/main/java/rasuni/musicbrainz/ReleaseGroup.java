@@ -52,6 +52,9 @@ public class ReleaseGroup extends Value implements IEntity
 	@XmlElement(name = "release-list")
 	public ReleaseList _releaseList;
 
+	@XmlElement(name = "alias-list")
+	public AliasList _aliasList;
+
 	// empty
 	@Override
 	public String toString()

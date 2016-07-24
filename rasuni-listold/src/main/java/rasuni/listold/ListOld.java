@@ -1,6 +1,5 @@
 package rasuni.listold;
 
-import rasuni.graph.impl.Edges;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -16,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import rasuni.filesystemscanner.api.IFileSystemScanner;
 import rasuni.filesystemscanner.impl.FileSystemScanner;
 import rasuni.graph.api.IGraphDatabase;
+import rasuni.graph.impl.Edges;
 import rasuni.titan.TaskType;
 import rasuni.titan.TitanCollector;
 
@@ -389,13 +389,13 @@ public final class ListOld // NO_UCD (unused code)
 			{
 				if (file.isDirectory())
 				{
-					if (file.list().length == 0)
+					if (rasuni.filesystemscanner.impl.Files.containsEntries(file))
 					{
-						lines.add("RD \"" + file.toString() + "\"");
+						Check.fail();
 					}
 					else
 					{
-						Check.fail();
+						lines.add("RD \"" + file.toString() + "\"");
 					}
 				}
 				else
