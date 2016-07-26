@@ -55,6 +55,9 @@ public class ReleaseGroup extends Value implements IEntity
 	@XmlElement(name = "alias-list")
 	public AliasList _aliasList;
 
+	@XmlElement(name = "relation-list")
+	public LinkedList<RelationList> _relationLists = new LinkedList<>();
+
 	// empty
 	@Override
 	public String toString()
@@ -79,10 +82,4 @@ public class ReleaseGroup extends Value implements IEntity
 	{
 		return _id;
 	}
-
-	/**
-	 * The relation list
-	 */
-	@XmlElement(name = "relation-list")
-	final LinkedList<RelationList> _relationLists = new LinkedList<>();
 }
