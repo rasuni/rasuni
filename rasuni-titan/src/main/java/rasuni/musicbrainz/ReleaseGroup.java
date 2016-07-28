@@ -58,6 +58,9 @@ public class ReleaseGroup extends Value implements IEntity
 	@XmlElement(name = "relation-list")
 	public LinkedList<RelationList> _relationLists = new LinkedList<>();
 
+	@XmlElement(name = "tag-list")
+	public String _tagList;
+
 	// empty
 	@Override
 	public String toString()
