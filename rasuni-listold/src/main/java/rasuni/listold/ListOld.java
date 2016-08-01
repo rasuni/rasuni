@@ -448,7 +448,8 @@ public final class ListOld // NO_UCD (unused code)
 		{
 			Vertex newEntry = tg.addNewDirectoryEntryToCurrent(root);
 			Vertex current = tg.getCurrentVertex();
-			Edge eLastTask = FileSystemScanner.getPreviousTaskEdges(current).iterator().next();
+			Edge eLastTask = FileSystemScanner.getPreviousTaskEdgesIterator(current).next();
+			//Edge eLastTask = FileSystemScanner.getPreviousTaskEdges(current).iterator().next();
 			Vertex last = Edges.getTail(eLastTask);
 			eLastTask.remove();
 			last.addEdge("next.task", newEntry);
