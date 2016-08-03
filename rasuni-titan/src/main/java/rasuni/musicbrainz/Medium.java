@@ -1,6 +1,5 @@
 package rasuni.musicbrainz;
 
-import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import rasuni.lang.Value;
 
@@ -17,9 +16,4 @@ public class Medium extends Value
 	 */
 	@XmlElement(name = "track-list")
 	public TrackList _trackList; // NO_UCD (use final)
-
-	Collection<String> getRecordingIds()
-	{
-		return _trackList.getRecordingIds();
-	}
 }
