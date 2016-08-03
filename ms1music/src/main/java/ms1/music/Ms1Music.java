@@ -17,6 +17,6 @@ public class Ms1Music // NO_UCD (unused code)
 	 */
 	public static void main(String[] args)
 	{
-		MusicCollector.run(ConsPStack.from(Arrays.asList("\\\\MusikServer\\Musik", "\\\\qnap\\music")), "ms1music", System.out, "\\\\MusikServer\\Musik", true);
+		MusicCollector.run(ConsPStack.from(Arrays.asList("\\\\MusikServer\\Musik", "\\\\qnap\\music")), "ms1music", "\\\\MusikServer\\Musik", true);
 	}
 }
