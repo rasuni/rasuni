@@ -33,33 +33,33 @@ public class ReleaseGroup extends Value implements IEntity
 	public Annotation _annotation; // NO_UCD (use final)
 
 	@XmlElement(name = "disambiguation")
-	public String _disambiguation;
+	public String _disambiguation; // NO_UCD (use final)
 
 	@XmlElement(name = "first-release-date")
-	public String _firstReleaseDate;
+	public String _firstReleaseDate; // NO_UCD (use final)
 
 	@XmlElement(name = "primary-type")
-	public String _primaryType;
+	public String _primaryType; // NO_UCD (use final)
 
 	@XmlElementWrapper(name = "secondary-type-list")
 	@XmlElement(name = "secondary-type")
-	public LinkedList<String> _secondaryTypes = new LinkedList<>();
+	public LinkedList<String> _secondaryTypes = new LinkedList<>(); // NO_UCD (use final)
 
 	@XmlElementWrapper(name = "artist-credit")
 	@XmlElement(name = "name-credit")
 	public final LinkedList<NameCredit> _artistCredits = new LinkedList<>(); // NO_UCD (use final)
 
 	@XmlElement(name = "release-list")
-	public ReleaseList _releaseList;
+	public ReleaseList _releaseList; // NO_UCD (use final)
 
 	@XmlElement(name = "alias-list")
-	public AliasList _aliasList;
+	public AliasList _aliasList; // NO_UCD (use final)
 
 	@XmlElement(name = "relation-list")
-	public LinkedList<RelationList> _relationLists = new LinkedList<>();
+	public LinkedList<RelationList> _relationLists = new LinkedList<>(); // NO_UCD (use final)
 
 	@XmlElement(name = "tag-list")
-	public String _tagList;
+	public TagList _tagList; // NO_UCD (use final)
 
 	// empty
 	@Override

@@ -109,14 +109,4 @@ public class Release extends Value implements IEntity
 	{
 		return _relationLists;
 	}
-
-	public LinkedList<String> getRecordings()
-	{
-		LinkedList<String> recordings = new LinkedList<>();
-		for (Medium m : _mediumList._mediums)
-		{
-			recordings.addAll(m.getRecordingIds());
-		}
-		return recordings;
-	}
 }
