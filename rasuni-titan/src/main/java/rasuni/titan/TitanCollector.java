@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import rasuni.acoustid.Response;
 import rasuni.acoustid.Result;
+import rasuni.filesystemscanner.impl.FileSystemScanner;
 import rasuni.functional.IConsumer;
 import rasuni.functional.IExpression3;
 import rasuni.functional.IFunction;
@@ -142,7 +143,7 @@ public final class TitanCollector
 	 *            the object type
 	 * @return the single object
 	 */
-	static <T> T getReferenced(IExpression3<Iterable<T>, Vertex, Direction, String> expression, Vertex vertex, String label)
+	private static <T> T getReferenced(IExpression3<Iterable<T>, Vertex, Direction, String> expression, Vertex vertex, String label)
 	{
 		return getSingle(expression, vertex, Direction.OUT, label);
 	}
@@ -167,7 +168,7 @@ public final class TitanCollector
 	 */
 	private static void setNextTask(Vertex predecessor, Vertex successor)
 	{
-		predecessor.addEdge("nextTask", successor);
+		FileSystemScanner.setNextTask(predecessor, successor);
 	}
 
 	/**
@@ -552,7 +553,7 @@ public final class TitanCollector
 	 *            the label
 	 * @return the first outgoing edge
 	 */
-	static Edge getReference(Vertex vertex, String label)
+	private static Edge getReference(Vertex vertex, String label)
 	{
 		return getReferenced(Vertex::getEdges, vertex, label);
 	}
@@ -566,7 +567,7 @@ public final class TitanCollector
 	 *            the reference label
 	 * @return the previously referenced vertex
 	 */
-	public static Vertex removeReference(Vertex vertex, String label)
+	private static Vertex removeReference(Vertex vertex, String label)
 	{
 		Edge edge = getReference(vertex, label);
 		return edge == null ? null : Edges.remove(edge);
