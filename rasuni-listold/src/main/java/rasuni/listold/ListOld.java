@@ -179,8 +179,12 @@ public final class ListOld // NO_UCD (unused code)
 									Vertex last = Edges.getTail(eLastTask);
 									//Vertex last = eLastTask.getVertex(Direction.OUT);
 									eLastTask.remove();
+									FileSystemScanner.setNextTask(last, newEntry);
+									FileSystemScanner.setNextTask(newEntry, current);
+									/*
 									last.addEdge("next.task", newEntry);
 									newEntry.addEdge("next.task", current);
+									 */
 									break;
 								}
 								System.out.println("  already added " + name);
@@ -449,11 +453,14 @@ public final class ListOld // NO_UCD (unused code)
 			Vertex newEntry = tg.addNewDirectoryEntryToCurrent(root);
 			Vertex current = tg.getCurrentVertex();
 			Edge eLastTask = FileSystemScanner.getPreviousTaskEdgesIterator(current).next();
-			//Edge eLastTask = FileSystemScanner.getPreviousTaskEdges(current).iterator().next();
 			Vertex last = Edges.getTail(eLastTask);
 			eLastTask.remove();
+			FileSystemScanner.setNextTask(last, newEntry);
+			FileSystemScanner.setNextTask(newEntry, current);
+			/*
 			last.addEdge("next.task", newEntry);
 			newEntry.addEdge("next.task", current);
+			 */
 			return completeDirectory(tg.getDatabase());
 		}
 	}

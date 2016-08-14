@@ -21,26 +21,4 @@ public class ReleaseList extends Value //implements IEntityList<Release>
 
 	@XmlElement(name = "release")
 	public final LinkedList<Release> _releases = new LinkedList<>();
-
-	public LinkedList<Release> list()
-	{
-		return _releases;
-	}
-
-	public int count()
-	{
-		return _count;
-	}
-
-	/**
-	 * Compare the count
-	 *
-	 * @param compare
-	 *            the compare value
-	 * @return true if equal
-	 */
-	public final boolean isCount(int compare)
-	{
-		return _count == compare;
-	}
 }
