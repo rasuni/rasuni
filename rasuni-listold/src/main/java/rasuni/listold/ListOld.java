@@ -270,9 +270,9 @@ public final class ListOld // NO_UCD (unused code)
 		}
 	}
 
-	private static boolean completeDirectory(IGraphDatabase tg)
+	private static boolean completeDirectory(IGraphDatabase db)
 	{
-		final Vertex system = tg.getVertexLabel("system").getVertex().getVertices(Direction.OUT, "system").iterator().next();
+		final Vertex system = db.getSystemLabel().getVertex().getVertices(Direction.OUT, "system").iterator().next();
 		Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
 		Vertex current = Edges.getHead(currentEdge);
 		Iterator<Vertex> iEntries2 = current.getVertices(Direction.OUT, "directory.entry").iterator();
@@ -282,7 +282,7 @@ public final class ListOld // NO_UCD (unused code)
 			{
 				current.removeProperty("fso.lastAccess");
 				System.out.println("  clear last access");
-				complete(tg);
+				complete(db);
 				return false;
 			}
 			final Long lat1 = iEntries2.next().getProperty("fso.lastAccess");
@@ -306,7 +306,7 @@ public final class ListOld // NO_UCD (unused code)
 				Long smt = system.getProperty("fso.lastAccess");
 				if (smt == null)
 				{
-					complete(tg);
+					complete(db);
 					return false;
 				}
 				else
@@ -317,7 +317,7 @@ public final class ListOld // NO_UCD (unused code)
 					{
 						//TitanCollector.fail();
 						System.out.println("Info: dump empty!");
-						complete(tg);
+						complete(db);
 						return false;
 					}
 					else
@@ -327,7 +327,7 @@ public final class ListOld // NO_UCD (unused code)
 						{
 							System.out.println(line);
 						}
-						complete(tg);
+						complete(db);
 						return true;
 					}
 				}
@@ -457,17 +457,13 @@ public final class ListOld // NO_UCD (unused code)
 			eLastTask.remove();
 			FileSystemScanner.setNextTask(last, newEntry);
 			FileSystemScanner.setNextTask(newEntry, current);
-			/*
-			last.addEdge("next.task", newEntry);
-			newEntry.addEdge("next.task", current);
-			 */
 			return completeDirectory(tg.getDatabase());
 		}
 	}
 
 	private static void complete(IGraphDatabase tg)
 	{
-		final Vertex system = tg.getVertexLabel("system").getVertex().getVertices(Direction.OUT, "system").iterator().next();
+		final Vertex system = tg.getSystemLabel().getVertex().getVertices(Direction.OUT, "system").iterator().next();
 		Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
 		Vertex current = Edges.getHead(currentEdge);
 		currentEdge.remove();
