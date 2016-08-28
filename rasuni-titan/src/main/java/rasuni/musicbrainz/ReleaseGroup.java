@@ -64,6 +64,9 @@ public class ReleaseGroup extends Value implements IEntity
 	@XmlElement(name = "user-tag-list")
 	public UserTagList _userTagList; // NO_UCD (use final)
 
+	@XmlElement(name = "rating")
+	public String _rating; // NO_UCD (use final)
+
 	// empty
 	@Override
 	public String toString()
