@@ -19,10 +19,13 @@
 			<artifactId>filesystemscanner</artifactId>
 			<version>0.0.7</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>rasuni</groupId>
 			<artifactId>music</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		
+		
 	</dependencies>
 </project>

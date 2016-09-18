@@ -1,8 +1,8 @@
 package rasuni.graph.impl;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
  * Edges utilities
@@ -23,7 +23,12 @@ public final class Edges
 	 */
 	public static Vertex getHead(Edge edge)
 	{
-		return edge.getVertex(Direction.IN);
+		return vertex(edge, Direction.IN);
+	}
+
+	private static Vertex vertex(Edge edge, Direction direction)
+	{
+		return edge.vertices(direction).next();
 	}
 
 	/**
@@ -44,6 +49,6 @@ public final class Edges
 
 	public static Vertex getTail(Edge edge)
 	{
-		return edge.getVertex(Direction.OUT);
+		return vertex(edge, Direction.OUT);
 	}
 }
