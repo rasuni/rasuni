@@ -1,8 +1,6 @@
 package rasuni.listold;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
+import com.thinkaurelius.titan.core.TitanVertex;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,9 +10,12 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import rasuni.filesystemscanner.api.IFileSystemScanner;
 import rasuni.filesystemscanner.impl.FileSystemScanner;
-import rasuni.graph.api.IGraphDatabase;
 import rasuni.graph.impl.Edges;
 import rasuni.titan.TaskType;
 import rasuni.titan.TitanCollector;
@@ -32,7 +33,7 @@ public final class ListOld // NO_UCD (unused code)
 	 */
 	public static void main(String[] args)
 	{
-		final IFileSystemScanner tg = FileSystemScanner.create("listold", (IFileSystemScanner scanner) ->
+		final FileSystemScanner tg = new FileSystemScanner("listold", (IFileSystemScanner scanner) ->
 		{
 			registerRoot(scanner, "C:\\", () ->
 			{
@@ -73,33 +74,50 @@ public final class ListOld // NO_UCD (unused code)
 		final Vertex system = tg.getSystemVertex();
 		l1: for (;;)
 		{
-			Vertex current = Edges.getHead(system.getEdges(Direction.OUT, "system.currentTask").iterator().next());
-			switch (TaskType.values()[(Integer) current.getProperty("task.type")])
+			Vertex current = tg.getCurrentVertex();
+			switch (TaskType.values()[tg.getCurrentTaskType()])
 			{
 			case ROOT:
-				System.out.println("root");
-				if (registerRoot(tg, "C:\\", () ->
+				//tg.indent("root", () -> tg.processRoot(TreePVector.from(Arrays.asList("C:\\", "D:\\", "\\\\qnap\\backup", "\\\\qnap\\Public", "\\\\qnap\\Qmultimedia"))));
+				tg.getOut().println("root");
+				tg.getOut().incrementLevel();
+				try
 				{
-					return registerRoot(tg, "D:\\", () ->
+					if (registerRoot(tg, "C:\\", () ->
 					{
-						return registerRoot(tg, "\\\\qnap\\backup", () ->
+						return registerRoot(tg, "D:\\", () ->
 						{
-							return registerRoot(tg, "\\\\qnap\\Public", () ->
+							return registerRoot(tg, "\\\\qnap\\backup", () ->
 							{
-								return registerRoot(tg, "\\\\qnap\\Qmultimedia", () ->
+								return registerRoot(tg, "\\\\qnap\\Public", () ->
 								{
-									return registerRoot(tg, "\\\\qnap\\Qrecordings", () ->
+									return registerRoot(tg, "\\\\qnap\\Qmultimedia", () ->
 									{
-										Check.fail();
-										return false;
+										return registerRoot(tg, "\\\\qnap\\music", () ->
+										{
+											return registerRoot(tg, "\\\\MUSIKSERVER\\Kunde", () ->
+											{
+												return registerRoot(tg, "\\\\MUSIKSERVER\\Lights-Out", () ->
+												{
+													return registerRoot(tg, "\\\\MUSIKSERVER\\Musik", () ->
+													{
+														return completeDirectory(tg);
+													});
+												});
+											});
+										});
 									});
 								});
 							});
 						});
-					});
-				}))
+					}))
+					{
+						break l1;
+					}
+				}
+				finally
 				{
-					break l1;
+					tg.getOut().decrementLevel();
 				}
 				// TitanCollector.fail();
 				break;
@@ -130,13 +148,13 @@ public final class ListOld // NO_UCD (unused code)
 									if (lat < ct)
 									{
 										// last access time is min
-										current.setProperty("fso.lastAccess", lat);
+										current.property("fso.lastAccess", lat);
 										System.out.println("  set last access to '" + LocalDate.ofEpochDay(lat) + "'");
 									}
 									else
 									{
 										// creation time is min
-										current.setProperty("fso.lastAccess", ct);
+										current.property("fso.lastAccess", ct);
 										System.out.println("  set last access to '" + LocalDate.ofEpochDay(ct) + "'");
 									}
 								}
@@ -147,13 +165,13 @@ public final class ListOld // NO_UCD (unused code)
 									if (lat < ct)
 									{
 										// last access time is min
-										current.setProperty("fso.lastAccess", lat);
+										current.property("fso.lastAccess", lat);
 										System.out.println("  set last access to '" + LocalDate.ofEpochDay(lat) + "'");
 									}
 									else
 									{
 										// last modification time is max
-										current.setProperty("fso.lastAccess", lmt);
+										current.property("fso.lastAccess", lmt);
 										System.out.println("  set last access to '" + LocalDate.ofEpochDay(lmt) + "'");
 									}
 								}
@@ -162,7 +180,7 @@ public final class ListOld // NO_UCD (unused code)
 							{
 								throw new RuntimeException(e);
 							}
-							complete(tg.getDatabase());
+							complete(tg);
 						}
 						else
 						{
@@ -170,12 +188,12 @@ public final class ListOld // NO_UCD (unused code)
 							for (;;)
 							{
 								final String name = entries[iEntries];
-								if (!current.query().direction(Direction.OUT).labels("directory.entry").has("name", name).edges().iterator().hasNext())
+								if (!((TitanVertex) current).query().direction(Direction.OUT).labels("directory.entry").has("name", name).edges().iterator().hasNext())
 								{
 									System.out.println("  adding " + name);
 									Vertex newEntry = TitanCollector.newTask(tg.getDatabase(), TaskType.FILESYSTEMOBJECT);
-									current.addEdge("directory.entry", newEntry).setProperty("name", name);
-									Edge eLastTask = current.getEdges(Direction.IN, "next.task").iterator().next();
+									current.addEdge("directory.entry", newEntry).property("name", name);
+									Edge eLastTask = getEdges(current, Direction.IN, "next.task").iterator().next();
 									Vertex last = Edges.getTail(eLastTask);
 									//Vertex last = eLastTask.getVertex(Direction.OUT);
 									eLastTask.remove();
@@ -194,7 +212,7 @@ public final class ListOld // NO_UCD (unused code)
 									break;
 								}
 							}
-							if (completeDirectory(tg.getDatabase()))
+							if (completeDirectory(tg))
 							{
 								break l1;
 							}
@@ -214,13 +232,13 @@ public final class ListOld // NO_UCD (unused code)
 								if (lat < lmt)
 								{
 									// last modified time is max
-									current.setProperty("fso.lastAccess", lmt);
+									current.property("fso.lastAccess", lmt);
 									System.out.println("  set last access to '" + LocalDate.ofEpochDay(lmt) + "'");
 								}
 								else
 								{
 									// last access time is max
-									current.setProperty("fso.lastAccess", lat);
+									current.property("fso.lastAccess", lat);
 									System.out.println("  set last access to '" + LocalDate.ofEpochDay(lat) + "'");
 								}
 							}
@@ -231,13 +249,13 @@ public final class ListOld // NO_UCD (unused code)
 								if (lat < ct)
 								{
 									// creation time is max
-									current.setProperty("fso.lastAccess", ct);
+									current.property("fso.lastAccess", ct);
 									System.out.println("  set last access to '" + LocalDate.ofEpochDay(ct) + "'");
 								}
 								else
 								{
 									// last access time is max
-									current.setProperty("fso.lastAccess", lat);
+									current.property("fso.lastAccess", lat);
 									System.out.println("  set last access to '" + LocalDate.ofEpochDay(lat) + "'");
 								}
 							}
@@ -246,17 +264,17 @@ public final class ListOld // NO_UCD (unused code)
 						{
 							throw new RuntimeException(e);
 						}
-						complete(tg.getDatabase());
+						complete(tg);
 					}
 				}
 				else
 				{
 					System.out.println("  removing");
-					final Edge ePrevious = current.getEdges(Direction.IN, "next.task").iterator().next();
+					final Edge ePrevious = getEdges(current, Direction.IN, "next.task").iterator().next();
 					Vertex previous = Edges.getTail(ePrevious);
 					ePrevious.remove();
-					final Edge eNext = current.getEdges(Direction.OUT, "next.task").iterator().next();
-					Vertex next = eNext.getVertex(Direction.IN);
+					final Edge eNext = getEdges(current, Direction.OUT, "next.task").iterator().next();
+					Vertex next = eNext.inVertex();
 					eNext.remove();
 					previous.addEdge("next.task", next);
 					current.remove();
@@ -270,28 +288,48 @@ public final class ListOld // NO_UCD (unused code)
 		}
 	}
 
-	private static boolean completeDirectory(IGraphDatabase db)
+	private static <T> T getProperty(Vertex vertex, String name)
 	{
-		final Vertex system = db.getSystemLabel().getVertex().getVertices(Direction.OUT, "system").iterator().next();
-		Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
-		Vertex current = Edges.getHead(currentEdge);
-		Iterator<Vertex> iEntries2 = current.getVertices(Direction.OUT, "directory.entry").iterator();
+		final Property<T> property = vertex.property(name);
+		return property.isPresent() ? property.value() : null;
+	}
+
+	private static Iterable<Edge> getEdges(Vertex vertex, Direction direction, String label)
+	{
+		return () -> vertex.edges(direction, label);
+	}
+
+	private static boolean completeDirectory(IFileSystemScanner fs)
+	{
+		final Vertex system = getVertices(fs.getDatabase().getSystemLabel().getVertex(), Direction.OUT, "system").iterator().next();
+		final Iterator<Edge> iterator = getEdges(system, Direction.OUT, "system.currentTask").iterator();
+		Vertex current;
+		if (iterator.hasNext())
+		{
+			Edge currentEdge = iterator.next();
+			current = Edges.getHead(currentEdge);
+		}
+		else
+		{
+			current = system;
+		}
+		Iterator<Vertex> iEntries2 = getVertices(current, Direction.OUT, "directory.entry").iterator();
 		for (;;)
 		{
 			if (!iEntries2.hasNext())
 			{
-				current.removeProperty("fso.lastAccess");
+				removeProperty(current, "fso.lastAccess");
 				System.out.println("  clear last access");
-				complete(db);
+				complete(fs);
 				return false;
 			}
-			final Long lat1 = iEntries2.next().getProperty("fso.lastAccess");
+			final Long lat1 = getProperty(iEntries2.next(), "fso.lastAccess");
 			if (lat1 != null)
 			{
 				long minTime = lat1.longValue();
 				while (iEntries2.hasNext())
 				{
-					final Long lat2 = iEntries2.next().getProperty("fso.lastAccess");
+					final Long lat2 = getProperty(iEntries2.next(), "fso.lastAccess");
 					if (lat2 != null)
 					{
 						long lat2v = lat2.longValue();
@@ -301,12 +339,12 @@ public final class ListOld // NO_UCD (unused code)
 						}
 					}
 				}
-				current.setProperty("fso.lastAccess", minTime);
+				current.property("fso.lastAccess", minTime);
 				System.out.println("  set last access to '" + LocalDate.ofEpochDay(minTime) + "'");
-				Long smt = system.getProperty("fso.lastAccess");
+				Long smt = getProperty(system, "fso.lastAccess");
 				if (smt == null)
 				{
-					complete(db);
+					complete(fs);
 					return false;
 				}
 				else
@@ -317,7 +355,7 @@ public final class ListOld // NO_UCD (unused code)
 					{
 						//TitanCollector.fail();
 						System.out.println("Info: dump empty!");
-						complete(db);
+						complete(fs);
 						return false;
 					}
 					else
@@ -327,12 +365,17 @@ public final class ListOld // NO_UCD (unused code)
 						{
 							System.out.println(line);
 						}
-						complete(db);
+						complete(fs);
 						return true;
 					}
 				}
 			}
 		}
+	}
+
+	private static void removeProperty(Vertex vertex, String name)
+	{
+		vertex.property(name).remove();
 	}
 
 	/**
@@ -346,7 +389,7 @@ public final class ListOld // NO_UCD (unused code)
 		Edge entry = TitanCollector.getSingleIncoming(currentEntry, "directory.entry");
 		do
 		{
-			path.addFirst(entry.getProperty("name"));
+			path.addFirst(getProperty(entry, "name"));
 			currentEntry = Edges.getTail(entry);
 			entry = TitanCollector.getSingleIncoming(currentEntry, "directory.entry");
 		} while (entry != null);
@@ -359,16 +402,22 @@ public final class ListOld // NO_UCD (unused code)
 		return file;
 	}
 
+	@SuppressWarnings("unchecked")
+	private static String getProperty(Edge entry, String name)
+	{
+		return ((Property<String>) (Property<?>) entry.property(name)).value();
+	}
+
 	private static void dump(final Vertex parent, long minTime, LinkedList<String> lines)
 	{
-		Iterator<Edge> iEntries = parent.getEdges(Direction.OUT, "directory.entry").iterator();
+		Iterator<Edge> iEntries = getEdges(parent, Direction.OUT, "directory.entry").iterator();
 		if (iEntries.hasNext())
 		{
 			for (;;)
 			{
 				Edge ce = iEntries.next();
 				Vertex fso = Edges.getHead(ce);
-				Long la = fso.getProperty("fso.lastAccess");
+				Long la = getProperty(fso, "fso.lastAccess");
 				if (la != null)
 				{
 					if (la.longValue() == minTime)
@@ -452,22 +501,36 @@ public final class ListOld // NO_UCD (unused code)
 		{
 			Vertex newEntry = tg.addNewDirectoryEntryToCurrent(root);
 			Vertex current = tg.getCurrentVertex();
-			Edge eLastTask = FileSystemScanner.getPreviousTaskEdgesIterator(current).next();
-			Vertex last = Edges.getTail(eLastTask);
-			eLastTask.remove();
-			FileSystemScanner.setNextTask(last, newEntry);
-			FileSystemScanner.setNextTask(newEntry, current);
-			return completeDirectory(tg.getDatabase());
+			final Iterator<Edge> previousTaskEdgesIterator = FileSystemScanner.getPreviousTaskEdgesIterator(current);
+			if (previousTaskEdgesIterator.hasNext())
+			{
+				FileSystemScanner.setNextTask(Edges.getTail(previousTaskEdgesIterator.next()), newEntry);
+				FileSystemScanner.setNextTask(newEntry, current);
+			}
+			else
+			{
+				FileSystemScanner.setNextTask(current, newEntry);
+				FileSystemScanner.setNextTask(newEntry, current);
+			}
+			return completeDirectory(tg);
 		}
 	}
 
-	private static void complete(IGraphDatabase tg)
+	private static void complete(IFileSystemScanner fs)
 	{
-		final Vertex system = tg.getSystemLabel().getVertex().getVertices(Direction.OUT, "system").iterator().next();
-		Edge currentEdge = system.getEdges(Direction.OUT, "system.currentTask").iterator().next();
+		fs.moveToNextTask();
+		/*
+		final Vertex system = getVertices(tg.getSystemLabel().getVertex(), Direction.OUT, "system").iterator().next();
+		Edge currentEdge = getEdges(system, Direction.OUT, "system.currentTask").iterator().next();
 		Vertex current = Edges.getHead(currentEdge);
 		currentEdge.remove();
-		system.addEdge("system.currentTask", current.getVertices(Direction.OUT, "next.task").iterator().next());
-		tg.commit();
+		system.addEdge("system.currentTask", getVertices(current, Direction.OUT, "next.task").iterator().next());
+		 */
+		fs.commit();
+	}
+
+	private static Iterable<Vertex> getVertices(Vertex vertex, Direction direction, String label)
+	{
+		return () -> vertex.vertices(direction, label);
 	}
 }
