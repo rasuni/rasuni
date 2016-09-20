@@ -1,6 +1,5 @@
 package rasuni.ms1;
 
-import org.pcollections.ConsPStack;
 import rasuni.titan.MusicCollector;
 
 /**
@@ -16,6 +15,6 @@ public class Ms1 // NO_UCD (unused code)
 	 */
 	public static void main(String[] args)
 	{
-		MusicCollector.run(ConsPStack.singleton("\\\\MUSIKSERVER\\Musik"), "ms1", "\\\\MUSIKSERVER\\Musik", true);
+		MusicCollector.run("\\\\MUSIKSERVER\\Musik", "ms1", "\\\\MUSIKSERVER\\Musik", true);
 	}
 }

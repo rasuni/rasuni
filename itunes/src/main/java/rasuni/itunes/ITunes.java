@@ -1,6 +1,5 @@
 package rasuni.itunes;
 
-import rasuni.org.pcollections.ConsPStacks;
 import rasuni.titan.MusicCollector;
 
 /**
@@ -15,6 +14,7 @@ public final class ITunes
 	 */
 	public static void main(String[] args)
 	{
-		MusicCollector.run(ConsPStacks.singleton("D:\\ITunes\\Music"), "itunes", null, false);
+		MusicCollector.run("D:\\ITunes\\Music", "itunes", null, false);
+		//MusicCollector.run(ConsPStacks.singleton("D:\\ITunes\\Music"), "itunes", null, false);
 	}
 }
