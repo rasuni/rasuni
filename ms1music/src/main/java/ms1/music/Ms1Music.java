@@ -1,7 +1,7 @@
 package ms1.music;
 
-import java.util.Arrays;
 import org.pcollections.ConsPStack;
+import rasuni.java.util.Arrays;
 import rasuni.titan.MusicCollector;
 
 /**
