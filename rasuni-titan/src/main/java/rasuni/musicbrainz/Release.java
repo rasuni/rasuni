@@ -48,6 +48,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "release-group")
 	public ReleaseGroup _releaseGroup; // NO_UCD (use final)
 
+	@XmlElement(name = "date")
+	public String _date;
+
 	/**
 	 * The relation list
 	 */
@@ -62,9 +65,6 @@ public class Release extends Value implements IEntity
 	 */
 	@XmlElement(name = "release-event-list")
 	public ReleaseEventList _releaseEventList; // NO_UCD (use final)
-
-	@XmlElement(name = "date")
-	private String _date; // NO_UCD (use final)
 
 	// @Override
 	// public Resource getKind()

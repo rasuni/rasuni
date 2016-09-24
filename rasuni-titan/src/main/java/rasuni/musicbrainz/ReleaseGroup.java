@@ -3,10 +3,12 @@ package rasuni.musicbrainz;
 import java.util.HashMap;
 import java.util.LinkedList;
 import javax.xml.bind.annotation.XmlAnyAttribute;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.namespace.QName;
+import org.w3c.dom.Element;
 import rasuni.lang.Value;
 
 /**
@@ -66,6 +68,12 @@ public class ReleaseGroup extends Value implements IEntity
 
 	@XmlElement(name = "rating")
 	public Rating _rating; // NO_UCD (use final)
+
+	@XmlElement(name = "user-rating")
+	public Integer _userRating;
+
+	@XmlAnyElement
+	public final LinkedList<Element> _elementExtensions = new LinkedList<>();
 
 	// empty
 	@Override
