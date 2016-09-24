@@ -1,7 +1,7 @@
 package rasuni.ms1.qnap;
 
-import java.util.Arrays;
 import org.pcollections.ConsPStack;
+import rasuni.java.util.Arrays;
 import rasuni.titan.MusicCollector;
 
 /**

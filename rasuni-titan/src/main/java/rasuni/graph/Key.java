@@ -1,6 +1,7 @@
 package rasuni.graph;
 
-import com.tinkerpop.blueprints.Element;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Property;
 
 /**
  * Property key
@@ -42,7 +43,13 @@ public final class Key<T>
 	 */
 	public T get(Element entry)
 	{
-		return entry.getProperty(_name);
+		return getProperty(entry, _name);
+	}
+
+	@SuppressWarnings("unchecked")
+	private T getProperty(Element element, String name)
+	{
+		return ((Property<T>) element.property(name)).value();
 	}
 
 	/**
