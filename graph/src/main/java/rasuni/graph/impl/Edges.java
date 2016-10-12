@@ -1,5 +1,6 @@
 package rasuni.graph.impl;
 
+import java.util.Iterator;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -50,5 +51,10 @@ public final class Edges
 	public static Vertex getTail(Edge edge)
 	{
 		return vertex(edge, Direction.OUT);
+	}
+
+	public static Vertex getTailFromNext(Iterator<Edge> edgesIterator)
+	{
+		return getTail(edgesIterator.next());
 	}
 }

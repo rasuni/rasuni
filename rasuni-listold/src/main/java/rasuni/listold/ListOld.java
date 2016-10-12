@@ -504,7 +504,8 @@ public final class ListOld // NO_UCD (unused code)
 			final Iterator<Edge> previousTaskEdgesIterator = FileSystemScanner.getPreviousTaskEdgesIterator(current);
 			if (previousTaskEdgesIterator.hasNext())
 			{
-				FileSystemScanner.setNextTask(Edges.getTail(previousTaskEdgesIterator.next()), newEntry);
+				FileSystemScanner.setNextTask(Edges.getTailFromNext(previousTaskEdgesIterator), newEntry);
+				//FileSystemScanner.setNextTask(Edges.getTail(previousTaskEdgesIterator.next()), newEntry);
 				FileSystemScanner.setNextTask(newEntry, current);
 			}
 			else
