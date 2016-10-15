@@ -51,6 +51,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "date")
 	public String _date;
 
+	@XmlElement(name = "country")
+	public String _country;
+
 	/**
 	 * The relation list
 	 */

@@ -82,6 +82,12 @@
 			<version>1.1.7</version>
 		</dependency>
 
+	<dependency>
+			<groupId>rasuni</groupId>
+			<artifactId>main</artifactId>
+			<version>0.0.1</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 	<repositories>
@@ -95,6 +101,8 @@
 			<url>https://dl.bintray.com/ijabz/maven</url>
 		</repository>
 	</repositories>
+	
+	
 
 	<version>0.0.1</version>
 	<groupId>rasuni</groupId>
