@@ -54,6 +54,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "country")
 	public String _country;
 
+	@XmlElement(name = "release-event-list")
+	public ReleaseEventList _releaseEventList;
+
 	/**
 	 * The relation list
 	 */
@@ -62,12 +65,6 @@ public class Release extends Value implements IEntity
 
 	@XmlElement(name = "barcode")
 	private String _barcode; // NO_UCD (use final)
-
-	/**
-	 * the release event list
-	 */
-	@XmlElement(name = "release-event-list")
-	public ReleaseEventList _releaseEventList; // NO_UCD (use final)
 
 	// @Override
 	// public Resource getKind()

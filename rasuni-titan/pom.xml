@@ -86,7 +86,6 @@
 			<groupId>rasuni</groupId>
 			<artifactId>main</artifactId>
 			<version>0.0.1</version>
-			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
