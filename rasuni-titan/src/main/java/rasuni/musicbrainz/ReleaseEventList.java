@@ -1,6 +1,7 @@
 package rasuni.musicbrainz;
 
 import java.util.LinkedList;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import rasuni.lang.Value;
 
@@ -10,6 +11,12 @@ import rasuni.lang.Value;
  */
 public final class ReleaseEventList extends Value
 {
+	@XmlAttribute(name = "count")
+	public int _count; // NO_UCD (use final)
+
+	@XmlAttribute(name = "offset")
+	public int _offset; // NO_UCD (use final)
+
 	/**
 	 * the release events
 	 */
