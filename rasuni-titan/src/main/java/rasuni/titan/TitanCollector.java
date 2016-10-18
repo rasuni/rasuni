@@ -6,15 +6,15 @@ import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.schema.EdgeLabelMaker;
 import com.thinkaurelius.titan.core.schema.SchemaManager;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Vertex;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import rasuni.acoustid.Response;
 import rasuni.acoustid.Result;
 import rasuni.filesystemscanner.impl.FileSystemScanner;
@@ -155,7 +155,12 @@ public final class TitanCollector
 
 	private static Vertex getCurrent(final IGraphDatabase tg)
 	{
-		return getCurrentTask(Vertex::getVertices, tg);
+		return getCurrentTask(TitanCollector::getVertices, tg);
+	}
+
+	private static Iterable<Vertex> getVertices(Vertex vertex, Direction direction, String label)
+	{
+		return () -> vertex.vertices(direction, label);
 	}
 
 	/**
@@ -171,6 +176,14 @@ public final class TitanCollector
 		FileSystemScanner.setNextTask(predecessor, successor);
 	}
 
+	private static Iterable<Edge> getEdges(Vertex vertex, Direction direction, String label)
+	{
+		return () ->
+		{
+			return vertex.edges(direction, label);
+		};
+	}
+
 	/**
 	 * Get the single incoming edge with the specified label
 	 *
@@ -182,7 +195,7 @@ public final class TitanCollector
 	 */
 	public static Edge getSingleIncoming(Vertex vertex, String label)
 	{
-		return getSingle(Vertex::getEdges, vertex, Direction.IN, label);
+		return getSingle(TitanCollector::getEdges, vertex, Direction.IN, label);
 	}
 
 	/**
@@ -346,7 +359,7 @@ public final class TitanCollector
 
 	private static void setProperty(Element element, String name, Enum<?> value)
 	{
-		element.setProperty(name, value.ordinal());
+		element.property(name, value.ordinal());
 	}
 
 	/**
@@ -399,8 +412,8 @@ public final class TitanCollector
 		final String idProperty = resourceName + ".mbid";
 		return include(tg.getVertices(idProperty, mbid), out, description.apply(resourceName), found, (Vertex v) ->
 		{
-			setProperty(v, "resource.kind", resource);
-			v.setProperty(idProperty, mbid);
+			v.property("resource.kind", resource);
+			v.property(idProperty, mbid);
 			return added.apply(v);
 		}, tg, TaskType.MB_RESOURCE);
 	}
@@ -448,8 +461,8 @@ public final class TitanCollector
 			}, () ->
 			{
 				Vertex v = enqueueNewTask(tg, TaskType.MB_RESOURCE);
-				setProperty(v, "resource.kind", resource);
-				v.setProperty(key, mbid);
+				v.property("resource.kind", resource);
+				v.property(key, mbid);
 				l.accept("adding");
 				return Boolean.TRUE;
 			});
@@ -555,7 +568,7 @@ public final class TitanCollector
 	 */
 	private static Edge getReference(Vertex vertex, String label)
 	{
-		return getReferenced(Vertex::getEdges, vertex, label);
+		return getReferenced(TitanCollector::getEdges, vertex, label);
 	}
 
 	/**
@@ -575,7 +588,7 @@ public final class TitanCollector
 
 	private static Vertex removeCurrent(final IGraphDatabase tg)
 	{
-		final Vertex current = Edges.remove(TitanCollector.getCurrentTask(Vertex::getEdges, tg));
+		final Vertex current = Edges.remove(TitanCollector.getCurrentTask(TitanCollector::getEdges, tg));
 		final Vertex nextTask = removeReference(current, "nextTask");
 		// reassign system.lastTask
 		TitanCollector.replacePrevious(current, nextTask);
@@ -629,7 +642,7 @@ public final class TitanCollector
 		final ReleaseEventList _releaseEventList = entity._releaseEventList;
 		return ifNull(_releaseEventList, Boolean.TRUE, () ->
 		{
-			final Iterator<ReleaseEvent> ire = _releaseEventList._releaseEvents.iterator();
+			final Iterator<ReleaseEvent> ire = _releaseEventList._list.iterator();
 			for (;;)
 			{
 				if (!ire.hasNext())

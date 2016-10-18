@@ -17,11 +17,8 @@ public final class ReleaseEventList extends Value
 	@XmlAttribute(name = "offset")
 	public int _offset; // NO_UCD (use final)
 
-	/**
-	 * the release events
-	 */
 	@XmlElement(name = "release-event")
-	public LinkedList<ReleaseEvent> _releaseEvents = new LinkedList<>(); // NO_UCD
+	public LinkedList<ReleaseEvent> _list = new LinkedList<>(); // NO_UCD
 
 	// (use
 	// final)
@@ -33,7 +30,7 @@ public final class ReleaseEventList extends Value
 	YearMonthDay getReleaseDate()
 	{
 		YearMonthDay result = null;
-		for (ReleaseEvent releaseEvent : _releaseEvents)
+		for (ReleaseEvent releaseEvent : _list)
 		{
 			result = YearMonthDay.min(result, releaseEvent._date);
 		}
