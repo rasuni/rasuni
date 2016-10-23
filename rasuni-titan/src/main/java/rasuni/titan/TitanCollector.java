@@ -163,19 +163,6 @@ public final class TitanCollector
 		return () -> vertex.vertices(direction, label);
 	}
 
-	/**
-	 * Set the next task
-	 *
-	 * @param predecessor
-	 *            the predecessor
-	 * @param successor
-	 *            the successor
-	 */
-	private static void setNextTask(Vertex predecessor, Vertex successor)
-	{
-		FileSystemScanner.setNextTask(predecessor, successor);
-	}
-
 	private static Iterable<Edge> getEdges(Vertex vertex, Direction direction, String label)
 	{
 		return () ->
@@ -211,14 +198,14 @@ public final class TitanCollector
 		Edge eLastTask = getSingleIncoming(current, "nextTask");
 		Vertex last = Edges.getTail(eLastTask);
 		eLastTask.remove();
-		setNextTask(last, newNext);
+		FileSystemScanner.setNextTask(last, newNext);
 	}
 
 	private static void enqueue(final IGraphDatabase tg, final Vertex vEntry)
 	{
 		final Vertex current = getCurrent(tg);
 		replacePrevious(current, vEntry);
-		setNextTask(vEntry, current);
+		FileSystemScanner.setNextTask(vEntry, current);
 	}
 
 	private static <T> T ifNull(Object object, T isNull, IProvider<T> notNull)

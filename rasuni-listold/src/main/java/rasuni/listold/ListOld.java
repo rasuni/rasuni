@@ -197,8 +197,7 @@ public final class ListOld // NO_UCD (unused code)
 									Vertex last = Edges.getTail(eLastTask);
 									//Vertex last = eLastTask.getVertex(Direction.OUT);
 									eLastTask.remove();
-									FileSystemScanner.setNextTask(last, newEntry);
-									FileSystemScanner.setNextTask(newEntry, current);
+									FileSystemScanner.insert(last, newEntry, current);
 									/*
 									last.addEdge("next.task", newEntry);
 									newEntry.addEdge("next.task", current);
@@ -464,7 +463,7 @@ public final class ListOld // NO_UCD (unused code)
 							}
 							else
 							{
-								Check.fail();
+								lines.add("ATTRIB -H \"" + file.toString() + "\"");
 							}
 						}
 						else
@@ -504,14 +503,11 @@ public final class ListOld // NO_UCD (unused code)
 			final Iterator<Edge> previousTaskEdgesIterator = FileSystemScanner.getPreviousTaskEdgesIterator(current);
 			if (previousTaskEdgesIterator.hasNext())
 			{
-				FileSystemScanner.setNextTask(Edges.getTailFromNext(previousTaskEdgesIterator), newEntry);
-				//FileSystemScanner.setNextTask(Edges.getTail(previousTaskEdgesIterator.next()), newEntry);
-				FileSystemScanner.setNextTask(newEntry, current);
+				FileSystemScanner.insert(Edges.getTailFromNext(previousTaskEdgesIterator), newEntry, current);
 			}
 			else
 			{
-				FileSystemScanner.setNextTask(current, newEntry);
-				FileSystemScanner.setNextTask(newEntry, current);
+				FileSystemScanner.insert(current, newEntry, current);
 			}
 			return completeDirectory(tg);
 		}
