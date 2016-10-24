@@ -593,7 +593,8 @@ public final class TitanCollector
 			final IFunction<String, E> name, final IFunction<String, E> idl)
 	{
 		final String resName = getName(resource);
-		final String foreignId = TitanCollector.string(resName + ".mbid").get(getCurrent(tg));
+		Key<String> r = TitanCollector.string(resName + ".mbid");
+		final String foreignId = r.getProperty(getCurrent(tg), r._name);
 		final String id = resName + "/" + foreignId;
 		final MetaData metaData = musicBrainz.query(id, inc);
 		if (metaData == null)

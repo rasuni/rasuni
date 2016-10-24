@@ -9,11 +9,8 @@ import rasuni.lang.Value;
  */
 public final class ReleaseEvent extends Value
 {
-	/**
-	 * The date
-	 */
 	@XmlElement(name = "date")
-	String _date; // NO_UCD (use final)
+	public String _date; // NO_UCD (use final)
 
 	/**
 	 * the area

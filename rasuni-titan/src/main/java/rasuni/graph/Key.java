@@ -13,7 +13,7 @@ import org.apache.tinkerpop.gremlin.structure.Property;
  */
 public final class Key<T>
 {
-	private final String _name;
+	public final String _name;
 
 	/**
 	 * the key type
@@ -34,20 +34,8 @@ public final class Key<T>
 		_type = type;
 	}
 
-	/**
-	 * get property value
-	 *
-	 * @param entry
-	 *            the entry
-	 * @return the property value
-	 */
-	public T get(Element entry)
-	{
-		return getProperty(entry, _name);
-	}
-
 	@SuppressWarnings("unchecked")
-	private T getProperty(Element element, String name)
+	public T getProperty(Element element, String name)
 	{
 		return ((Property<T>) element.property(name)).value();
 	}
