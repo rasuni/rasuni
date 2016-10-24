@@ -482,7 +482,7 @@ public final class TitanCollector
 	 */
 	private static <R> R definePropertyKey(Key<?> k, SchemaManager graph, IProvider<R> existing, IFunction<R, PropertyKey> created)
 	{
-		final String name = k.getName();
+		final String name = k._name;
 		return graph.containsPropertyKey(name) ? existing.provide() : created.apply(graph.makePropertyKey(name).cardinality(Cardinality.SINGLE).dataType(k._type).make());
 	}
 

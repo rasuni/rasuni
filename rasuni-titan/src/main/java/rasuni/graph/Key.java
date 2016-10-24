@@ -39,14 +39,4 @@ public final class Key<T>
 	{
 		return ((Property<T>) element.property(name)).value();
 	}
-
-	/**
-	 * Return the name
-	 *
-	 * @return the name
-	 */
-	public String getName()
-	{
-		return _name;
-	}
 }
