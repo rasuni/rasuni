@@ -1,8 +1,10 @@
 package ms1.music;
 
-import java.util.List;
-import org.pcollections.ConsPStack;
+import rasuni.java.util.AbstractLists;
+import java.util.AbstractList;
 import rasuni.java.lang.Classes;
+import rasuni.java.lang.Objects;
+import rasuni.org.pcollections.ConsPStacks;
 import rasuni.sun.misc.Unsafe;
 import rasuni.titan.MusicCollector;
 
@@ -20,8 +22,9 @@ public class Ms1Music // NO_UCD (unused code)
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args)
 	{
-		List<String> arrayList = (List<String>) Unsafe.allocateInstance(Classes.forName("java.util.Arrays$ArrayList"));
-		rasuni.java.lang.Objects.set(arrayList, "a", new String[] { "\\\\MusikServer\\Musik", "\\\\qnap\\music" });
-		MusicCollector.run(ConsPStack.from(arrayList), "ms1music", "\\\\MusikServer\\Musik", true);
+		AbstractList<String> arrayList = (AbstractList<String>) Unsafe.allocateInstance(Classes.forName("java.util.Arrays$ArrayList"));
+		AbstractLists.construct(arrayList);
+		Objects.set(arrayList, "a", new String[] { "\\\\MusikServer\\Musik", "\\\\qnap\\music" });
+		MusicCollector.run(ConsPStacks.from(arrayList, l -> l.iterator(), i -> i.hasNext(), i -> i.next()), "ms1music", "\\\\MusikServer\\Musik", true);
 	}
 }
