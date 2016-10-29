@@ -52,19 +52,22 @@ public class Release extends Value implements IEntity
 	public String _date;
 
 	@XmlElement(name = "country")
-	public String _country;
+	public String _country; // NO_UCD (use final)
 
 	@XmlElement(name = "release-event-list")
 	public ReleaseEventList _releaseEventList;
+
+	@XmlElement(name = "barcode")
+	public String _barcode; // NO_UCD (use final)
+
+	@XmlElement(name = "asin")
+	public String _asin; // NO_UCD (use final)
 
 	/**
 	 * The relation list
 	 */
 	@XmlElement(name = "relation-list")
 	private final LinkedList<RelationList> _relationLists = new LinkedList<>();
-
-	@XmlElement(name = "barcode")
-	private String _barcode; // NO_UCD (use final)
 
 	// @Override
 	// public Resource getKind()
