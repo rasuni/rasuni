@@ -300,7 +300,7 @@ public final class ListOld // NO_UCD (unused code)
 
 	private static boolean completeDirectory(IFileSystemScanner fs)
 	{
-		final Vertex system = getVertices(fs.getDatabase().getSystemLabel().getVertex(), Direction.OUT, "system").iterator().next();
+		final Vertex system = getVertices(fs.getSystemLabel().getVertex(), Direction.OUT, "system").iterator().next();
 		final Iterator<Edge> iterator = getEdges(system, Direction.OUT, "system.currentTask").iterator();
 		Vertex current;
 		if (iterator.hasNext())
@@ -501,14 +501,7 @@ public final class ListOld // NO_UCD (unused code)
 			Vertex newEntry = tg.addNewDirectoryEntryToCurrent(root);
 			Vertex current = tg.getCurrentVertex();
 			final Iterator<Edge> previousTaskEdgesIterator = FileSystemScanner.getPreviousTaskEdgesIterator(current);
-			if (previousTaskEdgesIterator.hasNext())
-			{
-				FileSystemScanner.insert(Edges.getTailFromNext(previousTaskEdgesIterator), newEntry, current);
-			}
-			else
-			{
-				FileSystemScanner.insert(current, newEntry, current);
-			}
+			FileSystemScanner.insert(previousTaskEdgesIterator.hasNext() ? Edges.getTailFromNext(previousTaskEdgesIterator) : current, newEntry, current);
 			return completeDirectory(tg);
 		}
 	}
