@@ -63,6 +63,9 @@ public class Release extends Value implements IEntity
 	@XmlElement(name = "asin")
 	public String _asin; // NO_UCD (use final)
 
+	@XmlElement(name = "cover-art-archive")
+	public String _coverArtArchive;
+
 	/**
 	 * The relation list
 	 */
