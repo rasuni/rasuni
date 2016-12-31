@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.DosFileAttributes;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,25 +35,10 @@ public final class ListOld // NO_UCD (unused code)
 	{
 		final FileSystemScanner tg = new FileSystemScanner("listold", (IFileSystemScanner scanner) ->
 		{
-			registerRoot(scanner, "C:\\", () ->
+			registerRoot(scanner, "/", () ->
 			{
-				return registerRoot(scanner, "D:\\", () ->
-				{
-					return registerRoot(scanner, "\\\\qnap\\backup", () ->
-					{
-						return registerRoot(scanner, "\\\\qnap\\Public", () ->
-						{
-							return registerRoot(scanner, "\\\\qnap\\Qmultimedia", () ->
-							{
-								return registerRoot(scanner, "\\\\qnap\\Qrecordings", () ->
-								{
-									Check.fail();
-									return false;
-								});
-							});
-						});
-					});
-				});
+				Check.fail();
+				return false;
 			});
 		});
 		try
@@ -84,33 +68,9 @@ public final class ListOld // NO_UCD (unused code)
 				tg.getOut().incrementLevel();
 				try
 				{
-					if (registerRoot(tg, "C:\\", () ->
+					if (registerRoot(tg, "/", () ->
 					{
-						return registerRoot(tg, "D:\\", () ->
-						{
-							return registerRoot(tg, "\\\\qnap\\backup", () ->
-							{
-								return registerRoot(tg, "\\\\qnap\\Public", () ->
-								{
-									return registerRoot(tg, "\\\\qnap\\Qmultimedia", () ->
-									{
-										return registerRoot(tg, "\\\\qnap\\music", () ->
-										{
-											return registerRoot(tg, "\\\\MUSIKSERVER\\Kunde", () ->
-											{
-												return registerRoot(tg, "\\\\MUSIKSERVER\\Lights-Out", () ->
-												{
-													return registerRoot(tg, "\\\\MUSIKSERVER\\Musik", () ->
-													{
-														return completeDirectory(tg);
-													});
-												});
-											});
-										});
-									});
-								});
-							});
-						});
+						return completeDirectory(tg);
 					}))
 					{
 						break l1;
@@ -269,16 +229,25 @@ public final class ListOld // NO_UCD (unused code)
 				}
 				else
 				{
-					System.out.println("  removing");
-					final Edge ePrevious = getEdges(current, Direction.IN, "next.task").iterator().next();
-					Vertex previous = Edges.getTail(ePrevious);
-					ePrevious.remove();
-					final Edge eNext = getEdges(current, Direction.OUT, "next.task").iterator().next();
-					Vertex next = eNext.inVertex();
-					eNext.remove();
-					previous.addEdge("next.task", next);
-					current.remove();
-					system.addEdge("system.currentTask", next);
+					if (current.edges(Direction.OUT, "directory.entry").hasNext())
+					{
+						System.out.println("  used directory removed, waiting for entries to be removed");
+						tg.moveToNextTask();
+					}
+					else
+					{
+						System.out.println("  removing");
+						final Edge ePrevious = getEdges(current, Direction.IN, "next.task").iterator().next();
+						Vertex previous = Edges.getTail(ePrevious);
+						ePrevious.remove();
+						final Edge eNext = getEdges(current, Direction.OUT, "next.task").iterator().next();
+						Vertex next = eNext.inVertex();
+						eNext.remove();
+						previous.addEdge("next.task", next);
+						current.remove();
+						system.addEdge("system.currentTask", next);
+						tg.clearCurrent();
+					}
 					tg.getDatabase().commit();
 				}
 				break;
@@ -453,33 +422,6 @@ public final class ListOld // NO_UCD (unused code)
 				}
 				else
 				{
-					try
-					{
-						DosFileAttributes attr = Files.readAttributes(file.toPath(), DosFileAttributes.class);
-						if (attr.isHidden())
-						{
-							if (attr.isSystem())
-							{
-								lines.add("ATTRIB -H -S \"" + file.toString() + "\"");
-							}
-							else
-							{
-								lines.add("ATTRIB -H \"" + file.toString() + "\"");
-							}
-						}
-						else
-						{
-							if (attr.isReadOnly())
-							{
-								lines.add("ATTRIB -R \"" + file.toString() + "\"");
-								//TitanCollector.fail();
-							}
-						}
-					}
-					catch (IOException e)
-					{
-						throw new RuntimeException(e);
-					}
 					lines.add("DEL \"" + file.toString() + "\"");
 				}
 			}
