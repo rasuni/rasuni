@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -300,7 +301,7 @@ public final class ListOld // NO_UCD (unused code)
 
 	private static boolean completeDirectory(IFileSystemScanner fs)
 	{
-		final Vertex system = getVertices(fs.getSystemLabel().getVertex(), Direction.OUT, "system").iterator().next();
+		final Vertex system = getVertices(fs.getSystemLabelVertex(), Direction.OUT, "system").iterator().next();
 		final Iterator<Edge> iterator = getEdges(system, Direction.OUT, "system.currentTask").iterator();
 		Vertex current;
 		if (iterator.hasNext())
@@ -489,12 +490,12 @@ public final class ListOld // NO_UCD (unused code)
 		}
 	}
 
-	private static boolean registerRoot(IFileSystemScanner tg, String root, IRunnable next)
+	private static boolean registerRoot(IFileSystemScanner tg, String root, BooleanSupplier next)
 	{
 		if (tg.hasDirectoryEntry(root))
 		{
 			tg.alreadyAdded(root);
-			return next.run();
+			return next.getAsBoolean();
 		}
 		else
 		{
