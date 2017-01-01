@@ -14,7 +14,7 @@ public final class ITunes
 	 */
 	public static void main(String[] args)
 	{
-		MusicCollector.run("D:\\ITunes", "itunes", null, false);
+		MusicCollector.run("/Users/ralph.sigrist/Music/iTunes/iTunes Media/Music", "itunes", null, false);
 		//MusicCollector.run(ConsPStacks.singleton("D:\\ITunes\\Music"), "itunes", null, false);
 	}
 }
