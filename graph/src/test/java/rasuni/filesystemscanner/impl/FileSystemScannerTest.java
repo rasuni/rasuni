@@ -248,7 +248,7 @@ public class FileSystemScannerTest extends MockTestCase
 	public void createRoot()
 	{
 		println("root");
-		Capture<IFileSystemScanner> sc = Capture.newInstance();
+		final Capture<IFileSystemScanner> sc = Capture.newInstance();
 		_root.accept(EasyMock.capture(sc));
 		withScanner(scanner ->
 		{
@@ -304,7 +304,7 @@ public class FileSystemScannerTest extends MockTestCase
 		println("adding ");
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent("");
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent("");
 			fileSystemScanner.setCurrentTask(newEntry);
 			Assert.assertEquals(ConsPStack.singleton(""), fileSystemScanner.getCurrentPath());
 		});
@@ -316,7 +316,7 @@ public class FileSystemScannerTest extends MockTestCase
 		println("adding ");
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent("");
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent("");
 			fileSystemScanner.setCurrentTask(newEntry);
 			Assert.assertEquals(new File(""), fileSystemScanner.getCurrentFile());
 		});
@@ -328,7 +328,7 @@ public class FileSystemScannerTest extends MockTestCase
 		println("adding ");
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent("");
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent("");
 			fileSystemScanner.setCurrentTask(newEntry);
 			Assert.assertEquals("", fileSystemScanner.getCurrentFilePath());
 		});
@@ -342,7 +342,7 @@ public class FileSystemScannerTest extends MockTestCase
 		println("");
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent("");
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent("");
 			fileSystemScanner.setCurrentTask(newEntry);
 			fileSystemScanner.currentFile(_runnable);
 		});
@@ -351,13 +351,13 @@ public class FileSystemScannerTest extends MockTestCase
 	@Test
 	public void deleteFile() throws IOException
 	{
-		File temp = File.createTempFile("file", null, _folder.getRoot());
+		final File temp = File.createTempFile("file", null, _folder.getRoot());
 		final String absolutePath = temp.getAbsolutePath();
 		println("adding " + absolutePath);
 		println("deleting " + absolutePath);
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
 			fileSystemScanner.setCurrentTask(newEntry);
 			fileSystemScanner.deleteFile();
 		});
@@ -369,13 +369,13 @@ public class FileSystemScannerTest extends MockTestCase
 	{
 		enableLog();
 		final File root = _folder.getRoot();
-		File dir = new File(root, "dir");
+		final File dir = new File(root, "dir");
 		dir.mkdir();
 		final String absolutePath = dir.getAbsolutePath();
 		println("adding " + absolutePath);
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
 			fileSystemScanner.setCurrentTask(newEntry);
 			fileSystemScanner.includeDirectoryEntries();
 		});
@@ -621,7 +621,7 @@ public class FileSystemScannerTest extends MockTestCase
 		{
 			fileSystemScanner.makeIntKey("\000");
 			final IGraphDatabase database = fileSystemScanner.getDatabase();
-			Object vertex = database.addVertex();
+			final Object vertex = database.addVertex();
 			database.addEdge(vertex, "next.task", vertex);
 			database.setProperty(vertex, "\000", 0);
 			Assert.assertEquals(0, ((Integer) fileSystemScanner.getByKeyAndPath("\000", 0, "next.task", "\000")).intValue());
@@ -647,12 +647,12 @@ public class FileSystemScannerTest extends MockTestCase
 	@Test
 	public void isDirectory() throws IOException
 	{
-		File temp = File.createTempFile("file", null, _folder.getRoot());
+		final File temp = File.createTempFile("file", null, _folder.getRoot());
 		final String absolutePath = temp.getAbsolutePath();
 		println("adding " + absolutePath);
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
 			fileSystemScanner.setCurrentTask(newEntry);
 			Assert.assertFalse(fileSystemScanner.isDirectory());
 		});
@@ -661,12 +661,12 @@ public class FileSystemScannerTest extends MockTestCase
 	@Test
 	public void getFileName() throws IOException
 	{
-		File temp = File.createTempFile("file", null, _folder.getRoot());
+		final File temp = File.createTempFile("file", null, _folder.getRoot());
 		final String absolutePath = temp.getAbsolutePath();
 		println("adding " + absolutePath);
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
 			fileSystemScanner.setCurrentTask(newEntry);
 			Assert.assertEquals(absolutePath, fileSystemScanner.getFileName());
 		});
@@ -676,12 +676,12 @@ public class FileSystemScannerTest extends MockTestCase
 	public void processDirectoryAddEntry() throws IOException
 	{
 		final File directory = _folder.newFolder("test");
-		File temp = File.createTempFile("file", null, directory);
+		final File temp = File.createTempFile("file", null, directory);
 		println("adding " + directory.getAbsolutePath());
 		println("adding " + temp.getName());
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(directory.getAbsolutePath());
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(directory.getAbsolutePath());
 			fileSystemScanner.setCurrentTask(newEntry);
 			fileSystemScanner.processDirectory();
 		});
@@ -704,12 +704,12 @@ public class FileSystemScannerTest extends MockTestCase
 	@Test
 	public void getFileExtension() throws IOException
 	{
-		File temp = File.createTempFile("file", ".temp", _folder.getRoot());
+		final File temp = File.createTempFile("file", ".temp", _folder.getRoot());
 		final String absolutePath = temp.getAbsolutePath();
 		println("adding " + absolutePath);
 		withScanner(fileSystemScanner ->
 		{
-			Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
+			final Vertex newEntry = fileSystemScanner.addNewDirectoryEntryToCurrent(absolutePath);
 			fileSystemScanner.setCurrentTask(newEntry);
 			Assert.assertEquals("temp", fileSystemScanner.getFileExtension());
 		});
@@ -741,6 +741,25 @@ public class FileSystemScannerTest extends MockTestCase
 			fileSystemScanner.registerTaskType(128, null);
 			fileSystemScanner.registerTaskType(128, null);
 			//fileSystemScanner.registerTaskType(16, null);
+		});
+	}
+
+	@Test
+	public void println()
+	{
+		println("null");
+		withScanner(fileSystemScanner ->
+		{
+			fileSystemScanner.println(null);
+		});
+	}
+
+	@Test
+	public void hasDirectoryEntries()
+	{
+		withScanner(fileSystemScanner ->
+		{
+			Assert.assertFalse(fileSystemScanner.hasDirectoryEntries());
 		});
 	}
 }

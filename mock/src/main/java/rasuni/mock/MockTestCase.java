@@ -14,6 +14,11 @@ public class MockTestCase extends EasyMockSupport
 		EasyMock.expect(ignore).andReturn(result);
 	}
 
+	protected static <T> void expectAndThrow(T ignore, Throwable throwable)
+	{
+		EasyMock.expect(ignore).andThrow(throwable);
+	}
+
 	protected void replay(Runnable runnable)
 	{
 		replayAll();
