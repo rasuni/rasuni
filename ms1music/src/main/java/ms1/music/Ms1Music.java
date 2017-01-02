@@ -24,9 +24,9 @@ public class Ms1Music // NO_UCD (unused code)
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args)
 	{
-		AbstractList<String> arrayList = (AbstractList<String>) Unsafe.allocateInstance(Classes.forName("java.util.Arrays$ArrayList"));
+		final AbstractList<String> arrayList = (AbstractList<String>) Unsafe.allocateInstance(Classes.forName("java.util.Arrays$ArrayList"));
 		Objects.set(arrayList, "modCount", 0);
-		Objects.set(arrayList, "a", new String[] { "\\\\MusikServer\\Musik", "\\\\qnap\\music" });
-		MusicCollector.run(ConsPStacks.from(arrayList, (Function<AbstractList<String>, Iterator<String>>) AbstractLists::iterator, i -> i.hasNext(), i -> i.next()), "ms1music", "\\\\MusikServer\\Musik", true);
+		Objects.set(arrayList, "a", new String[] { "/Volumes/Musik", "/Volumes/music" });
+		MusicCollector.run(ConsPStacks.from(arrayList, (Function<AbstractList<String>, Iterator<String>>) AbstractLists::iterator, AbstractLists.Itr::hasNext, i -> i.next()), "ms1music", "/Volumes/Musik", true);
 	}
 }

@@ -60,7 +60,6 @@ public interface IFileSystemScanner
 
 	void includeDirectoryEntries(Iterable<String> entries);
 
-	//void adding(String itemName);
 	Vertex getNextTask();
 
 	void setCurrentTask(Object taskId);
@@ -120,4 +119,6 @@ public interface IFileSystemScanner
 	void clearCurrent();
 
 	Vertex getSystemLabelVertex();
+
+	void println(String line);
 }
