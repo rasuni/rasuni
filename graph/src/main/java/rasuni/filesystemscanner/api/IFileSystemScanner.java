@@ -121,4 +121,6 @@ public interface IFileSystemScanner
 	Vertex getSystemLabelVertex();
 
 	void println(String line);
+
+	boolean hasDirectoryEntries();
 }

@@ -22,9 +22,9 @@ public class Ms1Qnap // NO_UCD (unused code)
 	public static void main(String[] args)
 	{
 		@SuppressWarnings("unchecked")
-		AbstractList<String> arrayList = (AbstractList<String>) Unsafe.allocateInstance(Classes.forName("java.util.Arrays$ArrayList"));
+		final AbstractList<String> arrayList = (AbstractList<String>) Unsafe.allocateInstance(Classes.forName("java.util.Arrays$ArrayList"));
 		Objects.set(arrayList, "modCount", 0);
-		Objects.set(arrayList, "a", new String[] { "\\\\MusikServer\\Musik", "\\\\qnap\\music", "\\\\qnap\\Qmultimedia" });
-		MusicCollector.run(ConsPStacks.from(arrayList, (AbstractList<String> l) -> AbstractLists.iterator(l), i -> i.hasNext(), i -> i.next()), "ms1qnap", "\\\\MusikServer\\Musik", true);
+		Objects.set(arrayList, "a", new String[] { "/Volumes/Musik", "/Volumes/music", "/Volumes/Qmultimedia" });
+		MusicCollector.run(ConsPStacks.from(arrayList, AbstractLists::iterator, AbstractLists.Itr::hasNext, i -> AbstractLists.Itr.next (i)), "ms1qnap", "/Volumes/Musik", true);
 	}
 }
