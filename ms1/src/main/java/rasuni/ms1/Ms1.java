@@ -15,6 +15,6 @@ public class Ms1 // NO_UCD (unused code)
 	 */
 	public static void main(String[] args)
 	{
-		MusicCollector.run("\\\\MUSIKSERVER\\Musik", "ms1", "\\\\MUSIKSERVER\\Musik", true);
+		MusicCollector.run("/Volumes/Musik", "ms1", "/Volumes/Musik", true);
 	}
 }
