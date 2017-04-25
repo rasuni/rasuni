@@ -740,7 +740,6 @@ public class FileSystemScannerTest extends MockTestCase
 		{
 			fileSystemScanner.registerTaskType(128, null);
 			fileSystemScanner.registerTaskType(128, null);
-			//fileSystemScanner.registerTaskType(16, null);
 		});
 	}
 
