@@ -42,7 +42,7 @@ public final class Edges
 	public static Vertex remove(Edge edge)
 	{
 		// retrieve head vertex
-		Vertex head = getHead(edge);
+		final Vertex head = getHead(edge);
 		// remove edge
 		edge.remove();
 		return head;
@@ -53,8 +53,8 @@ public final class Edges
 		return vertex(edge, Direction.OUT);
 	}
 
-	public static Vertex getTailFromNext(Iterator<Edge> edgesIterator)
+	public static Vertex getTailFromNext(Iterator<Edge> edgesIterator, Vertex noNext)
 	{
-		return getTail(edgesIterator.next());
+		return edgesIterator.hasNext() ? getTail(edgesIterator.next()) : noNext;
 	}
 }
