@@ -27,6 +27,6 @@ public class Ms1Music // NO_UCD (unused code)
 		final AbstractList<String> arrayList = (AbstractList<String>) Unsafe.allocateInstance(Classes.forName("java.util.Arrays$ArrayList"));
 		Objects.set(arrayList, "modCount", 0);
 		Objects.set(arrayList, "a", new String[] { "/Volumes/Musik", "/Volumes/music" });
-		MusicCollector.run(ConsPStacks.from(arrayList, (Function<AbstractList<String>, Iterator<String>>) AbstractLists::iterator, AbstractLists.Itr::hasNext, i -> i.next()), "ms1music", "/Volumes/Musik", true);
+		MusicCollector.run(ConsPStacks.from(arrayList, (Function<AbstractList<String>, Iterator<String>>) AbstractLists::iterator, AbstractLists.Itr::hasNext, i -> i.next()), "ms1music.mac", "/Volumes/Musik", true);
 	}
 }
