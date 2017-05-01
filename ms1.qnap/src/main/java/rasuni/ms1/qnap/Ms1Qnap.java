@@ -25,6 +25,6 @@ public class Ms1Qnap // NO_UCD (unused code)
 		final AbstractList<String> arrayList = (AbstractList<String>) Unsafe.allocateInstance(Classes.forName("java.util.Arrays$ArrayList"));
 		Objects.set(arrayList, "modCount", 0);
 		Objects.set(arrayList, "a", new String[] { "/Volumes/Musik", "/Volumes/music", "/Volumes/Qmultimedia" });
-		MusicCollector.run(ConsPStacks.from(arrayList, AbstractLists::iterator, AbstractLists.Itr::hasNext, i -> AbstractLists.Itr.next(i)), "ms1qnap.mac", "/Volumes/Musik", true);
+		MusicCollector.run(ConsPStacks.from(arrayList, AbstractLists::iterator, AbstractLists.Itr::hasNext, i -> AbstractLists.Itr.next(i)), "ms1qnap", "/Volumes/Musik", true);
 	}
 }
