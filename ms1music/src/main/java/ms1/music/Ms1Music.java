@@ -1,8 +1,6 @@
 package ms1.music;
 
 import java.util.AbstractList;
-import java.util.Iterator;
-import java.util.function.Function;
 import rasuni.java.lang.Classes;
 import rasuni.java.lang.Objects;
 import rasuni.java.util.AbstractLists;
@@ -27,6 +25,6 @@ public class Ms1Music // NO_UCD (unused code)
 		final AbstractList<String> arrayList = (AbstractList<String>) Unsafe.allocateInstance(Classes.forName("java.util.Arrays$ArrayList"));
 		Objects.set(arrayList, "modCount", 0);
 		Objects.set(arrayList, "a", new String[] { "/Volumes/Musik", "/Volumes/music" });
-		MusicCollector.run(ConsPStacks.from(arrayList, (Function<AbstractList<String>, Iterator<String>>) AbstractLists::iterator, AbstractLists.Itr::hasNext, AbstractLists.Itr::next), "ms1music", "/Volumes/Musik", true);
+		MusicCollector.run(ConsPStacks.from(arrayList, list -> AbstractLists.iterator(list), AbstractLists.Itr::hasNext, AbstractLists.Itr::next), "ms1music", "/Volumes/Musik", true);
 	}
 }
